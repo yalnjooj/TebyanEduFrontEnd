@@ -1,0 +1,106 @@
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "Cairo-Light";
+  src: url("./assets/CairoFonts/Cairo-Light.ttf") format('truetype');
+}
+
+
+app-root{
+font-family: "Cairo-Light";
+}
+
+/**
+Cairo-SemiBold.ttf
+Cairo-Regular.ttf
+Cairo-Light.ttf
+Cairo-ExtraLight.ttf
+Cairo-Bold.ttf
+Cairo-Black.ttf
+*/
+
+
+/* Background Tebyan Colors */
+.tebyan-bg-yellow{
+  background-color: #b09d75;
+}
+
+.tebyan-bg-green{
+  background-color: #276558;
+}
+
+.tebyan-bg-white{
+  background-color: #ffffff;
+}
+
+
+/* Text Tebyan Colors */
+.tebyan-text-yellow{
+
+  color: #b09d75;
+}
+
+.tebyan-text-green{
+  color: #276558;
+}
+
+.tebyan-text-white{
+  color: #ffffff;
+}
+
+
+/* Font Size */
+.font-size-8{
+  font-size: 0.5rem;
+  font-weight: 400;
+}
+
+.font-size-10{
+  font-size: 0.625rem;
+  font-weight: 400;
+}
+
+.font-size-12{
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.font-size-14{
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.font-size-16{
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.font-size-18{
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+
+.font-size-20{
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+
+
+
+::-webkit-scrollbar {
+  width: 7px;
+  background:lightgray;
+}
+
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,255,1);
+  border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 7px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+  background:cyan;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

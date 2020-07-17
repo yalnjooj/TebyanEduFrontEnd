@@ -1,0 +1,38 @@
+
+<!-- 276558 -->
+<!-- b09d75 -->
+<!-- ffffff -->
+<div [dir]="'rtl'">
+  <mat-toolbar dir color="primary">
+    <mat-toolbar-row  class="mat-elevation-z8" style="min-height: 50px !important; height: 50px !important;">
+      <span routerLink="/home"><mat-icon>eco</mat-icon>أكاديمية فراس للتعليم</span>
+      <div class="spacer"></div>
+      <a mat-button routerLink="/login">تسجيل الدخول</a>
+      <a mat-button routerLink="/signup">طلب فتح حساب</a>
+      <a mat-button [matMenuTriggerFor]="menu">الاستعلامات</a>
+      <a mat-raised-button color="accent">الأسئلة الشائعة</a>
+    </mat-toolbar-row>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>شهادة مدرب</button>
+      <button mat-menu-item>شهادة مشرف</button>
+      <button mat-menu-item>رخصة مدرب</button>
+    </mat-menu>
+    <mat-toolbar-row>
+      <span>Second Row</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
+
+
+
+
+<footer style="background-color: #b09d75; z-index: 50;" class="page-footer myFooter font-size-12">
+  <div class="footer-copyright">
+    <div class="container">
+      <a class="grey-text text-lighten-4 right" _blank>جميع الحقوق محفوظة · شركة تبيان للتعليم 2020©</a>
+
+      <a class="grey-text text-lighten-4 left" href="#!" _blank>بنود · الخصوصية · سياسات البرنامج</a>
+    </div>
+  </div>
+</footer>
+

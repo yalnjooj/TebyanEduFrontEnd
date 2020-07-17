@@ -1,0 +1,47 @@
+
+
+<app-navbar-out></app-navbar-out>
+<div class="container">
+  <div class="row">
+    <div class="col l6 offset-l3">
+
+        <div class="card">
+            <div class="card-content">
+                <h4 class="black-text center-align">تسجيل الدخول</h4>
+                <form>
+
+<div class="row">
+  <div class="input-field ">
+    <i class="material-icons prefix">person</i>
+      <input  class="validate" placeholder="أدخل البريد الإلكتروني" id="email" type="email" name="email" #email pattern="/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test">
+      <label for="email"></label>
+      <span class="helper-text" data-error="صيغة غير صحيحة" data-success="إستمر">يرجى مراعاة كتابة البريد الإلكتروني بالشكل الصحيح!</span>
+    </div>
+  <div class="input-field">
+    <i class="material-icons prefix">vpn_key</i>
+      <input class="validate" placeholder="أدخل كلمة المرور" id="password" type="password" name="password" #pass>
+      <label for="password"></label>
+      <span class="helper-text" data-error="صيغة غير صحيحة" data-success="إستمر">يرجى مراعاة كتابة كلمة السر بالشكل الصحيح!</span>
+    </div>
+</div>
+
+<div class="row">
+  <div class="input-field">
+    <button    type="button" class="btn waves-effect waves-light col s12" (click)="logIn(email, pass)">دخول
+    </button>
+</div>
+</div>
+
+<div class="row">
+  <a routerLink="/forgotPassword">
+    <p class="right">هل نسيت كلمة المرور؟</p>
+</a>
+</div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,48 @@
+<app-navbar-out></app-navbar-out>
+
+<div class="row">
+  <div class="col s6 offset-s3">
+
+
+      <div class="card">
+
+
+          <div class="card-content">
+
+              <form action="/users/register" method="post">
+                  <h3 class="center-align">Register Form</h3>
+                  <div class="">
+                    <label>Materialize Select</label>
+                    <select class="browser-default" #role>
+                        <option value="" disabled selected>أختر نوع الحساب</option>
+                        <option value="PROFIT">جهة خيرية</option>
+                        <option value="NONPROFIT">جهة ربحية</option>
+                        <option value="GOVERNMENTAL">جهة حكومية</option>
+                      </select>
+                  </div>
+
+                  <div class="input-field">
+                      <input type="text" placeholder="email" name="email" #email>
+                  </div>
+                  <div class="input-field">
+                      <input type="password" placeholder="password" name="password" #pass>
+                  </div>
+                  <div class="input-field">
+                      <input type="password" placeholder="confrirm password" name="password2" #pass2>
+                  </div>
+                  <div class="input-field col s12">
+
+                  </div>
+                  <div class="input-field">
+                      <button type="button" class="btn deep-purple"  (click)="signUp(email, pass, pass2, role)">Join the team</button>
+
+                  </div>
+                  <a routerLink="/login">
+                      <p class="center-align"> I have account</p>
+                  </a>
+              </form>
+          </div>
+
+      </div>
+  </div>
+</div>
