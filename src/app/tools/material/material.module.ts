@@ -4,7 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatVideoModule } from 'mat-video';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatSelectModule} from '@angular/material/select';
 
 
 const materialModule = [
@@ -13,7 +17,11 @@ const materialModule = [
   MatIconModule,
   MatToolbarModule,
   MatMenuModule,
-  MatVideoModule
+  MatFormFieldModule,
+  MatInputModule,
+  MatGridListModule,
+  MatSnackBarModule,
+  MatSelectModule
 ];
 
 @NgModule({

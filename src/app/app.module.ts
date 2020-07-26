@@ -17,10 +17,9 @@ import { AuthHomePageGuard } from './gared/auth.homePage.guard';
 import { AuthGlobalGuard } from './gared/auth.globale.guard';
 import { ForgotPasswordComponent } from './registeration/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './registeration/reset-password/reset-password.component';
-import { NavbarOutComponent } from './home/navbar-out/navbar-out.component';
+import { NavbarFooterOuterComponent } from './home/navbar-footer-outer/navbar-footer-outer.component';
 import { MaterialModule } from './tools/material/material.module';
 import { AngularModule } from './tools/angular/angular.module';
-
 
 @NgModule({
   declarations: [
@@ -35,15 +34,14 @@ import { AngularModule } from './tools/angular/angular.module';
     DashboardComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    NavbarOutComponent
+    NavbarFooterOuterComponent
   ],
   imports: [
     AppRoutingModule,
     NgxSpinnerModule,
     SlimLoadingBarModule.forRoot(),
     MaterialModule,
-    AngularModule,   
-
+    AngularModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [BrowserModule, SlimLoadingBarModule],

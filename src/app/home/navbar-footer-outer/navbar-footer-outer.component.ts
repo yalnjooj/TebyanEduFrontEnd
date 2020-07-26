@@ -9,11 +9,11 @@ import { NavigationCancel,
 
   
 @Component({
-  selector: 'app-navbar-out',
-  templateUrl: './navbar-out.component.html',
-  styleUrls: ['./navbar-out.component.css']
+  selector: 'navbar-footer-outer',
+  templateUrl: './navbar-footer-outer.component.html',
+  styleUrls: ['./navbar-footer-outer.component.css']
 })
-export class NavbarOutComponent implements OnInit {
+export class NavbarFooterOuterComponent implements OnInit {
 
   constructor(private router: Router, private slimLoadingBarService: SlimLoadingBarService) {
 

@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { NavbarOutComponent } from './navbar-out.component';
+import { NavbarFooterOuterComponent } from './navbar-footer-outer.component';
 
 describe('NavbarOutComponent', () => {
-  let component: NavbarOutComponent;
-  let fixture: ComponentFixture<NavbarOutComponent>;
+  let component: NavbarFooterOuterComponent;
+  let fixture: ComponentFixture<NavbarFooterOuterComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavbarOutComponent ]
+      declarations: [ NavbarFooterOuterComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(NavbarOutComponent);
+    fixture = TestBed.createComponent(NavbarFooterOuterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

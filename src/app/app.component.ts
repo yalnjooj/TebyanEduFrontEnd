@@ -11,9 +11,6 @@ import { SlimLoadingBarService } from '@cime/ngx-slim-loading-bar';
 })
 export class AppComponent implements  OnInit {
 
-  // @HostListener('click') sdfsd () {
-  //   console.log('HostListener')
-  // }
 
 
   constructor(private router: Router, private slimLoadingBarService: SlimLoadingBarService ){

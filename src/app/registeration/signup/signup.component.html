@@ -1,48 +1,69 @@
-<app-navbar-out></app-navbar-out>
+<navbar-footer-outer></navbar-footer-outer>
+<div [dir]="'rtl'">
+  <mat-grid-list gutterSize="0px" cols="3" rowHeight="10rem">
+    <mat-grid-tile colspan="1" rowspan="3"></mat-grid-tile>
 
-<div class="row">
-  <div class="col s6 offset-s3">
+    <mat-grid-tile colspan="1" rowspan="3">
+      <mat-grid-tile-header>
+        <h1 class="mat-display-1">
+          تسجيل مستخدم جديد !
+        </h1>
+      </mat-grid-tile-header>
+      <form [formGroup]="loginForm" class="example-form">
+        <mat-form-field [style.fontSize]="'14px'" style="width: 100%;">
+          <mat-label>اختر نوع الحساب</mat-label>
+          <mat-select formControlName="select" required>
+            <mat-option value="" disabled selected>أختر نوع الحساب</mat-option>
+            <mat-option value="PROFIT">خيري</mat-option>
+            <mat-option value="NONPROFIT">ربحي</mat-option>
+            <mat-option value="GOVERNMENTAL">حكومي</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field [style.fontSize]="'14px'" style="width: 100%;" appearance="outline">
+          <mat-label>أدخل البريد الإلكتروني</mat-label>
+          <input matInput placeholder="pat@example.com" formControlName="email" required />
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error>{{ getErrorMessageMail() }}</mat-error>
+        </mat-form-field>
 
-
-      <div class="card">
-
-
-          <div class="card-content">
-
-              <form action="/users/register" method="post">
-                  <h3 class="center-align">Register Form</h3>
-                  <div class="">
-                    <label>Materialize Select</label>
-                    <select class="browser-default" #role>
-                        <option value="" disabled selected>أختر نوع الحساب</option>
-                        <option value="PROFIT">جهة خيرية</option>
-                        <option value="NONPROFIT">جهة ربحية</option>
-                        <option value="GOVERNMENTAL">جهة حكومية</option>
-                      </select>
-                  </div>
-
-                  <div class="input-field">
-                      <input type="text" placeholder="email" name="email" #email>
-                  </div>
-                  <div class="input-field">
-                      <input type="password" placeholder="password" name="password" #pass>
-                  </div>
-                  <div class="input-field">
-                      <input type="password" placeholder="confrirm password" name="password2" #pass2>
-                  </div>
-                  <div class="input-field col s12">
-
-                  </div>
-                  <div class="input-field">
-                      <button type="button" class="btn deep-purple"  (click)="signUp(email, pass, pass2, role)">Join the team</button>
-
-                  </div>
-                  <a routerLink="/login">
-                      <p class="center-align"> I have account</p>
-                  </a>
-              </form>
+        <mat-form-field [style.fontSize]="'14px'" style="width: 100%;" appearance="outline">
+          <mat-label>أدخل كلمة المرور</mat-label>
+          <input matInput [type]="hide1 ? 'password' : 'text'" formControlName="password1" required />
+          <mat-error>{{ getErrorMessagePass1() }}</mat-error>
+          <button mat-icon-button matSuffix (click)="hide1 = !hide1" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide1">
+            <mat-icon>{{ hide1 ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <mat-form-field [style.fontSize]="'14px'" style="width: 100%;" appearance="outline">
+          <mat-label>تأكيد كلمة المرور</mat-label>
+          <input matInput [type]="hide2 ? 'password' : 'text'" formControlName="password2" required />
+          <mat-error>{{ getErrorMessagePass2() }}</mat-error>
+          <button mat-icon-button matSuffix (click)="hide2 = !hide2" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide2">
+            <mat-icon>{{ hide2 ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <section>
+          <div class="example-button-row">
+            <button [disabled]="loginForm.invalid ? true : false" (click)="signUp()" mat-raised-button
+              color="primary">
+              تسجيل</button><br />
+            <a routerLink="/login">لدي حساب !</a>
           </div>
+        </section>
+      </form>
 
-      </div>
-  </div>
+      <span mat-stroked-button aria-label="Show an example snack-bar"></span>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1" rowspan="3">
+      <ul class="mat-h4">
+        <b>كلمة المرور يجب أن تحتوي على:</b>
+        <li>تتألف من 7 أحرف على الأقل</li>
+        <li>تحتوي على حرف واحد على الأقل (a, b, c...)</li>
+        <li>يجب أن يكون لديك رقم واحد على الأقل (1, 2, 3...)</li>
+        <li>قم بتضمين كل من الأحرف الكبيرة والصغيرة</li>
+      </ul>
+    </mat-grid-tile>
+  </mat-grid-list>
 </div>

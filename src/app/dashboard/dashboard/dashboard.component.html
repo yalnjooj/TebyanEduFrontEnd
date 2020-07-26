@@ -1,51 +1,50 @@
-
 <!-- 276558 -->
 <!-- b09d75 -->
 <!-- ffffff -->
-
+<div [dir]="'rtl'">
+    <mat-toolbar dir color="primary">
+      <mat-toolbar-row  class="mat-elevation-z8" style="min-height: 50px !important; height: 50px !important;">
+        <span routerLink="/home"><mat-icon class="private-icon">eco</mat-icon>أكاديمية فراس للتعليم</span>
+        <div class="private-spacer"></div>
+        <a mat-button routerLink="/login">تسجيل الدخول</a>
+        <a mat-button routerLink="/signup">طلب فتح حساب</a>
+        <a mat-button [matMenuTriggerFor]="menu">الاستعلامات</a>
+        <a mat-raised-button color="accent">الأسئلة الشائعة</a>
+      </mat-toolbar-row>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>شهادة مدرب</button>
+        <button mat-menu-item>شهادة مشرف</button>
+        <button mat-menu-item>رخصة مدرب</button>
+      </mat-menu>
+      <mat-toolbar-row>
+        <span>أدخل بيانات تسجيل الدخول للوصول إلى حسابك.</span>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </div>
+  
+  
+  <footer layout="row" class="md-padding">
+  
+      <p>I am Sticky!</p>
+   
+  </footer>
+  
+  
 <nav  class="navbar-fixed">
 
-  <div style="background-color: #b09d75;" class="nav-wrapper">
-
-      <ul class="hide-on-med-and-down">
-        <li class="left"><a (click)="logout()">تسجيل خروج</a></li>
-        <li class="left"><a>إدارة حسابك</a></li>            <!-- notifications_active //  red accent-4-->
-        <li class="left"><a><i class="material-icons prefix">notifications_none</i></a></li>
-
-        <a class="brand-logo center" routerLink="">{{user['email']}}</a>
-
-        <li class="right"><a><i class="material-icons prefix">view_headline</i></a></li>
-        <li class="right"  style="background-color: #fff;"><a><img src="../../../assets/logo.png" width="40" /></a></li>
-        <li class="right"><a>متخصصون في تنمية مهارات ومواهب اﻷطفال</a></li>
-      </ul>
-  </div>
-
-</nav>
-
-
-    <!-- Page Layout here -->
-    <div class="row">
-
-      <div class="col s3">
-        
-        <p>Grey navigation panel</p>
-          <!-- Scaled in -->
-  <a id="scale-demo" href="#!" class="btn-floating btn-large scale-transition">
-    <i class="material-icons">add</i>
-  </a>
-
-  <!-- Scaled out -->
-  <a id="scale-demo" href="#!" class="btn-floating btn-large scale-transition scale-out">
-    <i class="material-icons">add</i>
-  </a>
-      </div>
-
-      <div class="col s9">
-        <h1>{{user['role']}}</h1>
-        <button mat-button>Basic</button>
-        <button mat-button color="primary">Primary</button>
-        <button mat-button color="accent">Accent</button>
-        <button mat-button color="warn">Warn</button>
-      </div>
-
+    <div style="background-color: #b09d75;" class="nav-wrapper">
+  
+        <ul class="hide-on-med-and-down">
+          <li class="left"><a (click)="logout()">تسجيل خروج</a></li>
+          <li class="left"><a>إدارة حسابك</a></li>            <!-- notifications_active //  red accent-4-->
+          <li class="left"><a><i class="material-icons prefix">notifications_none</i></a></li>
+  
+          <a class="brand-logo center" routerLink="">{{user['email']}}</a>
+  
+          <li class="right"><a><i class="material-icons prefix">view_headline</i></a></li>
+          <li class="right"  style="background-color: #fff;"><a><img src="../../../assets/logo.png" width="40" /></a></li>
+          <li class="right"><a>متخصصون في تنمية مهارات ومواهب اﻷطفال</a></li>
+        </ul>
     </div>
+  
+  </nav>

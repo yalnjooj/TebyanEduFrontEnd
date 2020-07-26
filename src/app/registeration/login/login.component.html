@@ -1,47 +1,54 @@
+<navbar-footer-outer></navbar-footer-outer>
+<div [dir]="'rtl'">
+  <mat-grid-list cols="1" rowHeight="30rem">
+    <mat-grid-tile>
+      <mat-grid-tile-header>
+        <h1 class="mat-display-1">
+          أدخل بيانات تسجيل الدخول للوصول إلى حسابك.
+        </h1>
+      </mat-grid-tile-header>
+      <form [formGroup]="loginForm"  class="example-form">
+        <mat-form-field appearance="outline">
+          <mat-label>أدخل البريد الإلكتروني</mat-label>
+          <input matInput placeholder="pat@example.com" formControlName="email" required />
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error>{{ getErrorMessageMail() }}</mat-error>
+        </mat-form-field>
 
+        <mat-form-field appearance="outline">
+          <mat-label>أدخل كلمة المرور</mat-label>
+          <input matInput [type]="hide ? 'password' : 'text'" formControlName="password" required />
+          <mat-error>{{ getErrorMessagePass() }}</mat-error>
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="hide = !hide"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide"
+          >
+            <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+        </mat-form-field>
 
-<app-navbar-out></app-navbar-out>
-<div class="container">
-  <div class="row">
-    <div class="col l6 offset-l3">
+        <section>
+          <div class="example-button-row">
+            <button [disabled]="loginForm.invalid? true: false" (click)="logIn()" mat-raised-button color="primary">تسجيل الدخول</button
+            ><br />
+            <a routerLink="/forgotPassword">هل نسيت كلمة المرور؟</a>
+          </div>
+        </section>
+      </form>
+      <ul class="mat-h4">
+        <b>كلمة المرور يجب أن تحتوي على:</b>
+        <li>تتألف من 7 أحرف على الأقل</li>
+        <li>تحتوي على حرف واحد على الأقل (a, b, c...)</li>
+        <li>يجب أن يكون لديك رقم واحد على الأقل (1, 2, 3...)</li>
+        <li>قم بتضمين كل من الأحرف الكبيرة والصغيرة</li>
+      </ul>
+      <span mat-stroked-button aria-label="Show an example snack-bar"></span>
 
-        <div class="card">
-            <div class="card-content">
-                <h4 class="black-text center-align">تسجيل الدخول</h4>
-                <form>
-
-<div class="row">
-  <div class="input-field ">
-    <i class="material-icons prefix">person</i>
-      <input  class="validate" placeholder="أدخل البريد الإلكتروني" id="email" type="email" name="email" #email pattern="/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test">
-      <label for="email"></label>
-      <span class="helper-text" data-error="صيغة غير صحيحة" data-success="إستمر">يرجى مراعاة كتابة البريد الإلكتروني بالشكل الصحيح!</span>
-    </div>
-  <div class="input-field">
-    <i class="material-icons prefix">vpn_key</i>
-      <input class="validate" placeholder="أدخل كلمة المرور" id="password" type="password" name="password" #pass>
-      <label for="password"></label>
-      <span class="helper-text" data-error="صيغة غير صحيحة" data-success="إستمر">يرجى مراعاة كتابة كلمة السر بالشكل الصحيح!</span>
-    </div>
+      <mat-grid-tile-footer>
+      </mat-grid-tile-footer>
+    </mat-grid-tile>
+  </mat-grid-list>
 </div>
-
-<div class="row">
-  <div class="input-field">
-    <button    type="button" class="btn waves-effect waves-light col s12" (click)="logIn(email, pass)">دخول
-    </button>
-</div>
-</div>
-
-<div class="row">
-  <a routerLink="/forgotPassword">
-    <p class="right">هل نسيت كلمة المرور؟</p>
-</a>
-</div>
-                </form>
-
-            </div>
-        </div>
-    </div>
-  </div>
-</div>
-

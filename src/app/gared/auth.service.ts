@@ -59,9 +59,9 @@ logout() {
 }
 
 
-forgotPassword(email, linkOrigin) {
+forgotPassword(email) {
   // response, body
-  return this.http.post('http://localhost:3000/registeration/forgotPassword', {email, linkOrigin}, {
+  return this.http.post('http://localhost:3000/registeration/forgotPassword', {email}, {
     observe: 'response',
     responseType: 'json',
     headers:  new HttpHeaders({'Access-Control-Allow-Origin': '*'}),
