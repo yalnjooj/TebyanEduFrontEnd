@@ -9,6 +9,8 @@ app-root{
 font-family: "Cairo-Light";
 }
 
+html, body { height: 100%; margin: 0;}
+
 /**
 Cairo-SemiBold.ttf
 Cairo-Regular.ttf
@@ -85,22 +87,3 @@ Cairo-Black.ttf
 }
 
 
-
-::-webkit-scrollbar {
-  width: 7px;
-  background:lightgray;
-}
-
-::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,255,1);
-  border-radius: 7px;
-}
-
-::-webkit-scrollbar-thumb {
-  border-radius: 7px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-  background:cyan;
-}
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

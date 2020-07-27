@@ -20,6 +20,7 @@ import { ResetPasswordComponent } from './registeration/reset-password/reset-pas
 import { NavbarFooterOuterComponent } from './home/navbar-footer-outer/navbar-footer-outer.component';
 import { MaterialModule } from './tools/material/material.module';
 import { AngularModule } from './tools/angular/angular.module';
+import { DialogSingoutComponent } from './dialogs/singout/dialogSingout/dialog.singout.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { AngularModule } from './tools/angular/angular.module';
     DashboardComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    NavbarFooterOuterComponent
+    NavbarFooterOuterComponent,
+    DialogSingoutComponent
   ],
   imports: [
     AppRoutingModule,

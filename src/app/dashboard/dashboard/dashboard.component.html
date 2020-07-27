@@ -1,50 +1,63 @@
-<!-- 276558 -->
-<!-- b09d75 -->
-<!-- ffffff -->
 <div [dir]="'rtl'">
-    <mat-toolbar dir color="primary">
-      <mat-toolbar-row  class="mat-elevation-z8" style="min-height: 50px !important; height: 50px !important;">
-        <span routerLink="/home"><mat-icon class="private-icon">eco</mat-icon>أكاديمية فراس للتعليم</span>
-        <div class="private-spacer"></div>
-        <a mat-button routerLink="/login">تسجيل الدخول</a>
-        <a mat-button routerLink="/signup">طلب فتح حساب</a>
-        <a mat-button [matMenuTriggerFor]="menu">الاستعلامات</a>
-        <a mat-raised-button color="accent">الأسئلة الشائعة</a>
-      </mat-toolbar-row>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>شهادة مدرب</button>
-        <button mat-menu-item>شهادة مشرف</button>
-        <button mat-menu-item>رخصة مدرب</button>
-      </mat-menu>
-      <mat-toolbar-row>
-        <span>أدخل بيانات تسجيل الدخول للوصول إلى حسابك.</span>
-      </mat-toolbar-row>
-    </mat-toolbar>
-  </div>
-  
-  
-  <footer layout="row" class="md-padding">
-  
-      <p>I am Sticky!</p>
-   
-  </footer>
-  
-  
-<nav  class="navbar-fixed">
+  <mat-toolbar dir color="primary">
+    <mat-toolbar-row class="mat-elevation-z8" style="min-height: 50px !important; height: 50px !important;">
+      <button type="button" mat-button (click)="drawer.toggle()">
+        <mat-icon class="private-icon">menu</mat-icon>
+      </button>
+      <!-- <img src="../../../assets/logo.png" width="40" /> -->
+      <span routerLink="/home">
+        <mat-icon class="private-icon">eco</mat-icon>أكاديمية فراس
+        للتعليم
+      </span>
+      <div class="private-spacer"></div>
+      <a mat-button>
+        {{dateNow}} | {{timeNow}}
+      </a>
+      <a mat-button>
+        <mat-icon class="private-icon">notification_important</mat-icon>
+      </a>
+      <a mat-button [matMenuTriggerFor]="menu">
+        <mat-icon class="private-icon">settings</mat-icon>
+      </a>
+      <a (click)="logout()" mat-raised-button color="accent">
+        <mat-icon class="private-icon mat-icon-rtl-mirror">exit_to_app</mat-icon>
+      </a>
+    </mat-toolbar-row>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>شهادة مدرب</button>
+    </mat-menu>
+    <mat-toolbar-row>
+      <span>نظام تجريبي لتصدير الشهادات</span>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>
+<!-- push   over   side -->
+<mat-drawer-container [dir]="'rtl'" class="example-container" hasBackdrop="true">
+  <mat-drawer #drawer mode="side">
+    <mat-nav-list>
+      <div mat-subheader>الحسابات</div>
+      <mat-list-item (click)="drawer.close()">
+        <mat-icon mat-list-icon>account_box</mat-icon>
+        <span mat-line>فتح حساب جديد</span>
+      </mat-list-item>
 
-    <div style="background-color: #b09d75;" class="nav-wrapper">
-  
-        <ul class="hide-on-med-and-down">
-          <li class="left"><a (click)="logout()">تسجيل خروج</a></li>
-          <li class="left"><a>إدارة حسابك</a></li>            <!-- notifications_active //  red accent-4-->
-          <li class="left"><a><i class="material-icons prefix">notifications_none</i></a></li>
-  
-          <a class="brand-logo center" routerLink="">{{user['email']}}</a>
-  
-          <li class="right"><a><i class="material-icons prefix">view_headline</i></a></li>
-          <li class="right"  style="background-color: #fff;"><a><img src="../../../assets/logo.png" width="40" /></a></li>
-          <li class="right"><a>متخصصون في تنمية مهارات ومواهب اﻷطفال</a></li>
-        </ul>
-    </div>
-  
-  </nav>
+      <mat-divider></mat-divider>
+      <div mat-subheader>الشهادات</div>
+      <mat-list-item (click)="drawer.close()">
+        <mat-icon mat-list-icon>library_books</mat-icon>
+        <span mat-line>الشهادات</span>
+      </mat-list-item>
+      <mat-list-item (click)="drawer.close()">
+        <mat-icon mat-list-icon>calendar_today</mat-icon>
+        <span mat-line>التقارير</span>
+      </mat-list-item>
+    </mat-nav-list>
+  </mat-drawer>
+  <mat-drawer-content>
+    <h1>بببببببببببب</h1>
+  </mat-drawer-content>
+</mat-drawer-container>
+
+<footer class="md-padding">
+  <p>I am Sticky!</p>
+</footer>

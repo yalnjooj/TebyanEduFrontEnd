@@ -8,7 +8,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 const materialModule = [
@@ -21,7 +24,10 @@ const materialModule = [
   MatInputModule,
   MatGridListModule,
   MatSnackBarModule,
-  MatSelectModule
+  MatSelectModule,
+  MatSidenavModule,
+  MatListModule,
+  MatDialogModule
 ];
 
 @NgModule({
