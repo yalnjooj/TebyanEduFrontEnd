@@ -15,13 +15,16 @@ footer, p {
 
   .example-container {
     width: 100%;
-    height: 30rem;
+    height: 34.04rem;
   }
 
   mat-drawer {
     width: 17%;
   }
 
- 
+  mat-grid-tile {
+    background: lightblue;
+  }
+  
   
   

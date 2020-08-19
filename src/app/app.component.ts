@@ -1,7 +1,16 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Event } from '@angular/router';
 import { SlimLoadingBarService } from '@cime/ngx-slim-loading-bar';
+import { loadCldr} from '@syncfusion/ej2-base';
 
+declare var require: any;
+
+loadCldr(
+    require('cldr-data/supplemental/numberingSystems.json'),
+    require('cldr-data/main/ar/ca-gregorian.json'),
+    require('cldr-data/main/ar/numbers.json'),
+    require('cldr-data/main/ar/timeZoneNames.json'),
+    require('cldr-data/supplemental/weekdata.json')); // To load the culture based first day of week
 
 
 @Component({

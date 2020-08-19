@@ -1,18 +1,18 @@
 <div [dir]="'rtl'">
   <mat-toolbar dir color="primary">
-    <mat-toolbar-row class="mat-elevation-z8" style="min-height: 50px !important; height: 50px !important;">
+    <mat-toolbar-row
+      class="mat-elevation-z8"
+      style="min-height: 50px !important; height: 50px !important;"
+    >
       <button type="button" mat-button (click)="drawer.toggle()">
         <mat-icon class="private-icon">menu</mat-icon>
       </button>
       <!-- <img src="../../../assets/logo.png" width="40" /> -->
-      <span routerLink="/home">
-        <mat-icon class="private-icon">eco</mat-icon>أكاديمية فراس
-        للتعليم
+      <span routerLink="body">
+        <mat-icon class="private-icon">eco</mat-icon>أكاديمية فراس للتعليم
       </span>
       <div class="private-spacer"></div>
-      <a mat-button>
-        {{dateNow}} | {{timeNow}}
-      </a>
+      <a mat-button> {{ dateNow }} | {{ timeNow }} </a>
       <a mat-button>
         <mat-icon class="private-icon">notification_important</mat-icon>
       </a>
@@ -20,44 +20,79 @@
         <mat-icon class="private-icon">settings</mat-icon>
       </a>
       <a (click)="logout()" mat-raised-button color="accent">
-        <mat-icon class="private-icon mat-icon-rtl-mirror">exit_to_app</mat-icon>
+        <mat-icon class="private-icon mat-icon-rtl-mirror"
+          >exit_to_app</mat-icon
+        >
       </a>
     </mat-toolbar-row>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>شهادة مدرب</button>
+      <button mat-menu-item routerLink="profile">
+        إدارة الحساب
+        <mat-icon class="private-icon">person</mat-icon>
+      </button>
+      <button mat-menu-item routerLink="settings">
+        الإعدادات
+        <mat-icon class="private-icon">settings</mat-icon>
+      </button>
     </mat-menu>
     <mat-toolbar-row>
       <span>نظام تجريبي لتصدير الشهادات</span>
     </mat-toolbar-row>
   </mat-toolbar>
 </div>
+
 <!-- push   over   side -->
-<mat-drawer-container [dir]="'rtl'" class="example-container" hasBackdrop="true">
+<mat-drawer-container
+  [dir]="'rtl'"
+  class="example-container"
+  hasBackdrop="true"
+>
   <mat-drawer #drawer mode="side">
     <mat-nav-list>
       <div mat-subheader>الحسابات</div>
-      <mat-list-item (click)="drawer.close()">
+      <mat-list-item routerLink="users" (click)="drawer.close()">
         <mat-icon mat-list-icon>account_box</mat-icon>
         <span mat-line>فتح حساب جديد</span>
       </mat-list-item>
 
       <mat-divider></mat-divider>
       <div mat-subheader>الشهادات</div>
-      <mat-list-item (click)="drawer.close()">
+      <mat-list-item routerLink="certificates" (click)="drawer.close()">
         <mat-icon mat-list-icon>library_books</mat-icon>
         <span mat-line>الشهادات</span>
       </mat-list-item>
-      <mat-list-item (click)="drawer.close()">
+      <mat-list-item routerLink="reports" (click)="drawer.close()">
         <mat-icon mat-list-icon>calendar_today</mat-icon>
         <span mat-line>التقارير</span>
       </mat-list-item>
     </mat-nav-list>
   </mat-drawer>
   <mat-drawer-content>
-    <h1>بببببببببببب</h1>
+
+        <router-outlet></router-outlet>
+
+    <!-- <date-picker></date-picker>
+    <div class="w3-bar-block w3-light-grey">
+      <div hidden onclick="selectLang(this)">
+          <input hidden type="radio" value="en">
+          <label for="gregDate">Gregorian Date</label>
+          <input value="en" id="gregDate" onclick="pickDate(event)" #e class="w3-input w3-border" type="button" placeholder="Click to pick a date...">      
+      </div>
+      <div style="width: 20px; background-color: black;" onclick="selectLang(this)">
+          <input hidden type="radio" value="ar">
+          <label hidden for="hijrDate">Hijri Date</label>
+          <input style="background-color: black;" value="ar" id="hijrDate" onclick="pickDate(event)" #a class="w3-input w3-border" type="button" placeholder="Click to pick a date...">      
+      </div>
+  </div>
+
+    <input type="button" mat-button (click)="changeDateFormat(a.value)" value="موافق" />
+
+ <ejs-datepicker format="dd/MM/yyyy" placeholder='إختر التاريخ' [isMultiSelection]='multiSelect' [firstDayOfWeek]='weekStart' [min]='minDate' [max]='maxDate' (change)="onValueChange($event)" [value]='dateValue' locale='ar' enableRtl='true'></ejs-datepicker> -->
+    <!-- <ejs-calendar calendarMode='Islamic' placeholder='إختر التاريخ' [isMultiSelection]='multiSelect' [firstDayOfWeek]='weekStart' [min]='minDate' [max]='maxDate' (change)="onValueChange($event)" [(value)]='selectedDate' enableRtl='true'></ejs-calendar> -->
+
+    <!-- calendarMode='Islamic' -->
+
+    <!-- <h6>{{ Change }}</h6> 
+<h6>{{ Change2 }}</h6> -->
   </mat-drawer-content>
 </mat-drawer-container>
-
-<footer class="md-padding">
-  <p>I am Sticky!</p>
-</footer>

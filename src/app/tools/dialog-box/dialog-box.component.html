@@ -1,0 +1,50 @@
+<!-- dialog-box.component.html -->
+
+<div [dir]="'rtl'">
+  <h1 mat-dialog-title>
+    <strong>{{ action["message"] }}</strong>
+  </h1>
+  <div mat-dialog-content>
+    <div *ngIf="action['action'] != 'حذف'; else elseTemplate">
+    <form class="example-form">
+      <mat-form-field class="example-full-width">
+        <input placeholder="إسم الشهادة" matInput name="0" [(ngModel)]="local_data.courseName" /> 
+      </mat-form-field>
+      <mat-form-field class="example-width">
+        <input placeholder="عنوان الشهادة - عربي" name="1" matInput [(ngModel)]="local_data.cr_title_AR" />  
+      </mat-form-field>
+      <mat-form-field class="example-width">
+        <input placeholder="عنوان الشهادة - إنجليزي" name="2" matInput [(ngModel)]="local_data.cr_title_EN" />
+      </mat-form-field>
+
+    
+      <mat-form-field class="example-full-width">
+        <mat-label>النص العربي - مذكر</mat-label>
+        <textarea matInput rows="10"  name="3" [(ngModel)]="local_data.cr_text_M_AR" [value]="local_data.cr_text_M_AR" placeholder="النص العربي - مذكر"></textarea>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>النص الإنجليزي - مذكر</mat-label>
+        <textarea matInput rows="10" name="4" [(ngModel)]="local_data.cr_text_M_EN" [value]="local_data.cr_text_M_EN" placeholder="النص الإنجليزي - مذكر"></textarea>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>النص العربي - مؤنث</mat-label>
+        <textarea matInput rows="10" name="5" [(ngModel)]="local_data.cr_text_F_AR" [value]="local_data.cr_text_F_AR" placeholder="النص العربي - مؤنث"></textarea>
+      </mat-form-field>
+      <mat-form-field class="example-full-width">
+        <mat-label>النص الإنجليزي - مؤنث</mat-label>
+        <textarea matInput rows="10" name="6" [(ngModel)]="local_data.cr_text_F_EN" [value]="local_data.cr_text_F_EN" placeholder="النص الإنجليزي - مؤنث"></textarea>
+      </mat-form-field>
+    </form>
+  </div>
+    <ng-template #elseTemplate>
+      <b>هل تريد حذف إسم الدورة؟</b>
+    </ng-template>
+
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="doAction()">{{ action["action"] }}</button>
+    <button mat-button (click)="closeDialog()" mat-flat-button color="warn">
+      إلغاء
+    </button>
+  </div>
+</div>

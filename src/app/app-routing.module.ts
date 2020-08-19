@@ -1,6 +1,10 @@
-import { TaskComponent } from './task/task.component';
+import { UsersComponent } from './dashboard/users/users.component';
+import { SettingsComponent } from './dashboard/settings/settings.component';
+import { ReportsComponent } from './dashboard/reports/reports.component';
+import { CertificatesComponent } from './dashboard/certificates/certificates.component';
+import { BodyComponent } from './dashboard/body/body.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { ProfileComponent } from './profile/profile.component';
+import { ProfileComponent } from './dashboard/profile/profile.component';
 import { HomeComponent } from './home/home.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -14,10 +18,22 @@ import { ResetPasswordComponent } from './registeration/reset-password/reset-pas
 
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full'},
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent, canActivate: [AuthHomePageGuard] },
   { path: 'login', component: LoginComponent, canActivate: [AuthHomePageGuard] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGlobalGuard] },
+  {
+    path: 'dashboard', component: DashboardComponent, canActivate: [AuthGlobalGuard],
+    children: [
+      { path: '', redirectTo: 'body', pathMatch: 'full' },
+      { path: 'body', component: BodyComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'certificates', component: CertificatesComponent },
+      { path: 'reports', component: ReportsComponent },
+      { path: 'settings', component: SettingsComponent },
+      { path: 'users', component: UsersComponent },
+      { path: '**', component: NotFoundComponent, pathMatch: 'full' }
+    ]
+  },
   { path: 'signup', component: SignupComponent, canActivate: [AuthHomePageGuard] },
   { path: 'forgotPassword', component: ForgotPasswordComponent, canActivate: [AuthHomePageGuard] },
   { path: 'resetPassword/:idToken', component: ResetPasswordComponent, canActivate: [AuthHomePageGuard] },

@@ -13,6 +13,7 @@ body {
   color: #274c5e;
 }
 .Container {
+  top: 9rem;
   text-align: center;
   position: relative;
 }
