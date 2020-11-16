@@ -18,6 +18,10 @@ export interface PeriodicElement {
   cr_text_M_EN: String,
   cr_text_F_AR: String,
   cr_text_F_EN: String
+  cr_Note_M_AR: String,
+  cr_Note_M_EN: String,
+  cr_Note_F_AR: String,
+  cr_Note_F_EN: String
   editDate: String;
   createData: String;
 }
@@ -437,6 +441,10 @@ getCourses() {
           cr_text_M_EN: data['items'][i].cr_text_M_EN,
           cr_text_F_AR: data['items'][i].cr_text_F_AR,
           cr_text_F_EN: data['items'][i].cr_text_F_EN,
+          cr_Note_M_AR: data['items'][i].cr_Note_M_AR,
+          cr_Note_M_EN: data['items'][i].cr_Note_M_EN,
+          cr_Note_F_AR: data['items'][i].cr_Note_F_AR,
+          cr_Note_F_EN: data['items'][i].cr_Note_F_EN,
           editDate: new Date(data['items'][i].updatedAt).toLocaleDateString(),
           createData: new Date(data['items'][i].createdAt).toLocaleDateString()
         });

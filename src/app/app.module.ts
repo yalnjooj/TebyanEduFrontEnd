@@ -28,6 +28,11 @@ import { ReportsComponent } from './dashboard/reports/reports.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
 import { UsersComponent } from './dashboard/users/users.component';
 import { DialogBoxComponent } from './tools/dialog-box/dialog-box.component';
+import { GraphQLModule } from './graphql.module';
+import { HttpClientModule } from '@angular/common/http';
+
+
+
 
 @NgModule({
   declarations: [
@@ -58,7 +63,9 @@ import { DialogBoxComponent } from './tools/dialog-box/dialog-box.component';
     MaterialModule,
     AngularModule,
     CalendarModule,
-    DatePickerModule
+    DatePickerModule,
+    GraphQLModule,
+    HttpClientModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [BrowserModule, SlimLoadingBarModule],

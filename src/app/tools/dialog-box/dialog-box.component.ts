@@ -59,7 +59,6 @@ export class DialogBoxComponent {
         this.act.action = 'Delete';
         break;
     }
-    
     this.dialogRef.close({ event: this.action['action'], data: this.local_data });
   }
 

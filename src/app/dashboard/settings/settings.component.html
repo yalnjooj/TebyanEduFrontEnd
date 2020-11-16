@@ -305,11 +305,15 @@
             <td mat-cell *matCellDef="let element">
               <h6><b>إسم الشهادة: </b>{{element.courseName}}</h6> <br />
               <b>عنوان الشهادة - عربي: </b>{{element.cr_title_AR}} <br />
-              <b>عنوان الشهادة - إنجليزي: </b>{{element.cr_title_EN}} <br />
-              <b>النص العربي - مذكر: </b>{{element.cr_text_M_AR}} <br />
-              <b>النص الإنجليزي - مذكر: </b>{{element.cr_text_M_EN}} <br />
-              <b>النص العربي - مؤنث: </b>{{element.cr_text_F_AR}} <br />
-              <b>النص الإنجليزي - مؤنث: </b>{{element.cr_text_F_EN}}
+              <b>عنوان الشهادة - إنجليزي: </b>{{element.cr_title_EN}} <br /> <br /> 
+              <b>النص العربي - مذكر: </b> <br /> {{element.cr_text_M_AR}} <br /> <br /> 
+              <b>النص الإنجليزي - مذكر: </b> <br /> {{element.cr_text_M_EN}} <br /> <br /> 
+              <b>النص العربي - مؤنث: </b> <br /> {{element.cr_text_F_AR}} <br /> <br /> 
+              <b>النص الإنجليزي - مؤنث: </b> <br /> {{element.cr_text_F_EN}} <br /> <br /> 
+              <b>ملاحظة - عربي - مذكر: </b> <br /> {{element.cr_Note_M_AR}} <br />
+              <b>ملاحظة - انجليزي - مذكر: </b> <br /> {{element.cr_Note_M_EN}} <br />
+              <b>ملاحظة - عربي - مؤنث: </b> <br /> {{element.cr_Note_F_AR}} <br />
+              <b>ملاحظة - انجليزي - مؤنث: </b> <br /> {{element.cr_Note_F_EN}}
             </td>
           </ng-container>
 
@@ -339,7 +343,7 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               تاريخ الإنشاء
             </th>
-            <td mat-cell *matCellDef="let element">{{ element.createData }}</td>
+            <td mat-cell *matCellDef="let element">{{ element.createData }} - </td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
