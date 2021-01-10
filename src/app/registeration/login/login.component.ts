@@ -48,35 +48,27 @@ export class LoginComponent implements OnInit {
   logIn() {
     if (this.loginForm.invalid) {
       console.log(this.loginForm.invalid)
-      console.log(this.loginForm.get('email').value)
-      console.log(this.loginForm.get('password').value)
       return
     }
 
     else {
       this.ngxSpinnerService.show();
-      this.mutation.createUser(this.loginForm.get('email').value, this.loginForm.get('password').value).subscribe(
+      this.mutation.login(this.loginForm.get('email').value, this.loginForm.get('password').value).subscribe(
         (data) => {
-console.log(data)
-return
-          if (data) {
-           // this.router.navigate(['/dashboard']);
-            return
-          }
-
-          if (data) {
-            this._snackBar.open('data', 'إغلاق', {
-              duration: 4000,
-              horizontalPosition: this.horizontalPosition,
-              verticalPosition: this.verticalPosition,
-            });
-          }
-
+          console.log('data-login-loginlogin-loginlogin-loginlogin-login-data')
+          
+          this.router.navigate(['/dashboard']);
           this.ngxSpinnerService.hide();
-
         },
         (err) => {
-          console.error('Observer got an error: ' + err)
+          console.log('err-login-loginlogin-loginlogin-loginlogin-login-err')
+
+          this._snackBar.open(err, 'إغلاق', {
+            duration: 4000,
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition,
+          });
+          this.ngxSpinnerService.hide();
         },
         () => console.log('Observer got a complete notification')
 

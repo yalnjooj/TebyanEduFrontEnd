@@ -19,10 +19,9 @@ import { ResetPasswordComponent } from './registeration/reset-password/reset-pas
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, canActivate: [AuthHomePageGuard] },
-  { path: 'login', component: LoginComponent, canActivate: [AuthHomePageGuard] },
-  {
-    path: 'dashboard', component: DashboardComponent, canActivate: [AuthGlobalGuard],
+  { path: 'home', component: HomeComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE'] },
+  { path: 'login', component: LoginComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE'] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGlobalGuard], data: ['DASHBOARD'],
     children: [
       { path: '', redirectTo: 'body', pathMatch: 'full' },
       { path: 'body', component: BodyComponent },
@@ -34,9 +33,9 @@ const routes: Routes = [
       { path: '**', component: NotFoundComponent, pathMatch: 'full' }
     ]
   },
-  { path: 'signup', component: SignupComponent, canActivate: [AuthHomePageGuard] },
-  { path: 'forgotPassword', component: ForgotPasswordComponent, canActivate: [AuthHomePageGuard] },
-  { path: 'resetPassword/:idToken', component: ResetPasswordComponent, canActivate: [AuthHomePageGuard] },
+  { path: 'signup', component: SignupComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE']  },
+  { path: 'forgotPassword', component: ForgotPasswordComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE']  },
+  { path: 'resetPassword/:idToken', component: ResetPasswordComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE']  },
   { path: '**', component: NotFoundComponent }
 ];
 

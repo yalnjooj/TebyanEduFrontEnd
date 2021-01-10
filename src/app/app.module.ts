@@ -30,7 +30,7 @@ import { UsersComponent } from './dashboard/users/users.component';
 import { DialogBoxComponent } from './tools/dialog-box/dialog-box.component';
 import { GraphQLModule } from './graphql.module';
 import { HttpClientModule } from '@angular/common/http';
-
+import { CookieService } from 'ngx-cookie-service';
 
 
 
@@ -70,7 +70,7 @@ import { HttpClientModule } from '@angular/common/http';
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [BrowserModule, SlimLoadingBarModule],
   entryComponents: [DialogBoxComponent],
-  providers: [AuthHomePageGuard, AuthGlobalGuard, IslamicService],
+  providers: [AuthHomePageGuard, AuthGlobalGuard, IslamicService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -43,7 +43,6 @@ export class HomeComponent implements OnInit {
         else console.log(result.data['course'])
          
 
-        console.log(result.loading)
       });
   }
 

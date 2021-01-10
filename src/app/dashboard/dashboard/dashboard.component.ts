@@ -1,3 +1,4 @@
+import { Apollo } from 'apollo-angular';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/gared/auth.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -7,6 +8,8 @@ import { IslamicService } from '@syncfusion/ej2-angular-calendars';
 import { L10n } from '@syncfusion/ej2-base';
 import { SlimLoadingBarService } from '@cime/ngx-slim-loading-bar';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Event } from '@angular/router';
+import { Mutations } from 'src/app/graphql/mutations';
+import { CookieService } from 'ngx-cookie-service';
 
 export interface User {
   selectedDate: Date;
@@ -27,7 +30,6 @@ export class DashboardComponent implements OnInit {
   public user: any;
   public JSONData: JSONUser = JSON.parse('{ "selectedDate": "2018-12-18T08:56:00+00:00"}');
   public model_result: string = JSON.stringify(this.JSONData);
-
   selectedDate
   showFiller = false;
   // user: Object = {
@@ -42,12 +44,14 @@ export class DashboardComponent implements OnInit {
   public multiSelect: Boolean = false;
   public weekStart: number = 0;
 
-  constructor(private slimLoadingBarService: SlimLoadingBarService, private dialog: MatDialog, private router: Router, private authS: AuthService, private ngxSpinnerService: NgxSpinnerService) {
-    this.router.events.subscribe( (event: Event) => {
+  constructor(private cookieService: CookieService, private slimLoadingBarService: SlimLoadingBarService, private dialog: MatDialog, private router: Router, private apollo: Apollo, private ngxSpinnerService: NgxSpinnerService) {
+    this.router.events.subscribe((event: Event) => {
 
       this.navigationInterceptor(event);
-  });
+    });
   }
+  mutation = new Mutations(this.apollo)
+
   DATE: any = {
     DAY_STRING: String,
     DAY_NUMBER: String,
@@ -60,10 +64,10 @@ export class DashboardComponent implements OnInit {
     },
     getFullDateString: () => {
       // return this.DATE.YEAR_NUMBER + '/' + this.DATE.MONTH_STRING + '/' + this.DATE.DAY_NUMBER + ' ' + this.DATE.DAY_STRING + ' ' + this.DATE.TAG
-      return  this.DATE.DAY_STRING+ ' ' +this.DATE.DAY_NUMBER+ '/' +this.DATE.MONTH_STRING + '/' + this.DATE.YEAR_NUMBER + this.DATE.TAG
+      return this.DATE.DAY_STRING + ' ' + this.DATE.DAY_NUMBER + '/' + this.DATE.MONTH_STRING + '/' + this.DATE.YEAR_NUMBER + this.DATE.TAG
     }
-  
-  
+
+
   }
 
   timeNow;
@@ -71,7 +75,7 @@ export class DashboardComponent implements OnInit {
   dateNowHijri;
   Change;
   Change2;
-  
+
   time0 = setInterval(() => {
     this.timeNow = new Date().toLocaleTimeString();
     this.dateNow = new Date().toLocaleDateString();
@@ -91,16 +95,11 @@ export class DashboardComponent implements OnInit {
 
     this.ngxSpinnerService.show();
 
-    this.authS.isAuthenticate().subscribe(data => {
-      // this.user['id'] = data['id'];
-      // this.user['role'] = data['roles'];
-      // this.user['email'] = data['email'];
-
-      this.ngxSpinnerService.hide();
-    });
 
 
 
+
+    this.ngxSpinnerService.hide();
   }
 
 
@@ -111,13 +110,23 @@ export class DashboardComponent implements OnInit {
       width: '500px'
     })
 
-    f.afterClosed().subscribe(data => {
 
-      if (data) {
-        this.authS.logout().subscribe((data) => {
-          if (data.status == 200) this.router.navigate(['/']);
-        })
+    f.afterClosed().subscribe(data => {
+      switch (data) {
+        case true:
+          this.cookieService.delete('tebyanSession', '/')
+          this.router.navigate(['/home'])
+          break;
+
+        case false:
+          break;
       }
+      // this.mutation.logout().subscribe(data => {
+
+
+      // },
+      //   err => {
+      //   })
 
     })
 
@@ -126,7 +135,7 @@ export class DashboardComponent implements OnInit {
   }
 
   changeDateFormat(oldDate) {
-    
+
     let monthsNames = ["المُحَرَّم", "صَفَر ", "رَبيع الاوَّل", "رَبيع الآخِر", "جُمادى الأولى", "جُمادى الآخِرة", "رَجَب", "شَعبان", "رَمَضان", "شَوّال", "ذو القَعدة", "ذو الحِجّة"]
 
     let newDateFormat;
@@ -183,7 +192,7 @@ export class DashboardComponent implements OnInit {
 
     })
 
-    if(newDateFormat == undefined) return;
+    if (newDateFormat == undefined) return;
 
     // ,
     newDateFormat = newDateFormat.replace(',', '')
@@ -213,30 +222,30 @@ export class DashboardComponent implements OnInit {
 
   }
 
-      // Angular Slim Loading Bar
-      navigationInterceptor(event: Event): void {
+  // Angular Slim Loading Bar
+  navigationInterceptor(event: Event): void {
 
-        if (event instanceof NavigationStart) {
-          this.slimLoadingBarService.start(() => {
-            console.log('Loading start');
-        });
-        }
-        if (event instanceof NavigationEnd) {
-          this.slimLoadingBarService.complete();
-          console.log('Loading complete');
-  
-        }
-        if (event instanceof NavigationCancel) {
-          this.slimLoadingBarService.stop();
-          console.log('Loading stop');
-  
-        }
-        if (event instanceof NavigationError) {
-          this.slimLoadingBarService.stop();
-          console.log('Loading error');
-  
-        }
-      }
+    if (event instanceof NavigationStart) {
+      this.slimLoadingBarService.start(() => {
+        console.log('Loading start');
+      });
+    }
+    if (event instanceof NavigationEnd) {
+      this.slimLoadingBarService.complete();
+      console.log('Loading complete');
+
+    }
+    if (event instanceof NavigationCancel) {
+      this.slimLoadingBarService.stop();
+      console.log('Loading stop');
+
+    }
+    if (event instanceof NavigationError) {
+      this.slimLoadingBarService.stop();
+      console.log('Loading error');
+
+    }
+  }
 
 }
 
