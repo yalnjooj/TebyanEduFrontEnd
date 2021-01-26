@@ -1,3 +1,5 @@
+import { Queries } from './../../graphql/queries';
+import gql from 'graphql-tag';
 import { Apollo } from 'apollo-angular';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/gared/auth.service';
@@ -45,12 +47,21 @@ export class DashboardComponent implements OnInit {
   public weekStart: number = 0;
 
   constructor(private cookieService: CookieService, private slimLoadingBarService: SlimLoadingBarService, private dialog: MatDialog, private router: Router, private apollo: Apollo, private ngxSpinnerService: NgxSpinnerService) {
-    this.router.events.subscribe((event: Event) => {
 
-      this.navigationInterceptor(event);
-    });
+    this.apollo.watchQuery({
+      query: gql`
+      query{
+        currentUser{
+          id
+          email
+        }
+    } 
+      `
+    }).valueChanges.subscribe(x => {
+
+    })
+ 
   }
-  mutation = new Mutations(this.apollo)
 
   DATE: any = {
     DAY_STRING: String,
@@ -114,19 +125,21 @@ export class DashboardComponent implements OnInit {
     f.afterClosed().subscribe(data => {
       switch (data) {
         case true:
-          this.cookieService.delete('tebyanSession', '/')
-          this.router.navigate(['/home'])
+          this.apollo.watchQuery({
+            query: gql`
+              query{
+                logout
+              }
+            `
+          }).valueChanges.subscribe(data => {
+            this.router.navigate(['/home'])
+          }, err => { console.log(err) })
           break;
 
         case false:
           break;
       }
-      // this.mutation.logout().subscribe(data => {
 
-
-      // },
-      //   err => {
-      //   })
 
     })
 
@@ -222,30 +235,7 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  // Angular Slim Loading Bar
-  navigationInterceptor(event: Event): void {
-
-    if (event instanceof NavigationStart) {
-      this.slimLoadingBarService.start(() => {
-        console.log('Loading start');
-      });
-    }
-    if (event instanceof NavigationEnd) {
-      this.slimLoadingBarService.complete();
-      console.log('Loading complete');
-
-    }
-    if (event instanceof NavigationCancel) {
-      this.slimLoadingBarService.stop();
-      console.log('Loading stop');
-
-    }
-    if (event instanceof NavigationError) {
-      this.slimLoadingBarService.stop();
-      console.log('Loading error');
-
-    }
-  }
+ 
 
 }
 

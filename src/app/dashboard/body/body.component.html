@@ -1,2 +1,11 @@
-<h1>oooooooooooooo</h1>
-<p>{{data?.data.currentUser?.email}}</p>
+<h1>{{email}}</h1>
+<h1>{{id}}</h1>
+
+<div *ngIf="true; else loggedOut">
+  <h1>{{email2}}</h1>
+  </div>
+  <input #fileInput type="file" multiple (change)="upload($event)">
+
+  <ng-template #loggedOut>
+    Please friend, login.
+  </ng-template>

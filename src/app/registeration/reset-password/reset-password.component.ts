@@ -5,6 +5,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition, MatSnackBar } from '@angular/material/snack-bar';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MustMatch } from 'src/app/tools/must-match.validator';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-reset-password',
@@ -12,6 +14,7 @@ import { MustMatch } from 'src/app/tools/must-match.validator';
   styleUrls: ['./reset-password.component.css']
 })
 export class ResetPasswordComponent implements OnInit {
+  subscribe
   hide1 = true;
   hide2 = true;
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
@@ -25,40 +28,42 @@ export class ResetPasswordComponent implements OnInit {
     validator: MustMatch.val('password1', 'password2')
   })
 
-  constructor(private formBuilder: FormBuilder, private authS: AuthService, private router: Router, private ngxSpinnerService: NgxSpinnerService, private _snackBar: MatSnackBar) { }
+  constructor(private formBuilder: FormBuilder, private apollo: Apollo, private router: Router, private ngxSpinnerService: NgxSpinnerService, private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.resetPassGet(this.siteLink)
-  }
 
-  resetPassGet(link) {
     this.ngxSpinnerService.show();
 
-    this.authS.resetPassGet(link).subscribe((data) => {
-      if (data['status'] == 400) {
-        this.ngxSpinnerService.hide();
+   this.subscribe = this.apollo.watchQuery({
+      query: gql`
+        query resetPassword($tokenID: String!){
+          resetPassword(tokenID: $tokenID)
+      } 
+      `,
+      variables: { tokenID: this.siteLink }
+    }).valueChanges.subscribe(data => {
 
-        this._snackBar.open(data['message'], 'إغلاق', {
-          duration: 4000,
+
+      if (data.data['resetPassword'] == 'false') {
+        this._snackBar.open('انتهت صلاحية الرابط !!', 'إغلاق', {
+          duration: 7000,
           horizontalPosition: this.horizontalPosition,
           verticalPosition: this.verticalPosition,
         });
+        this.router.navigate(['/home'])
 
-        this.router.navigate(['/login'])
+      } else if (data.data['resetPassword'] == 'مع نفسك') {
+        this.router.navigate(['/home'])
       }
 
-      if (data['status'] == 200) {
-        this.ngxSpinnerService.hide();
-
-        this._snackBar.open(data['message'], 'إغلاق', {
-          duration: 4000,
-          horizontalPosition: this.horizontalPosition,
-          verticalPosition: this.verticalPosition,
-        });
-      }
-    })
+      this.ngxSpinnerService.hide();
+    },
+      err => {
+        console.log(err)
+      })
 
   }
+
 
 
 
@@ -80,36 +85,58 @@ export class ResetPasswordComponent implements OnInit {
   resetPassPost() {
     if (this.loginForm.invalid) return;
 
+    this.subscribe.unsubscribe()
+
     this.ngxSpinnerService.show();
 
-    this.authS.resetPassPost(this.loginForm.get('password2').value, this.siteLink).subscribe((data) => {
+   this.subscribe = this.apollo.watchQuery({
+      query: gql`
+        query resetPassword($tokenID: String! $password: String){
+          resetPassword(tokenID: $tokenID password: $password)
+      } 
+      `,
+      variables: { tokenID: this.siteLink, password: this.loginForm.get('password2').value }
+    }).valueChanges.subscribe(data => {
 
-      if (data['status'] == 400) {
-        this.ngxSpinnerService.hide();
-        this._snackBar.open(data['message'], 'إغلاق', {
-          duration: 4000,
+      if (data.data['resetPassword'] == 'false') {
+        console.log(data.data['resetPassword'] == 'false')
+        console.log(data.data['resetPassword'])
+        this._snackBar.open('انتهت صلاحية الرابط !!', 'إغلاق', {
+          duration: 7000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+        });
+        this.router.navigate(['/home'])
+
+      } else if (data.data['resetPassword'] == 'go') {
+        console.log(data.data['resetPassword'] == 'go')
+        console.log(data.data['resetPassword'])
+
+        this._snackBar.open('تم اعادة تعيين كلمة المرور بنجاح !!', 'إغلاق', {
+          duration: 7000,
           horizontalPosition: this.horizontalPosition,
           verticalPosition: this.verticalPosition,
         });
 
-        this.router.navigate(['/']); return
+        this.router.navigate(['/login'])
       }
 
-      if (data.status == 200) {
-        this.ngxSpinnerService.hide();
-        this._snackBar.open(data.body['message'], 'إغلاق', {
-          duration: 4000,
-          horizontalPosition: this.horizontalPosition,
-          verticalPosition: this.verticalPosition,
-        });
 
-        this.router.navigate(['/login']);
-      }
 
-    })
+      this.ngxSpinnerService.hide();
+    },
+      err => {
+        console.log(err)
+      })
+    
+      this.ngxSpinnerService.hide();
   }
 
-  
+  onDestroy(){
+    this.subscribe.unsubscribe()
+  }
+
+
 }
 
 

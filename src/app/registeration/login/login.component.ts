@@ -21,6 +21,7 @@ export class LoginComponent implements OnInit {
   mutation = new Mutations(this.apollo)
 
   ngOnInit(): void {
+    // Online window.navigator.onLine
   }
 
 
@@ -46,33 +47,55 @@ export class LoginComponent implements OnInit {
 
 
   logIn() {
+          this.ngxSpinnerService.show();
+
+
+
+
     if (this.loginForm.invalid) {
       console.log(this.loginForm.invalid)
       return
     }
 
     else {
-      this.ngxSpinnerService.show();
-      this.mutation.login(this.loginForm.get('email').value, this.loginForm.get('password').value).subscribe(
-        (data) => {
-          console.log('data-login-loginlogin-loginlogin-loginlogin-login-data')
-          
-          this.router.navigate(['/dashboard']);
-          this.ngxSpinnerService.hide();
-        },
-        (err) => {
-          console.log('err-login-loginlogin-loginlogin-loginlogin-login-err')
 
-          this._snackBar.open(err, 'إغلاق', {
-            duration: 4000,
-            horizontalPosition: this.horizontalPosition,
-            verticalPosition: this.verticalPosition,
-          });
-          this.ngxSpinnerService.hide();
-        },
-        () => console.log('Observer got a complete notification')
+    //  if(window.navigator.onLine){
+        this.mutation.login(this.loginForm.get('email').value, this.loginForm.get('password').value).subscribe(
+          (data) => {
+            if (!data.errors) {
+            this.router.navigate(['/dashboard'], { state: { data: data?.data['login']?.email } });
+  
+            } else {
+              this._snackBar.open(data.errors[0].message , 'إغلاق', {
+                duration: 4000,
+                horizontalPosition: this.horizontalPosition,
+                verticalPosition: this.verticalPosition,
+              });
+            }
+            this.ngxSpinnerService.hide();
+          },
+          (err) => {
+            this.ngxSpinnerService.hide();
+  
+            this._snackBar.open(err, 'إغلاق', {
+              duration: 4000,
+              horizontalPosition: this.horizontalPosition,
+              verticalPosition: this.verticalPosition,
+            });
+          },
+          () => console.log('Observer got a complete notification')
+  
+        )
+      // } else {
+      //   this.ngxSpinnerService.hide();
 
-      )
+      //   this._snackBar.open('غير متصل بالانترنت !!', 'إغلاق', {
+      //     duration: 4000,
+      //     horizontalPosition: this.horizontalPosition,
+      //     verticalPosition: this.verticalPosition,
+      //   });
+      // }
+
 
     }
 

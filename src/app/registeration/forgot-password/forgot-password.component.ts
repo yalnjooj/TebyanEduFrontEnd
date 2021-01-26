@@ -5,6 +5,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition, MatSnackBar } from '@angular/material/snack-bar';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MustMatch } from 'src/app/tools/must-match.validator';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-forgot-password',
@@ -19,42 +21,59 @@ export class ForgotPasswordComponent implements OnInit {
     email: (['', [Validators.required, Validators.email]])
   })
 
-  constructor(private _snackBar: MatSnackBar, private formBuilder: FormBuilder, private  authS: AuthService,  private router: Router,  private ngxSpinnerService: NgxSpinnerService) {}
+  constructor(private apollo: Apollo, private _snackBar: MatSnackBar, private formBuilder: FormBuilder, private authS: AuthService, private router: Router, private ngxSpinnerService: NgxSpinnerService) { }
 
   ngOnInit(): void {
   }
 
 
-  forgotPassword(){
-if(this.loginForm.get('email').invalid) return;
+  forgotPassword() {
+    if (this.loginForm.get('email').invalid) return;
 
- this.ngxSpinnerService.show();
-    this.authS.forgotPassword(this.loginForm.get('email').value).subscribe((data)=>{
+    this.ngxSpinnerService.show();
 
-      if(data.body['status'] == 400){
-        this.ngxSpinnerService.hide();
-        
-        this._snackBar.open(data.body['message'], 'إغلاق', {
+    this.apollo.watchQuery({
+      query: gql`
+        query forgotPassword($email: String!){
+          forgotPassword(email: $email)
+          }
+      `,
+      variables: {
+        email: this.loginForm.get('email').value
+      }
+    }).valueChanges.subscribe(data => {
+
+      if (data.data['forgotPassword']) {
+      this.router.navigate(['/home']);
+
+      this._snackBar.open(data.data['forgotPassword'], 'إغلاق', {
+          duration: 7000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition
+          
+        });
+
+      } else {
+
+        this._snackBar.open('لا يوجد مستخدم مسجل بهذا العنوان', 'إغلاق', {
           duration: 4000,
           horizontalPosition: this.horizontalPosition,
           verticalPosition: this.verticalPosition,
         });
       }
+      this.ngxSpinnerService.hide();
+    },
+      err => {
 
-      if(data.body['status'] == 200){
-        this.ngxSpinnerService.hide();
-        this._snackBar.open(data.body['message'], 'إغلاق', {
-          duration: 4000,
+        this._snackBar.open(err, 'إغلاق', {
+          duration: 7000,
           horizontalPosition: this.horizontalPosition,
           verticalPosition: this.verticalPosition,
         });
+        this.ngxSpinnerService.hide();
+      })
 
-          this.router.navigate(['/'])
-
-      }
-    })
-
-  }
+    }
 
 
   getErrorMessageMail() {
@@ -62,6 +81,6 @@ if(this.loginForm.get('email').invalid) return;
       this.loginForm.get('email').hasError('required') ? 'حقل مطلوب!' :
         '';
   }
-  
+
 
 }

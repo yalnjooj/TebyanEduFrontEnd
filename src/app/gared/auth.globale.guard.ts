@@ -19,6 +19,7 @@ export class AuthGlobalGuard implements CanActivate {
     DASHBOARD: 'DASHBOARD',
     GLOBALE: 'GLOBALE'
   }
+  observer;
   constructor(private apollo: Apollo, private router: Router, private cookieService: CookieService) { }
 
 
@@ -31,19 +32,19 @@ export class AuthGlobalGuard implements CanActivate {
 
     return new Promise((resolve, reject) => {
 
-      this.apollo.watchQuery<any>({
+    this.observer =  this.apollo.watchQuery<any>({
         query: gql`
           query{
             isAuthenticated
           }
         `
-      }).valueChanges.pipe(map(value => {
+      }).valueChanges.subscribe(value => {
 
         switch (next.data[0]) {
 
           case this.roles.DASHBOARD:
-            if (this.cookieService.check('tebyanSession')) {
-              
+            if (value.data.isAuthenticated) {
+
 
               resolve(true)
             } else {
@@ -54,7 +55,7 @@ export class AuthGlobalGuard implements CanActivate {
             break;
 
           case this.roles.GLOBALE:
-            if (this.cookieService.check('tebyanSession')) {
+            if (value.data.isAuthenticated) {
 
               this.router.navigate(['/dashboard'])
               resolve(false)
@@ -65,7 +66,14 @@ export class AuthGlobalGuard implements CanActivate {
         }
 
 
-      })).toPromise()
+      })
+
     })
   }
+
+  ngOnDestroy() {
+    console.log('ngOnDestroy ngOnDestroy ngOnDestroy')
+    this.observer.unsubscribe();
+  }
+
 }

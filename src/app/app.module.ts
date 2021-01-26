@@ -1,6 +1,7 @@
 import { ProfileComponent } from './dashboard/profile/profile.component';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,9 +29,10 @@ import { ReportsComponent } from './dashboard/reports/reports.component';
 import { SettingsComponent } from './dashboard/settings/settings.component';
 import { UsersComponent } from './dashboard/users/users.component';
 import { DialogBoxComponent } from './tools/dialog-box/dialog-box.component';
-import { GraphQLModule } from './graphql.module';
-import { HttpClientModule } from '@angular/common/http';
+// import { GraphQLModule } from './graphql.mdodule';
 import { CookieService } from 'ngx-cookie-service';
+import { GraphQLModule } from './graphql.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -64,8 +66,9 @@ import { CookieService } from 'ngx-cookie-service';
     AngularModule,
     CalendarModule,
     DatePickerModule,
+    HttpClientModule,
     GraphQLModule,
-    HttpClientModule
+    BrowserAnimationsModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [BrowserModule, SlimLoadingBarModule],

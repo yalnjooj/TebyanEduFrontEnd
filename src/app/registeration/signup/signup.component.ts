@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MustMatch } from '../../tools/must-match.validator';
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-signup',
@@ -17,7 +19,7 @@ export class SignupComponent implements OnInit {
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
-  constructor(private formBuilder: FormBuilder, private authS: AuthService, private router: Router, private ngxSpinnerService: NgxSpinnerService, private _snackBar: MatSnackBar) { }
+  constructor(private apollo: Apollo, private formBuilder: FormBuilder, private authS: AuthService, private router: Router, private ngxSpinnerService: NgxSpinnerService, private _snackBar: MatSnackBar) { }
 
 
   ngOnInit(): void {
@@ -69,35 +71,46 @@ export class SignupComponent implements OnInit {
     }
 
     this.ngxSpinnerService.show();
-
-    this.authS.signUp(this.loginForm.get('email').value, this.loginForm.get('password1').value, this.loginForm.get('select').value).subscribe((data) => {
-
-      if (data['status'] == 400) {
- 
-        this._snackBar.open(data['message'], 'إغلاق', {
-          duration: 4000,
-          horizontalPosition: this.horizontalPosition,
-          verticalPosition: this.verticalPosition,
-        });
-        this.ngxSpinnerService.hide();
-        return;
+    this.apollo.mutate({
+      mutation: gql`
+        mutation signup($email: String! $password: String!){
+          signup(email: $email, password: $password){
+                    id
+                    email
+                    }
+          }
+      `,
+      variables: {
+        email: this.loginForm.get('email').value,
+        password: this.loginForm.get('password1').value
       }
+    }).subscribe(data => {
 
-      if (data['status'] == 200) {
-
-        this._snackBar.open(data['message'], 'إغلاق', {
-          duration: 4000,
-          horizontalPosition: this.horizontalPosition,
-          verticalPosition: this.verticalPosition,
-        });
-        this.ngxSpinnerService.hide();
+      if (!data.errors) {
         this.router.navigate(['/login']);
-
+        this._snackBar.open('تم تسجيل بيناتك بنجاح، يمكنك تسجيل الدخول إلى النظام عبر هذي الصفحة!!', 'إغلاق', {
+          duration: 7000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+        });
+      } else {
+        this._snackBar.open(data.errors[0].message, 'إغلاق', {
+          duration: 4000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+        });
       }
+      this.ngxSpinnerService.hide();
+    },
+      err => {
+        this._snackBar.open(err, 'إغلاق', {
+          duration: 4000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+        });
+        this.ngxSpinnerService.hide();
+      })
 
-
-
-    })
 
 
   }

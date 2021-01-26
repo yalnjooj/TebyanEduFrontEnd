@@ -43,15 +43,7 @@ export class Mutations {
     })
   }
 
-  logout(){
-   return this.apollo.mutate({
-      mutation: gql`
-        mutation{
-          logout
-        }
-      `
-    })
-  }
+
 
 
 }

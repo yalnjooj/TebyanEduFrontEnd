@@ -37,13 +37,13 @@ export class HomeComponent implements OnInit {
           }
           }
         `
-      }).valueChanges.subscribe(result => {
+      })/*.valueChanges.subscribe(result => {
 
         if(result.error) console.log(result.error)
         else console.log(result.data['course'])
          
 
-      });
+      });*/
   }
 
 
