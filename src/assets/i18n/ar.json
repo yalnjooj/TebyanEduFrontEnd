@@ -1,0 +1,100 @@
+{
+  "ROOT": {
+    "MAIN_SIDE_LIST": {
+      "dashboard": "لوحة التحكم",
+      "apps": "التطبيق",
+      "all_In_One": "حسابات المستخدمين",
+      "helpCenter": "مركز المساعدة",
+      "calendar": "التقويم",
+      "chat": "الدردشة",
+      "mailbox": "صندوق البريد",
+      "social": "الملف الشخصي",
+      "WYSIWYG_Editor": "WYSIWYG محرر",
+      "contacts": "جهات الإتصال",
+      "scrumboard": "مجلس سكرم",
+      "pages": "الصفحات",
+      "authentication": "المصادقة",
+      "comingSoon": "سنعود قريبًا",
+      "errors": "الاخطاء",
+      "pricing": "التسعير",
+      "invoice": "الفوترة",
+      "FAQ": "الأسئلة الشائعة",
+      "guides": "الإرشادات",
+      "UI_Elements": "عناصر واجهة المستخدم",
+      "components": "المكونات",
+      "forms": "النماذج",
+      "icons": "الرموز",
+      "pageLayouts": "تخطيطات الصفحة",
+      "documentation": "التوثيق",
+      "changelog": "المتغيرات",
+      "gettingStarted": "ابدء",
+      "customization": "التخصيص",
+      "furtherHelp": "مزيد من المساعدة",
+      "customize": "التعديل",
+      "configuration": "الترتيبات"
+    },
+    "DASHBOARD": {
+      "good": "عمل جيد، عمر!",
+      "finishe": "لقد أنهيت جميع مهامك لهذا الأسبوع.",
+      "finisheDashboard": "الانتهاء من تصميم لوحة التحكم",
+      "fix": "اصلاح #74 مهمة",
+      "publish": "اصدار النشر 3.3.0"
+    },
+    "TOOLBAR": {
+      "english": "English",
+      "arabic": "اللغة العربية",
+      "style": {
+        "light": "فاتح",
+        "default": "إفتراضي",
+        "dark": "الوضع الليلي"
+      }
+    },
+    "LOGIN": {
+      "welcome": "مرحبا بك",
+      "signCredentials": "سجل الدخول ببيانات الاعتماد الخاصة بك أدناه.",
+      "email": "البريد الإلكتروني",
+      "needEmail": "نحتاج إلى عنوان بريد إلكتروني لتسجيل دخولك",
+      "password": "كلمة المرور",
+      "clickToToggle": "انقر فوق العين لإظهار كلمة المرور",
+      "needPassword": "نحتاج إلى كلمة المرور لتسجيل دخولك",
+      "forgotPassword": "هل نسيت كلمة المرور؟",
+      "singIn": "تسجيل دخول",
+      "noAccount": "ليس لديك حساب؟",
+      "clickToCreate": "انقر هنا لإنشاء حساب جديد"
+    },
+    "MAIN_COMPONANT": {
+      "loding": "الرجاء الإنتظار..."
+    },
+    "RESETPASSWORD": {
+      "resetPasswordMass": "إعادة تعيين كلمة المرور",
+      "fillForm": "يرجى إعادة كلمة المرور الخاصة بك من الأسفل",
+      "password": "كلمة المرور",
+      "clickTheEye": "انقر فوق العين لتبديل الرؤية",
+      "confirm": "تأكيد كلمة المرور",
+      "resetPassword": "إعادة تعيين كلمة مرور حسابك",
+      "backTo": "العودة إلى صفحة تسجيل الدخول"
+    },
+    "SENDEMAIL": {
+      "resetPassword": "هل نسيت كلمة المرور؟",
+      "recovery": "أدخل بريدك الإلكتروني لاستعادة كلمة المرور",
+      "email": "البريد الإلكتروني",
+      "Notrecover": "لا يمكن استعادة كلمة مرورك بدون بريدك الإلكتروني.",
+      "send": "إرسال كلمة المرور",
+      "remember": "هل تذكرت بيانات حسابك؟"
+    },
+    "REGISTER": {
+      "organizations": "المنظمات",
+      "companyInformation": "معلومات المنظمة",
+      "companyType": "نوع المنظمة",
+      "companyName": "اسم المنظمة",
+      "mobilePhone": "رقم الجوال",
+      "select": "اختر",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirm": "تأكيد كلمة المرور",
+      "clear": "مسح",
+      "rejester": "تسجيل",
+      "haveAccount": "لدي حساب !"
+    }
+  }
+}

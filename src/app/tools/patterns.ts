@@ -1,0 +1,3 @@
+
+export const patternsEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+export const patternsNumber = "^((\\+91-?)|0)?[0-9]{5,15}$";
