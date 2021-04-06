@@ -2,79 +2,96 @@
   <div class="flex-auto">
     <div class="card">
       <div class="px-gutter py-4 border-b">
-        <h2 class="title m-0">About</h2>
+        <h2 class="title m-0">عرض | تعديل</h2>
       </div>
 
       <div class="px-gutter py-4" gdColumns="1fr 1fr" gdColumns.xs="1fr" gdGap="16px">
         <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
           <div @scaleIn
-               class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
+            class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
+            <ic-icon [icon]="icNotes" size="20px"></ic-icon>
+          </div>
+
+          <div @fadeInRight>
+            <p class="m-0 body-1"><span ngClass="font-medium">اسم المنظمة: </span>{{companyName}}</p>
+            <button (click)="openDialogueWindow(id, 'companyName', null)" mat-button style="color:red">
+              <p class="m-0 caption">تعديل</p>
+            </button>
+          </div>
+        </div>
+
+        <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
+          <div @scaleIn
+            class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
+            <ic-icon [icon]="icNotes" size="20px"></ic-icon>
+          </div>
+
+          <div @fadeInRight>
+            <p class="m-0 body-1"><span ngClass="font-medium">نوع المنظمة: </span>{{companyType}}</p>
+            <button (click)="openDialogueWindow(id, 'companyType', null)" mat-button style="color:red">
+              <p class="m-0 caption">تعديل</p>
+            </button>
+          </div>
+        </div>
+
+        <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
+          <div @scaleIn
+            class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
             <ic-icon [icon]="icPhone" size="20px"></ic-icon>
           </div>
 
           <div @fadeInRight>
-            <p class="m-0 body-1">+1 (930) 502-3182</p>
-            <p class="m-0 caption text-hint">Business</p>
+            <p class="m-0 body-1"><span ngClass="font-medium">رقم الجوال: </span>{{tell}}&nbsp;&nbsp;{{PHONECODE}}+</p>
+            <button (click)="openDialogueWindow(id, 'PHONECODE', null)" mat-button style="color:red">
+              <p class="m-0 caption">تعديل</p>
+            </button>
           </div>
         </div>
 
         <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
           <div @scaleIn
-               class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
-            <ic-icon [icon]="icWork" size="20px"></ic-icon>
-          </div>
-
-          <div @fadeInRight>
-            <p class="m-0 body-1">Web Developer at IceCube</p>
-            <p class="m-0 caption text-hint">Previously Designer at HotStuff</p>
-          </div>
-        </div>
-
-        <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
-          <div @scaleIn
-               class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
+            class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
             <ic-icon [icon]="icMail" size="20px"></ic-icon>
           </div>
 
           <div @fadeInRight>
-            <p class="m-0 body-1">david.smith@example.com</p>
-            <p class="m-0 caption text-hint">Business inquiries only</p>
+            <p class="m-0 body-1"><span ngClass="font-medium">عنوان البريد الإلكتروني: </span>{{email}}</p>
+            <button (click)="openDialogueWindow(id, 'email', null)" mat-button style="color:red">
+              <p class="m-0 caption">تعديل</p>
+            </button>
           </div>
         </div>
 
         <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
           <div @scaleIn
-               class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
-            <ic-icon [icon]="icAccessTime" size="20px"></ic-icon>
+            class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
+            <ic-icon [icon]="icLuck" size="20px"></ic-icon>
           </div>
 
           <div @fadeInRight>
-            <p class="m-0 body-1">Usually available 9am-5pm</p>
-            <p class="m-0 caption text-hint">Call +1 (930) 242-5186 for important things</p>
+            <p class="m-0 body-1"><span ngClass="font-medium">تعديل كلمة</span></p>
+            <button (click)="openDialogueWindow(id, 'password', null)" mat-button style="color:red">
+              <p class="m-0 caption">تعديل</p>
+            </button>
           </div>
         </div>
 
         <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
           <div @scaleIn
-               class="w-10 h-10 rounded-full bg-gray-light text-dark ltr:mr-3 rtl:ml-3 cursor-pointer flex items-center justify-center">
-            <ic-icon [icon]="icAdd" size="20px"></ic-icon>
+            class="w-10 h-10 rounded-full bg-primary-light text-primary ltr:mr-3 rtl:ml-3 flex items-center justify-center">
+            <ic-icon [icon]="icAvatar" size="20px"></ic-icon>
           </div>
 
-          <p @fadeInRight class="m-0 body-1 cursor-pointer">Add an address</p>
-        </div>
-
-        <div class="py-3" fxLayout="row" fxLayoutAlign="start center">
-          <div @scaleIn
-               class="w-10 h-10 rounded-full bg-gray-light text-dark ltr:mr-3 rtl:ml-3 cursor-pointer flex items-center justify-center">
-            <ic-icon [icon]="icWhatshot" size="20px"></ic-icon>
+          <div @fadeInRight>
+            <p class="m-0 body-1"><span ngClass="font-medium">شعار المنظمة</span></p>
+           حجم الصورة 2MB: <input mat-button type="file" (change)="openDialogueWindow(id, 'avatar', $event)" accept="image/x-png,image/gif,image/jpeg,image/jpg" />
           </div>
-
-          <p @fadeInRight class="m-0 body-1 cursor-pointer">Add social profiles</p>
         </div>
+
       </div>
     </div>
 
-    <div class="card mt-6">
+    <!-- <div class="card mt-6">
       <div class="px-gutter py-4 border-b">
         <h2 class="title m-0">Latest Photos</h2>
       </div>
@@ -91,10 +108,10 @@
              gdGridAlign="center"
              src="assets/img/avatars/{{ i }}.jpg"/>
       </div>
-    </div>
+    </div> -->
   </div>
 
-  <div class="card max-w-unset md:max-w-xs w-full flex-none md:ltr:ml-6 md:rtl:mr-6 mt-6 md:mt-0">
+  <!-- <div class="card max-w-unset md:max-w-xs w-full flex-none md:ltr:ml-6 md:rtl:mr-6 mt-6 md:mt-0">
     <div class="px-6 py-4 border-b">
       <h2 class="title m-0">Friend Suggestions</h2>
     </div>
@@ -115,5 +132,5 @@
         </button>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>

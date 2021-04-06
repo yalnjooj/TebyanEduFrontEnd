@@ -119,7 +119,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       companyName:  new FormControl('', [Validators.required]),
       Ctell:  new FormControl('', [Validators.required, Validators.pattern(patternsNumber)]),
       CcompanyKey:  new FormControl('', [Validators.required]),
-      Cemail:  new FormControl('', [Validators.email, Validators.required, Validators.pattern(patternsEmail)]),
+      Cemail:  new FormControl('', [Validators.email, Validators.required]),
       password:  new FormControl('', Validators.required),
       confirmPassword:  new FormControl('', Validators.required)
     },{
@@ -134,7 +134,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       lastName:  new FormControl('', [Validators.required]),
       Utell:  new FormControl('', [Validators.required, Validators.pattern(patternsNumber)]),
       UcompanyKey:  new FormControl('', [Validators.required]),
-      Uemail:  new FormControl('', [Validators.email, Validators.required, Validators.pattern(patternsEmail)]),
+      Uemail:  new FormControl('', [Validators.email, Validators.required]),
       Upassword:  new FormControl('', Validators.required),
       UconfirmPassword:  new FormControl('', Validators.required)
     },{
@@ -151,17 +151,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
         verticalPosition: this.verticalPosition,
       });
     } else {
-
-    //  console.log(this.formu.get('country').value)
-      console.log(this.formu.get('firstName').value)
-      console.log(this.formu.get('sacondName').value)
-      console.log(this.formu.get('thirdName').value)
-      console.log(this.formu.get('lastName').value)
-      console.log(this.formu.get('Utell').value)
-      console.log(this.formu.get('UcompanyKey').value)
-      console.log(this.formu.get('Uemail').value)
-      console.log(this.formu.get('Upassword').value)
-      console.log(this.formu.get('UconfirmPassword').value)
 
       this.ngxSpinnerService.show();
 

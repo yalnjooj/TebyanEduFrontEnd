@@ -55,7 +55,8 @@ export class MemberComponent implements OnInit {
 
   @ViewChild('configpanel', { static: true }) configpanel: SidebarComponent;
 
-  constructor(private layoutService: LayoutService,
+  constructor(
+    private layoutService: LayoutService,
     private configService: ConfigService,
     private breakpointObserver: BreakpointObserver,
     private router: Router,
@@ -89,6 +90,131 @@ export class MemberComponent implements OnInit {
           icon: icLayers,
           routerLinkActiveOptions: { exact: true }
         },
+        {
+          type: 'subheading',
+          label: translate.UI_Elements,
+          children: [
+            {
+              type: 'dropdown',
+              label: 'التخطيطات',
+              icon: icViewCompact,
+              children: [
+                {
+                  type: 'dropdown',
+                  label: 'Card',
+                  children: [
+                    {
+                      type: 'link',
+                      label: 'Default',
+                      route: '/member/ui/page-layouts/card',
+                      routerLinkActiveOptions: { exact: true }
+                    },
+                    {
+                      type: 'link',
+                      label: 'Tabbed',
+                      route: '/member/ui/page-layouts/card/tabbed',
+                    },
+                    {
+                      type: 'link',
+                      label: 'Large Header',
+                      route: '/member/ui/page-layouts/card/large-header',
+                      routerLinkActiveOptions: { exact: true }
+                    },
+                    {
+                      type: 'link',
+                      label: 'Tabbed & Large Header',
+                      route: '/member/ui/page-layouts/card/large-header/tabbed'
+                    }
+                  ]
+                },
+                {
+                  type: 'dropdown',
+                  label: 'Simple',
+                  children: [
+                    {
+                      type: 'link',
+                      label: 'Default',
+                      route: '/member/ui/page-layouts/simple',
+                      routerLinkActiveOptions: { exact: true }
+                    },
+                    {
+                      type: 'link',
+                      label: 'Tabbed',
+                      route: '/member/ui/page-layouts/simple/tabbed',
+                    },
+                    {
+                      type: 'link',
+                      label: 'Large Header',
+                      route: '/member/ui/page-layouts/simple/large-header',
+                      routerLinkActiveOptions: { exact: true }
+                    },
+                    {
+                      type: 'link',
+                      label: 'Tabbed & Large Header',
+                      route: '/member/ui/page-layouts/simple/large-header/tabbed'
+                    }
+                  ]
+                },
+                {
+                  type: 'link',
+                  label: 'اعداد نماذج الشهادات',
+                  icon: icPictureInPicture,
+                  route: '/member/ui/page-layouts/certificates'
+                },
+              ]
+            },
+          ]
+        },
+        {
+          type: 'subheading',
+          label: translate.pages,
+          children: [
+            {
+              type: 'link',
+              label: translate.pricing,
+              icon: icAttachMoney,
+              route: '/member/pages/pricing'
+            },
+            {
+              type: 'link',
+              label: translate.invoice,
+              icon: icReceipt,
+              route: '/member/pages/invoice'
+            },
+            {
+              type: 'link',
+              label: translate.FAQ,
+              icon: icHelp,
+              route: '/member/pages/faq'
+            },
+            {
+              type: 'link',
+              label: translate.guides,
+              icon: icBook,
+              route: '/member/pages/guides',
+              badge: {
+                value: '18',
+                bgClass: 'bg-teal',
+                textClass: 'text-teal-contrast',
+              },
+            },
+          ]
+        }
+      ];
+
+    });
+
+  }
+
+  ngOnInit() {
+    this.layoutService.configpanelOpen$.pipe(
+      untilDestroyed(this)
+    ).subscribe(open => open ? this.configpanel.open() : this.configpanel.close());
+  }
+
+}
+
+/*
         {
           type: 'subheading',
           label: translate.apps,
@@ -208,10 +334,7 @@ export class MemberComponent implements OnInit {
             },
           ]
         },
-        {
-          type: 'subheading',
-          label: translate.pages,
-          children: [
+------------------------------------------
             {
               type: 'dropdown',
               label: translate.authentication,
@@ -267,42 +390,8 @@ export class MemberComponent implements OnInit {
                 }
               ]
             },
-            {
-              type: 'link',
-              label: translate.pricing,
-              icon: icAttachMoney,
-              route: '/member/pages/pricing'
-            },
-            {
-              type: 'link',
-              label: translate.invoice,
-              icon: icReceipt,
-              route: '/member/pages/invoice'
-            },
-            {
-              type: 'link',
-              label: translate.FAQ,
-              icon: icHelp,
-              route: '/member/pages/faq'
-            },
-            {
-              type: 'link',
-              label: translate.guides,
-              icon: icBook,
-              route: '/member/pages/guides',
-              badge: {
-                value: '18',
-                bgClass: 'bg-teal',
-                textClass: 'text-teal-contrast',
-              },
-            },
-          ]
-        },
-        {
-          type: 'subheading',
-          label: translate.UI_Elements,
-          children: [
-            {
+            ---------------------------------------
+                        {
               type: 'dropdown',
               label: translate.components,
               icon: icBubbleChart,
@@ -433,77 +522,9 @@ export class MemberComponent implements OnInit {
                 }
               ]
             },
-            {
-              type: 'dropdown',
-              label: translate.pageLayouts,
-              icon: icViewCompact,
-              children: [
-                {
-                  type: 'dropdown',
-                  label: 'Card',
-                  children: [
-                    {
-                      type: 'link',
-                      label: 'Default',
-                      route: '/member/ui/page-layouts/card',
-                      routerLinkActiveOptions: { exact: true }
-                    },
-                    {
-                      type: 'link',
-                      label: 'Tabbed',
-                      route: '/member/ui/page-layouts/card/tabbed',
-                    },
-                    {
-                      type: 'link',
-                      label: 'Large Header',
-                      route: '/member/ui/page-layouts/card/large-header',
-                      routerLinkActiveOptions: { exact: true }
-                    },
-                    {
-                      type: 'link',
-                      label: 'Tabbed & Large Header',
-                      route: '/member/ui/page-layouts/card/large-header/tabbed'
-                    }
-                  ]
-                },
-                {
-                  type: 'dropdown',
-                  label: 'Simple',
-                  children: [
-                    {
-                      type: 'link',
-                      label: 'Default',
-                      route: '/member/ui/page-layouts/simple',
-                      routerLinkActiveOptions: { exact: true }
-                    },
-                    {
-                      type: 'link',
-                      label: 'Tabbed',
-                      route: '/member/ui/page-layouts/simple/tabbed',
-                    },
-                    {
-                      type: 'link',
-                      label: 'Large Header',
-                      route: '/member/ui/page-layouts/simple/large-header',
-                      routerLinkActiveOptions: { exact: true }
-                    },
-                    {
-                      type: 'link',
-                      label: 'Tabbed & Large Header',
-                      route: '/member/ui/page-layouts/simple/large-header/tabbed'
-                    }
-                  ]
-                },
-                {
-                  type: 'link',
-                  label: 'Blank',
-                  icon: icPictureInPicture,
-                  route: '/member/ui/page-layouts/blank'
-                },
-              ]
-            },
-          ]
-        },
+            ----------------------------
+
+            ,
         {
           type: 'subheading',
           label: translate.documentation,
@@ -612,16 +633,4 @@ export class MemberComponent implements OnInit {
           route: () => this.layoutService.openConfigpanel(),
           icon: icSettings
         }
-      ];
-
-    });
-
-  }
-
-  ngOnInit() {
-    this.layoutService.configpanelOpen$.pipe(
-      untilDestroyed(this)
-    ).subscribe(open => open ? this.configpanel.open() : this.configpanel.close());
-  }
-
-}
+*/

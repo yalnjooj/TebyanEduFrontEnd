@@ -4,8 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'blank',
-    loadChildren: () => import('./blank/blank.module').then(m => m.BlankModule),
+    path: 'certificates',
+    loadChildren: () => import('./certificates/certificates.module').then(m => m.CertificatesModule),
   },
   {
     path: 'simple',

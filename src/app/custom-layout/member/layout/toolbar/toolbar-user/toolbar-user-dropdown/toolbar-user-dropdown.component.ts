@@ -19,6 +19,11 @@ import icLock from '@iconify/icons-ic/twotone-lock';
 import icNotificationsOff from '@iconify/icons-ic/twotone-notifications-off';
 import { Icon } from '@visurel/iconify-angular';
 import { PopoverRef } from 'src/app/custom-layout/member/components/popover/popover-ref';
+import gql from 'graphql-tag';
+import { Apollo } from 'apollo-angular';
+import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import icClose from '@iconify/icons-ic/twotone-close';
 
 export interface OnlineStatus {
   id: 'online' | 'away' | 'dnd' | 'offline';
@@ -34,39 +39,36 @@ export interface OnlineStatus {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolbarUserDropdownComponent implements OnInit {
+  result: string;
+  dialogHTML =
+  `<button mat-raised-button type="button" (click)="openDialog()" color="primary">Open Dialog</button>
+<p *ngIf="result">You chose: {{ result }}</p>
+`;
 
   items: MenuItem[] = [
     {
       id: '1',
       icon: icAccountCircle,
-      label: 'My Profile',
-      description: 'Personal Information',
+      label: 'ملف التعريف الشخصي',
+      description: 'تعديل بياناتك الشخصية',
       colorClass: 'text-teal',
-      route: '/apps/social'
+      route: '/member/apps/social'
     },
     {
       id: '2',
-      icon: icMoveToInbox,
-      label: 'My Inbox',
-      description: 'Messages & Latest News',
-      colorClass: 'text-primary',
-      route: '/apps/chat'
+      icon: icSettings,
+      label: 'الإعدادات',
+      description: 'تعديل الأعدادات الأساسية بالنظام',
+      colorClass: 'text-amber',
+      route: '/member/apps/scrumboard'
     },
     {
       id: '3',
-      icon: icListAlt,
-      label: 'My Projects',
-      description: 'Tasks & Active Projects',
-      colorClass: 'text-amber',
-      route: '/apps/scrumboard'
-    },
-    {
-      id: '4',
       icon: icTableChart,
-      label: 'Billing Information',
-      description: 'Pricing & Current Plan',
+      label: 'معلومات الفواتير',
+      description: 'الفواتير الخاصة بك',
       colorClass: 'text-purple',
-      route: '/pages/pricing'
+      route: '/member/pages/pricing'
     }
   ];
 
@@ -109,10 +111,15 @@ export class ToolbarUserDropdownComponent implements OnInit {
   icLock = icLock;
   icNotificationsOff = icNotificationsOff;
 
+
   constructor(private cd: ChangeDetectorRef,
-              private popoverRef: PopoverRef<ToolbarUserDropdownComponent>) { }
+              private popoverRef: PopoverRef<ToolbarUserDropdownComponent>,
+              private apollo: Apollo,
+              private router: Router,
+              private dialog: MatDialog) { }
 
   ngOnInit() {
+
   }
 
   setStatus(status: OnlineStatus) {
@@ -121,6 +128,81 @@ export class ToolbarUserDropdownComponent implements OnInit {
   }
 
   close() {
-    this.popoverRef.close();
+    this.popoverRef.close();   
+  }
+
+  logOut(){
+
+  }
+
+
+  openDialog() {
+    
+    this.close()
+
+    this.dialog.open(DemoDialogComponent, {
+      disableClose: false,
+      width: '400px'
+    }).afterClosed().subscribe(result => {
+
+      switch (result) {
+
+        case 'Yes':
+          this.close()
+
+          this.apollo.watchQuery({
+            query: gql`
+                query{
+                  logout
+            }
+            `
+          }).valueChanges.subscribe(({ data }) => {
+            this.router.navigate(['/home']);
+          })  
+          break;
+      
+        case 'No':
+          this.close()
+          break;
+      }
+
+
+    });
+  }
+
+
+}
+
+@Component({
+  selector: 'vex-components-overview-demo-dialog',
+  template: `
+      <div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
+          <div>تأكيد تسجيل الخروج</div>
+          <button type="button" mat-icon-button (click)="close('No answer')" tabindex="-1">
+              <mat-icon [icIcon]="icClose"></mat-icon>
+          </button>
+      </div>
+
+      <mat-dialog-content>
+          <p><b>هل تريد تسجيل الخروج؟</b></p>
+      </mat-dialog-content>
+
+
+      <mat-dialog-actions align="end">
+          <button mat-button (click)="close('No')">لا</button>
+          <button mat-button color="primary" (click)="close('Yes')">نعم</button>
+      </mat-dialog-actions>
+  `
+})
+export class DemoDialogComponent {
+
+  icClose = icClose;
+
+  constructor(private dialogRef: MatDialogRef<DemoDialogComponent>) {
+  }
+
+  close(answer: string) {
+    this.dialogRef.close(answer);
   }
 }
+

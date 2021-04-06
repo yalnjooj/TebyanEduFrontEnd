@@ -103,3 +103,7 @@
 .notification + .notification {
   border-top: 1px solid var(--foreground-divider);
 }
+
+:host {
+  display: block;
+}

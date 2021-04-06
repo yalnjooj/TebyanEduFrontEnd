@@ -1,7 +1,6 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToolbarUserComponent } from './toolbar-user.component';
-import { ToolbarUserDropdownComponent } from './toolbar-user-dropdown/toolbar-user-dropdown.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRippleModule } from '@angular/material/core';
@@ -11,10 +10,10 @@ import { RelativeDateTimeModule } from 'src/@vex/pipes/relative-date-time/relati
 import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { IconModule } from '@visurel/iconify-angular';
-
+import { ToolbarUserDropdownComponent, DemoDialogComponent } from './toolbar-user-dropdown/toolbar-user-dropdown.component';
 
 @NgModule({
-  declarations: [ToolbarUserComponent, ToolbarUserDropdownComponent],
+  declarations: [ToolbarUserComponent, ToolbarUserDropdownComponent, DemoDialogComponent],
   imports: [
     CommonModule,
     FlexLayoutModule,
@@ -28,7 +27,8 @@ import { IconModule } from '@visurel/iconify-angular';
     IconModule
   ],
   exports: [ToolbarUserComponent],
-  entryComponents: [ToolbarUserDropdownComponent]
+  entryComponents: [ToolbarUserDropdownComponent, DemoDialogComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class ToolbarUserModule {
 }
