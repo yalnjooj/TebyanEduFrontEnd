@@ -1,0 +1,48 @@
+<div>
+    <!-- mat-dialog-title -->
+<p><b>{{data.certificateName}}</b> | {{data.rowID}}</p>
+<mat-dialog-content>
+
+
+
+    <div class="example-boundary boundary">
+  
+        <div class="example-box" cdkDragBoundary=".boundary" cdkDrag>
+      
+        <div class="arrow-handle rigth" style="bottom: 2px; right: 2px;">
+          <svg width="24px" fill="currentColor" viewBox="0 0 789.847 790.29">
+            <path d="M182.065,109.359H290.823v144.21H182.065V362.327L0,181.464,182.065,0Z" transform="translate(533.643 790.29) rotate(-135)"/>
+            <path d="M182.065,109.359H290.823v144.21H182.065V362.327L0,181.464,182.065,0Z" transform="translate(256.204) rotate(45)"/>
+          </svg>
+        </div>
+      
+         <div class="arrow-handle" style="bottom: 169px; right: 2px;">
+      <svg width="4px" fill="currentColor" viewBox="0 0 3 11">
+        <circle cx="1.5" cy="1.5" r="1.5"/>
+        <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 4)"/>
+        <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 8)"/>
+      </svg>
+      
+      
+      
+        </div>
+      
+        <div class="arrow-handle all" style="bottom: 172px; right: 172px;" cdkDragHandle>
+          <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+            <path d="M0 0h24v24H0z" fill="none"></path>
+          </svg>
+        </div>
+      
+          I can otainer
+        </div>
+      </div>
+
+
+
+</mat-dialog-content>
+<mat-dialog-actions align="start">
+  <button mat-button color="accent" [mat-dialog-close]="false">إلغاء</button>
+  <button mat-button color="primary" cdkFocusInitial (click)="conform()">حفظ</button>
+</mat-dialog-actions>
+</div>

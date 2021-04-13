@@ -21,9 +21,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ContainerModule } from 'src/@vex/directives/container/container.module';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import {MatDialogModule} from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { ConformDialogComponent } from 'src/app/custom-layout/member/layout/dialogs/conformDialog/conform.dialog.component'
+import { CertificateModule } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.component'
 
 @NgModule({
-  declarations: [CertificatesComponent, DialogAddCertificate],
+  declarations: [CertificatesComponent, DialogAddCertificate, ConformDialogComponent, CertificateModule],
   imports: [
     CommonModule,
     CertificatesRoutingModule,
@@ -45,7 +51,11 @@ import {MatDialogModule} from '@angular/material/dialog';
     CustomerCreateUpdateModule,
     BreadcrumbsModule,
     MatMenuModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

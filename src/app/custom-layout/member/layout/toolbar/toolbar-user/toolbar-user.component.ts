@@ -29,22 +29,6 @@ export class ToolbarUserComponent implements OnInit {
       this.avatar = d.avatar
     })
 
-    // this.apollo.watchQuery({
-    //   query: gql`
-    //       query{
-    //         currentUser{
-    //           companyName
-    //           avatar
-    //           expireDate
-    //         }
-    //     }
-    //     `
-    // }).valueChanges.subscribe( ( {data}: any ) => {
-  
-    //     this.companyName = data.currentUser.companyName,
-    //     this.avatar = data.currentUser.avatar
-      
-    // })
   }
 
   showPopover(originRef: HTMLElement) {

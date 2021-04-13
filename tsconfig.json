@@ -4,8 +4,7 @@
 
   To learn more about this file see: https://angular.io/config/solution-tsconfig.
 */
-{
-  "files": [],
+{  "files": [],
   "references": [
     {
       "path": "./tsconfig.app.json"
@@ -15,7 +14,11 @@
     }
   ],
   "compilerOptions": {
-    // ...
+    "outDir": "/dist",
+    "rootDir": "./src",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": [
       "es2017",
       "dom",
