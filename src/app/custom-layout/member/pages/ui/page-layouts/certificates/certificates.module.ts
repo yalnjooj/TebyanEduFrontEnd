@@ -26,10 +26,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ConformDialogComponent } from 'src/app/custom-layout/member/layout/dialogs/conformDialog/conform.dialog.component'
-import { CertificateModule } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.component'
 
 @NgModule({
-  declarations: [CertificatesComponent, DialogAddCertificate, ConformDialogComponent, CertificateModule],
+  declarations: [CertificatesComponent, DialogAddCertificate, ConformDialogComponent],
   imports: [
     CommonModule,
     CertificatesRoutingModule,

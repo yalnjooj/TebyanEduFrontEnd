@@ -24,7 +24,7 @@ import icSmartDocument from '@iconify/icons-ic/golf-course';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChangeDataFormDialog } from '../../../apps/social/social-profile/social-profile.component';
 import { ConformDialogComponent } from 'src/app/custom-layout/member/layout/dialogs/conformDialog/conform.dialog.component'
-import { CertificateModule } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.component'
+import { CertificateFormComponent } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.form.component'
 
 export interface PeriodicElement {
   id: number;
@@ -248,11 +248,11 @@ export class CertificatesComponent implements OnInit {
 
 
   formSettings(data) {
-    this.dialog.open(CertificateModule,{
+    this.dialog.open(CertificateFormComponent,{
       disableClose: true,
       width: '100vw',
       maxWidth: '100vw',
-      data
+      data: {data, userID: this.userID}
     }).afterClosed().subscribe(result => {
 
       if(JSON.parse(result)){

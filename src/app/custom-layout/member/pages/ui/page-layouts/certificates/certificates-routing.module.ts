@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: CertificatesComponent
+  },
+  {
+    path: 'noUsed!!!',
+    loadChildren: () => import('src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.form.module').then(m => m.CertificateFormModule),
   }
 ];
 
