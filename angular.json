@@ -3,17 +3,43 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "TebyanEdu": {
+    "vex": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "vex",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "outputPath": "dist/TebyanEdu",
+            "allowedCommonJsDependencies": [
+              "subscriptions-transport-ws",
+              "zen-observable", "graphql-tag",
+              "apexcharts", "highlight.js",
+              "core-js/modules/es.array.for-each",
+              "core-js/modules/es.string.replace",
+              "core-js/modules/es.string.match",
+              "core-js/modules/es.regexp.exec",
+              "core-js/modules/es.function.name",
+              "core-js/modules/es.array.reduce",
+              "core-js/modules/web.dom-collections.iterator",
+              "core-js/modules/es.string.iterator",
+              "core-js/modules/es.weak-map",
+              "core-js/modules/es.parse-int",
+              "core-js/modules/es.object.to-string",
+              "core-js/modules/es.object.assign",
+              "core-js/modules/es.array.iterator",
+              "core-js/modules/es.array.filter",
+              "core-js/modules/web.dom-collections.for-each",
+              "showdown",
+              "faker/locale/en"
+            ],
+            "outputPath": "dist/vex",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -21,13 +47,32 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/_redirects",
+              "src/README.md",
+              "src/CHANGELOG.md"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
-              "src/styles.css"
+              "src/@vex/styles/tailwind.scss",
+              "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "./webpack.config.js"
+            },
+            "allowedCommonJsDependencies": [
+              "simplebar",
+              "highlight.js",
+              "faker",
+              "showdown",
+              "core-js",
+              "dom-set",
+              "dom-plane",
+              "angular-calendar/date-adapters/date-fns",
+              "calendar-utils/date-adapters/date-fns",
+              "@mattlewis92/dom-autoscroller",
+              "apexcharts"
+            ]
           },
           "configurations": {
             "production": {
@@ -40,44 +85,44 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
+              "extractCss": true,
               "namedChunks": false,
+              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "3mb",
                   "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
                 }
-              ]
+              ],
+              "customWebpackConfig": {
+                "path": "./webpack.prod.config.js"
+              }
             }
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "TebyanEdu:build"
+            "browserTarget": "vex:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "TebyanEdu:build:production"
+              "browserTarget": "vex:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "TebyanEdu:build"
+            "browserTarget": "vex:build"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular-builders/custom-webpack:karma",
           "options": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
@@ -88,8 +133,7 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }
@@ -111,19 +155,19 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "TebyanEdu:serve"
+            "devServerTarget": "vex:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "TebyanEdu:serve:production"
+              "devServerTarget": "vex:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "TebyanEdu",
+  "defaultProject": "vex",
   "cli": {
-    "analytics": "dc1369c6-6237-412e-bdda-0873624ab8aa"
+    "analytics": false
   }
 }

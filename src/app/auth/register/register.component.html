@@ -1,0 +1,229 @@
+<div class="w-full h-full bg-pattern" fxLayout="column" fxLayoutAlign="center center">
+  <div @fadeInUp class="card overflow-hidden">
+    <!-- in class:=>  w-full max-w-xs -->
+
+    <vex-page-layout-content vexContainer>
+      <div class="card">
+        <mat-tab-group>
+          <mat-tab label="{{'ROOT.REGISTER.organizations' | translate}}">
+            <div class="p-6">
+              <!-- <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
+                <blockquote>
+                  <b>.Please Make Sure That Your Information Is Right Due We Well send The Message To Your Email To Set
+                    Your Password</b>
+                </blockquote>
+              </div> -->
+              <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="20px">
+
+                <div @fadeInUp class="card" fxFlex="auto">
+                  <div class="px-6 py-4 border-b" fxLayout="row" fxLayoutAlign="start center">
+                    <h2 class="title m-0">{{'ROOT.REGISTER.companyInformation' | translate}}</h2>
+                  </div>
+                  <div [formGroup]="formc" class="px-6 py-4" fxLayout="column">
+                    <mat-form-field>
+                      <mat-label>{{'ROOT.REGISTER.companyType' | translate}}</mat-label>
+                      <mat-select formControlName="companyType">
+                        <mat-option dir="rtl" *ngFor="let companyType of companiesTypes" value="{{companyType.id}}">{{companyType.companyType}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                      <mat-label>{{'ROOT.REGISTER.companyName' | translate}}</mat-label>
+                      <input type="text" formControlName="companyName" matInput>
+                    </mat-form-field>
+                    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+                      <mat-form-field dir="ltr" fxFlex="190px">
+                        <mat-label>{{'ROOT.REGISTER.mobilePhone' | translate}}</mat-label>
+                        <md-input-container>
+                          <input maxlength="15" [(ngModel)]="maxlength" placeholder="555-555-1234" formControlName="Ctell" matInput>
+                        </md-input-container>
+                        <mat-icon matSuffix [icIcon]="icSmartphone"></mat-icon>
+
+                      </mat-form-field>
+                      <mat-form-field fxFlex="90px">
+                        <mat-label>{{'ROOT.REGISTER.select' | translate}}</mat-label>
+                        <mat-select formControlName="CcompanyKey">
+                          <mat-option dir="rtl" *ngFor="let infoo of fackInfo" value="{{infoo.id}}">
+                            <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{infoo.ISO2Code}}.png" />
+                            {{infoo.PHONECODE}}+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{infoo.countrylityNameAr}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="220px">
+
+                        <mat-label>{{'ROOT.REGISTER.email' | translate}}</mat-label>
+                        <md-input-container>
+                          <input formControlName="Cemail" matInput>
+                        </md-input-container>
+                        <mat-icon [icIcon]="icSmartemail" class="mr-2" matPrefix></mat-icon>
+
+                      </mat-form-field>
+                    </div>
+                    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+                      <mat-form-field fxFlex="auto">
+
+                        <mat-label>{{'ROOT.REGISTER.password' | translate}}</mat-label>
+                        <md-input-container>
+                          <input [type]="C_hide ? 'password' : 'text'" formControlName="password" matInput>
+                        </md-input-container>
+                        <mat-icon (click)="C_hide = !C_hide" [icIcon]="C_hide ? icSmartVisibilityOFF : icSmartVisibility" class="mr-2" matPrefix></mat-icon>
+
+                      </mat-form-field>
+                      <mat-form-field fxFlex="auto">
+
+                        <mat-label>{{'ROOT.REGISTER.confirm' | translate}}</mat-label>
+                        <md-input-container>
+                          <input [type]="C_hide ? 'password' : 'text'" formControlName="confirmPassword" matInput>
+                        </md-input-container>
+                        <mat-icon (click)="C_hide = !C_hide" [icIcon]="C_hide ? icSmartVisibilityOFF : icSmartVisibility" lass="mr-2" matPrefix></mat-icon>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                </div>
+
+                
+              </div>
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px" class="p-6">
+                <button mat-button type="button" (click)="reset1()">{{'ROOT.REGISTER.clear' | translate}}</button>
+                <button [disabled]="formc.invalid ? true : false" color="primary" mat-raised-button type="button" (click)="companyInfo()">{{'ROOT.REGISTER.rejester' | translate}}</button>
+              </div>
+              <p class="text-secondary text-center">
+                <a [routerLink]="['/login']">{{'ROOT.REGISTER.haveAccount' | translate}}</a>
+              </p>
+            </div>
+          </mat-tab>
+
+          <!-- <mat-tab label="Individually">
+           
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px">
+                <blockquote>
+                  <b>.Please Make Sure That Your Information Is Right Because We Will Emailing You To Activate Your
+                    Account</b>
+                </blockquote>
+              </div>
+              
+              <div @fadeInUp class="card" fxFlex="auto">
+                <div class="px-6 py-4 border-b" fxLayout="row" fxLayoutAlign="start center">
+                  <h2 class="title m-0">User Information</h2>
+                </div>
+
+                <div class="px-6 py-4" fxLayout="column">
+                  <div [formGroup]="formu" class="px-6 py-4" fxLayout="column">
+                    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+
+
+
+
+
+                      <mat-form-field fxFlex="auto">
+                        <mat-label>Country</mat-label>
+                        <mat-select formControlName="country">
+                          <mat-option *ngFor="let infoo of fackInfo" value="{{infoo.country}}">{{infoo.country}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="none">
+                      <mat-label>Region</mat-label>
+                      <mat-select>
+                        <mat-option>Makkah region</mat-option>
+                        <mat-option>AL-madina region</mat-option>
+                        <mat-option>Riyadh region</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field fxFlex="none">
+                      <mat-label>City</mat-label>
+                      <mat-select>
+                        <mat-option>Makkah</mat-option>
+                        <mat-option>AL-madina</mat-option>
+                        <mat-option>Riyadh</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+
+
+
+
+
+
+                    </div>
+
+                    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+                      <mat-form-field fxFlex="147px">
+                        <mat-label>First Name</mat-label>
+                        <input formControlName="firstName" matInput>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="147px">
+                        <mat-label>Sacond Name</mat-label>
+                        <input formControlName="sacondName" matInput required>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="147px">
+                        <mat-label>Third Name</mat-label>
+                        <input formControlName="thirdName" matInput required>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="146px">
+                        <mat-label>Last Name</mat-label>
+                        <input formControlName="lastName" matInput required>
+                      </mat-form-field>
+                    </div>
+                    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+
+                      <mat-form-field dir="ltr" fxFlex="258px">
+                        <mat-label>Mobile Phone</mat-label>
+                        <md-input-container>
+                        <input formControlName="Utell" matInput required>
+                      </md-input-container>
+                        <mat-icon [icIcon]="icSmartphone" class="mr-2" matSuffix></mat-icon>
+                      </mat-form-field>
+                      <mat-form-field fxFlex="90px">
+                        <mat-label>{{vcKey}}</mat-label>
+                        <mat-select formControlName="UcompanyKey">
+                          <mat-option dir="rtl" *ngFor="let infoo of fackInfo" value="{{infoo.id}}">
+                            <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{infoo.ISO2Code}}.png" />
+                            {{infoo.PHONECODE}}+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{infoo.countrylityNameAr}}
+                          </mat-option>
+                        </mat-select>
+                        
+                      </mat-form-field>
+                      <mat-form-field fxFlex="258px">
+                        <mat-label>E-mail</mat-label>
+                      <md-input-container>
+                        <input formControlName="Uemail" matInput>
+                      </md-input-container>
+                        <mat-icon [icIcon]="icSmartemail" class="mr-2" matPrefix></mat-icon>
+                      </mat-form-field>
+                    </div>
+                    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+                      <mat-form-field fxFlex="auto">
+
+                        <mat-label>Password</mat-label>
+                        <md-input-container>
+                          <input [type]="U_hide ? 'password' : 'text'" formControlName="Upassword" matInput>
+                        </md-input-container>
+                        <mat-icon (click)="U_hide = !U_hide" [icIcon]="U_hide ? icSmartVisibilityOFF : icSmartVisibility" class="mr-2" matPrefix></mat-icon>
+
+                      </mat-form-field>
+                      <mat-form-field fxFlex="auto">
+
+                        <mat-label>Confirm Password</mat-label>
+                        <md-input-container>
+                          <input [type]="U_hide ? 'password' : 'text'" formControlName="UconfirmPassword" matInput>
+                        </md-input-container>
+                        <mat-icon (click)="U_hide = !U_hide" [icIcon]="U_hide ? icSmartVisibilityOFF : icSmartVisibility" lass="mr-2" matPrefix></mat-icon>
+                      </mat-form-field>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="20px" class="p-6">
+                <button mat-button type="button"  (click)="reset2()">CLEAR</button>
+                <button color="primary" mat-raised-button type="button" (click)="userInfo()">Rejester</button>
+              </div>
+           
+          </mat-tab> -->
+        </mat-tab-group>
+      </div>
+    </vex-page-layout-content>
+
+  </div>
+</div>

@@ -1,46 +1,74 @@
-import { UsersComponent } from './dashboard/users/users.component';
-import { SettingsComponent } from './dashboard/settings/settings.component';
-import { ReportsComponent } from './dashboard/reports/reports.component';
-import { CertificatesComponent } from './dashboard/certificates/certificates.component';
-import { BodyComponent } from './dashboard/body/body.component';
-import { NotFoundComponent } from './not-found/not-found.component';
-import { ProfileComponent } from './dashboard/profile/profile.component';
-import { HomeComponent } from './home/home.component';
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AuthGlobalGuard } from './gared/auth.globale.guard';
-import { LoginComponent } from './registeration/login/login.component';
-import { SignupComponent } from './registeration/signup/signup.component';
-import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
-import { AuthHomePageGuard } from './gared/auth.homePage.guard';
-import { ForgotPasswordComponent } from './registeration/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './registeration/reset-password/reset-password.component';
+import { RouterModule } from '@angular/router';
+import { CustomLayoutComponent } from './custom-layout/custom-layout.component';
+import { VexRoutes } from 'src/@vex/interfaces/vex-route.interface';
+import { AuthGuard } from 'src/app/gards/auth.guard';
+import { Role } from 'src/app/tools/roles'
 
-
-const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE'] },
-  { path: 'login', component: LoginComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE'] },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGlobalGuard], data: ['DASHBOARD'],
-    children: [
-      { path: '', redirectTo: 'body', pathMatch: 'full' },
-      { path: 'body', component: BodyComponent },
-      { path: 'profile', component: ProfileComponent },
-      { path: 'certificates', component: CertificatesComponent },
-      { path: 'reports', component: ReportsComponent },
-      { path: 'settings', component: SettingsComponent },
-      { path: 'users', component: UsersComponent },
-      { path: '**', component: NotFoundComponent, pathMatch: 'full' }
-    ]
+const routes: VexRoutes = [
+  {
+    path: '', redirectTo: 'home', pathMatch: 'full'
   },
-  { path: 'signup', component: SignupComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE']  },
-  { path: 'forgotPassword', component: ForgotPasswordComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE']  },
-  { path: 'resetPassword/:idToken', component: ResetPasswordComponent, canActivate: [AuthGlobalGuard], data: ['GLOBALE']  },
-  { path: '**', component: NotFoundComponent }
+  {
+    path: 'home',
+    component: CustomLayoutComponent,
+    canActivate: [AuthGuard], data: [Role.HOME]
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('src/app/auth/login/login.module').then(m => m.LoginModule),
+    canActivate: [AuthGuard], data: [Role.LOGIN]
+  },
+  {
+    path: 'register',
+    loadChildren: () => import('src/app/auth/register/register.module').then(m => m.RegisterModule),
+    canActivate: [AuthGuard], data: [Role.REGISTER]
+  },
+  {
+    path: 'forgot-password',
+    loadChildren: () => import('src/app/auth/forgot-password/forgot-password.module').then(m => m.ForgotPasswordModule),
+    canActivate: [AuthGuard], data: [Role.FORGOT_PASSWORD]
+  },
+  {
+    path: 'reset-password/:idToken',
+    loadChildren: () => import('src/app/auth/reset-password/reset-password.module').then(m => m.ResetPasswordModule),
+    canActivate: [AuthGuard], data: [Role.RESET_PASSWORD]
+  },
+  {
+    path: 'coming-soon',
+    loadChildren: () => import('src/app/auth/coming-soon/coming-soon.module').then(m => m.ComingSoonModule),
+    canActivate: [AuthGuard], data: [Role.COMING_SOON]
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./custom-layout/admin/admin.module').then(m => m.AdminModule),
+    canActivate: [AuthGuard], data: [Role.ADMIN]
+  },
+  {
+    path: 'member',
+    loadChildren: () => import('./custom-layout/member/member.module').then(m => m.MemberModule),
+    canActivate: [AuthGuard], data: [Role.MEMBER]
+  },
+  {
+    path: 'guest',
+    loadChildren: () => import('./custom-layout/guest/guest.module').then(m => m.GuestModule),
+    canActivate: [AuthGuard], data: [Role.GUEST]
+  },
+  {
+    path: '**',
+    loadChildren: () => import('src/app/custom-layout/member/pages/pages/errors/error-500/error-500.module').then(m => m.Error500Module),
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, {
+    // preloadingStrategy: PreloadAllModules,
+    scrollPositionRestoration: 'enabled',
+    relativeLinkResolution: 'corrected',
+    anchorScrolling: 'enabled'
+  })],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

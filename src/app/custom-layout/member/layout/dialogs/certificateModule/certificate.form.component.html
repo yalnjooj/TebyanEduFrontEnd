@@ -1,0 +1,147 @@
+<div>
+  <!-- mat-dialog-title -->
+  <p>{{dataFromCertificate.data.certificateName}} | {{dataFromCertificate.data.cerPosition}}
+  &nbsp;
+  <button mat-raised-button color="primary" [matMenuTriggerFor]="menu">خيارات</button>
+</p>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="size">حجم المستند</button>
+    <button mat-menu-item [matMenuTriggerFor]="toggle">إدراج</button>
+  </mat-menu>
+  <mat-menu #size="matMenu">
+    <button mat-menu-item (click)="changePosition(100)">100%</button>
+    <button mat-menu-item (click)="changePosition(85)">85%</button>
+    <button mat-menu-item (click)="changePosition(70)">70%</button>
+    <button mat-menu-item (click)="changePosition(55)">55%</button>
+    <button mat-menu-item (click)="changePosition(40)">40%</button>
+    <button mat-menu-item (click)="changePosition(25)">25%</button>
+  </mat-menu>
+<mat-menu #toggle="matMenu">
+    <button mat-menu-item (click)="addItem('qr')">باركود</button>
+    <button mat-menu-item (click)="addItem('text')">مربع نص</button>
+    <button mat-menu-item (click)="addItem('img')">صورة</button>
+  </mat-menu>
+</div>
+<!-- <span fxFlex></span> -->
+
+<mat-dialog-content>
+
+    <mat-tab-group #tabGroup (selectedTabChange)="changedOptions(tabGroup)" animationDuration="0ms" mat-align-tabs="center">
+      <mat-tab #tap *ngFor="let dashboard of dashboards.tabs; index as tapIndex" [label]="dashboard.name">
+
+        <div dir="ltr" class="certificateBox" [style.width.mm]="dashboards.view.width" [style.height.mm]="dashboards.view.height" >   
+          <gridster [options]="options">
+            <gridster-item #gridsterItem style="border: black solid 1px; background: none;" [item]="item" *ngFor="let item of dashboard.details.contents; index as i">
+
+              <img #Imagebackground style="width: 100%; height: 100%;" *ngIf="(i === 0 && !(item.content == 'null'))" [src]="item.content">              
+              <input hidden #Inputbackground type="file"  accept="image/*" (change)="onSelectFile('Imagebackground', tapIndex, item, $event.target.files[0])" />
+          
+              <span class="dragHandle all" *ngIf="!(i === 0)">
+                <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
+                  <path d="M0 0h24v24H0z" fill="none"></path>
+                </svg>
+              </span>
+              <span [matMenuTriggerFor]="backgrounList" *ngIf="(i === 0)" [style.top.px]="6" [style.right.px]="10" class="dragHandle">
+                <svg width="4px" fill="currentColor" viewBox="0 0 3 11">
+                  <circle cx="1.5" cy="1.5" r="1.5" />
+                  <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 4)" />
+                  <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 8)" />
+                </svg>
+              </span>
+              <mat-menu #backgrounList="matMenu">
+                <button mat-menu-item (click)="Inputbackground.click()">{{(i === 0 && !(item.content.split('http://localhost:3000/uploadedFiles/profiles/')[1] == 'empty.png'))? 'تغيير الخلفية' : 'إدراج خلفية'}} </button>
+                <button mat-menu-item (click)="removeBackground(tapIndex, item)" style="color: red;">حذف الخلفية</button>
+              </mat-menu>
+
+
+
+              <div style="height: 100%; width: 100%;" *ngIf="!(i === 0)" class="button-holder">
+
+                <div dir="rtl" style="height: 100%; width: 100%; padding-top: 19px;" class="gridster-item-content">
+                  <ng-template *ngIf="(item.type == 'img'); then image; else text"></ng-template>
+
+                  <ng-template #image>
+                    
+                  <img #ImageItem style="width: 100%; height: 100%;" *ngIf="!(i === 0 && !(item.content == 'null'))" [src]="item.content">
+                  <input hidden #InputItem type="file"  accept="image/*" (change)="onSelectFile('ImageItem', tapIndex, item, $event.target.files[0])" />
+
+                  <span [matMenuTriggerFor]="menuBox" [style.top.px]="6" [style.right.px]="10" class="dragHandle">
+                    <svg width="4px" fill="currentColor" viewBox="0 0 3 11">
+                      <circle cx="1.5" cy="1.5" r="1.5" />
+                      <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 4)" />
+                      <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 8)" />
+                    </svg>
+                  </span>
+                  <mat-menu #menuBox="matMenu">
+                    <button mat-menu-item (click)="InputItem.click()">{{!(!(i === 0) && (item.content.split('http://localhost:3000/uploadedFiles/profiles/')[1] == 'empty.png'))? 'تغيير الصورة' : 'إدراج صورة'}} </button>
+                    <button style="color: red;" (click)="removeItem($event, tapIndex, item)" mat-menu-item>حذف</button>
+                    <button mat-menu-item [matMenuTriggerFor]="moveTo">..تحريك إلى</button>
+                  </mat-menu>
+                  <mat-menu #moveTo="matMenu">
+                    <button mat-menu-item (click)="gridsterItem.bringToFront(1);">الأمام</button>
+                    <button mat-menu-item (click)="item.layerIndex == 1? item.layerIndex = 1 : gridsterItem.sendToBack(1);">الخلف</button>
+                  </mat-menu>
+                  </ng-template>
+    
+                  <ng-template #text>
+                    
+                  <!-- [(ngModel)]="item.content" (ngModelChange)="onSelectFile(ImageItem, tapIndex, item, $event.target.files[0])" -->
+
+                  <span [matMenuTriggerFor]="menuBox" [style.top.px]="6" [style.right.px]="10" class="dragHandle">
+                    <svg width="4px" fill="currentColor" viewBox="0 0 3 11">
+                      <circle cx="1.5" cy="1.5" r="1.5" />
+                      <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 4)" />
+                      <circle cx="1.5" cy="1.5" r="1.5" transform="translate(0 8)" />
+                    </svg>
+                  </span>
+                  <mat-menu #menuBox="matMenu">
+                    <button style="color: red;" (click)="removeItem($event, tapIndex, item)" mat-menu-item>حذف</button>
+                    <button mat-menu-item [matMenuTriggerFor]="moveTo">..تحريك إلى</button>
+                  </mat-menu>
+                  <mat-menu #moveTo="matMenu">
+                    <button mat-menu-item (click)="gridsterItem.bringToFront(1);">الأمام</button>
+                    <button mat-menu-item (click)="item.layerIndex == 1? item.layerIndex = 1 : gridsterItem.sendToBack(1);">الخلف</button>
+                  </mat-menu>
+                  
+                          <!-- بداية المحتوى -->
+                   
+                      <!-- <span style="margin-left: 10px; color: blueviolet">{{item.layerIndex}} | type: {{item.type}}</span> -->
+                      1
+                      <div class="col-lg-8 control-section">
+                        <div class="sample-container">
+                            <div class="default-section">
+                                <ejs-richtexteditor id='inlineRTE' #inlineRTE
+                                [inlineMode]='inlineMode' [toolbarSettings]='toolbarSettings'
+                                    [format]='format' [fontFamily]='fontFamily'>
+                                    <ng-template #valueTemplate>
+                                        <p>The sample is configured with the inline mode of the editor. Initially, the editor is rendered
+                                            without a <a href="https://ej2.syncfusion.com/home/" target='_blank'>toolbar</a>.
+                                            The toolbar becomes visible only when the content is selected.</p>
+                                    </ng-template>
+                                </ejs-richtexteditor>
+                            </div>
+                        </div>
+                    </div>
+                        2
+                   
+      
+      
+                    
+                    <!-- نهاية المحتوى -->
+
+                  </ng-template>
+                </div>
+              </div> 
+          </gridster-item>
+        </gridster>
+      </div>
+        
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="start">
+    <button mat-button color="accent" [mat-dialog-close]="false">إلغاء</button>
+    <button mat-button color="primary" cdkFocusInitial (click)="conform()">حفظ</button>
+  </mat-dialog-actions>

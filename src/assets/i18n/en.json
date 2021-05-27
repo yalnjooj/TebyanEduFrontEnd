@@ -1,0 +1,100 @@
+{
+  "ROOT": {
+    "MAIN_SIDE_LIST": {
+      "dashboard": "Dashboard",
+      "apps": "Apps",
+      "all_In_One": "Users Accounts",
+      "helpCenter": "Help Center",
+      "calendar": "Calendar",
+      "chat": "Chat",
+      "mailbox": "Mailbox",
+      "social": "Social",
+      "WYSIWYG_Editor": "WYSIWYG Editor",
+      "contacts": "Contacts",
+      "scrumboard": "Scrumboard",
+      "pages": "Pages",
+      "authentication": "Authentication",
+      "comingSoon": "Coming Soon",
+      "errors": "Errors",
+      "pricing": "Pricing",
+      "invoice": "Invoice",
+      "FAQ": "FAQ",
+      "guides": "Guides",
+      "UI_Elements": "UI Elements",
+      "components": "Components",
+      "forms": "Forms",
+      "icons": "Icons",
+      "pageLayouts": "Page Layouts",
+      "documentation": "Documentation",
+      "changelog": "Changelog",
+      "gettingStarted": "Getting Started",
+      "customization": "Customize",
+      "furtherHelp": "Further Help",
+      "customize": "Customize",
+      "configuration": "Configuration"
+    },
+    "DASHBOARD": {
+      "good": "Good Job, Omar!",
+      "finishe": "You've finished all of your tasks for this week.",
+      "finisheDashboard": "Finish Dashboard Design",
+      "fix": "Fix Issue #74",
+      "publish": "Publish vergen 3.3.2"
+    },
+    "TOOLBAR": {
+      "english": "English",
+      "arabic": "اللغة العربية",
+      "style": {
+        "light": "LIGHT",
+        "default": "DEFAULT",
+        "dark": "DARK"
+      }
+    },
+    "LOGIN": {
+      "welcome": "Welcome back",
+      "signCredentials": "Sign in with your credentials below.",
+      "email": "E-Mail",
+      "needEmail": "We need an email address to log you in",
+      "password": "Password",
+      "clickToToggle": "Click the eye to toggle visibility",
+      "needPassword": "We need a password to log you in",
+      "forgotPassword": "Forgot Password?",
+      "singIn": "SIGN IN",
+      "noAccount": "Don't have an account?",
+      "clickToCreate": "Click here to create one"
+    },
+    "MAIN_COMPONANT": {
+      "loding": "Please Wait..."
+    },
+    "RESETPASSWORD": {
+      "resetPasswordMass": "Reset Password",
+      "fillForm": "Please Repeat Your Password From Below",
+      "password": "Password",
+      "clickTheEye": "Click the eye to toggle visibility",
+      "confirm": "Password (Confirm)",
+      "resetPassword": "RESET YOUR ACCOUNT PASSWORD",
+      "backTo": "Back To LogIn Page"
+    },
+    "SENDEMAIL": {
+      "resetPassword": "Reset Password",
+      "recovery": "Enter your email for password recovery",
+      "email": "E-Mail",
+      "Notrecover": "Can't recover your password, without your email.",
+      "send": "SENT EMAIL",
+      "remember": "Do you remember the data for your account?"
+    },
+    "REGISTER": {
+      "organizations": "Organizations",
+      "companyInformation": "Organizations Information",
+      "companyType": "Organizations Type",
+      "companyName": "Organizations Name",
+      "mobilePhone": "Mobile Phone",
+      "select": "Select",
+      "email": "E-mail",
+      "password": "Password",
+      "confirm": "Password (Confirm)",
+      "clear": "CLEAR",
+      "rejester": "Rejester",
+      "haveAccount": "I Have An Account !"
+    }
+  }
+}

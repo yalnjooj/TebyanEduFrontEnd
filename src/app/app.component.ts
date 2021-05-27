@@ -1,79 +1,72 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Event } from '@angular/router';
-import { SlimLoadingBarService } from '@cime/ngx-slim-loading-bar';
-import { loadCldr} from '@syncfusion/ej2-base';
+import { Component, Inject, LOCALE_ID, Renderer2, Pipe } from '@angular/core';
+import { ConfigService } from '../@vex/services/config.service';
+import { Settings } from 'luxon';
+import { DOCUMENT } from '@angular/common';
+import { Platform } from '@angular/cdk/platform';
+import { NavigationService } from '../@vex/services/navigation.service';
 
-declare var require: any;
-
-loadCldr(
-    require('cldr-data/supplemental/numberingSystems.json'),
-    require('cldr-data/main/ar/ca-gregorian.json'),
-    require('cldr-data/main/ar/numbers.json'),
-    require('cldr-data/main/ar/timeZoneNames.json'),
-    require('cldr-data/supplemental/weekdata.json')); // To load the culture based first day of week
-
+import { LayoutService } from '../@vex/services/layout.service';
+import { ActivatedRoute } from '@angular/router';
+import { filter, map } from 'rxjs/operators';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { SplashScreenService } from '../@vex/services/splash-screen.service';
+import { Style, StyleService } from '../@vex/services/style.service';
+import { ConfigName } from '../@vex/interfaces/config-name.model';
+import { TranslateService } from '@ngx-translate/core';
+import { TranslateConfigService } from 'src/@vex/services/translate-config.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'vex-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements  OnInit {
+export class AppComponent {
 
+  constructor(private configService: ConfigService,
+    private styleService: StyleService,
+    private renderer: Renderer2,
+    private platform: Platform,
+    @Inject(DOCUMENT) private document: Document,
+    @Inject(LOCALE_ID) private localeId: string,
+    private layoutService: LayoutService,
+    private route: ActivatedRoute,
+    private navigationService: NavigationService,
+    private splashScreenService: SplashScreenService,
+    private translateConfigService: TranslateConfigService) {
+    Settings.defaultLocale = this.localeId;
 
+    if (this.platform.BLINK) {
+      this.renderer.addClass(this.document.body, 'is-blink');
+    }
 
-  constructor(private router: Router, private slimLoadingBarService: SlimLoadingBarService ){
+    
 
-  //   this.router.events.subscribe( (event: Event) => {
+     
 
-  //  this.navigationInterceptor(event);
+    /**
+     * Config Related Subscriptions
+     * You can remove this if you don't need the functionality of being able to enable specific configs with queryParams
+     * Example: example.com/?layout=apollo&style=default
+     */
+    this.route.queryParamMap.pipe(
+      map(queryParamMap => queryParamMap.has('rtl') && coerceBooleanProperty(queryParamMap.get('rtl'))),
+    ).subscribe(isRtl => {
+      this.document.body.dir = localStorage.getItem("rtl")
+      this.configService.updateConfig({
+        rtl: isRtl
+      });
+    });
 
+    this.route.queryParamMap.pipe(
+      filter(queryParamMap => queryParamMap.has('layout'))
+    ).subscribe(queryParamMap => this.configService.setConfig(queryParamMap.get('layout') as ConfigName));
 
+    this.route.queryParamMap.pipe(
+      filter(queryParamMap => queryParamMap.has('style'))
+    ).subscribe(queryParamMap => this.styleService.setStyle(queryParamMap.get('style') as Style));
 
-  // });
-
-
-
-
-
-
+ 
 
   }
-
-
-  ngOnInit(){ }
-
-
-
-    // Angular Slim Loading Bar
-    // navigationInterceptor(event: Event): void {
-
-    //   if (event instanceof NavigationStart) {
-    //     this.slimLoadingBarService.start(() => {
-    //       console.log('Loading start');
-    //   });
-    //   }
-    //   if (event instanceof NavigationEnd) {
-    //     this.slimLoadingBarService.complete();
-    //     console.log('Loading complete');
-
-    //   }
-    //   if (event instanceof NavigationCancel) {
-    //     this.slimLoadingBarService.stop();
-    //     console.log('Loading stop');
-
-    //   }
-    //   if (event instanceof NavigationError) {
-    //     this.slimLoadingBarService.stop();
-    //     console.log('Loading error');
-
-    //   }
-    // }
-
-
-
-
-
-
+  
 }
-

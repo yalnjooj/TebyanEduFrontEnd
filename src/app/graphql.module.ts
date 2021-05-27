@@ -3,7 +3,7 @@ import { APOLLO_OPTIONS } from 'apollo-angular';
 import { ApolloClientOptions, InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
 import { WebSocketLink } from 'apollo-link-ws'; // <-- Add new import
-import { ApolloLink, split } from 'apollo-link'; // <-- Add new import
+import { split } from 'apollo-link'; // <-- Add new import
 import { getMainDefinition } from 'apollo-utilities'; // <-- Add new import
 
 
