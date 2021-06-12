@@ -79,23 +79,17 @@
 
           <!-- cerPosition Column -->
           <ng-container matColumnDef="cerPosition">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef>وضعية النموذج</th>
+            <th mat-header-cell mat-sort-header *matHeaderCellDef>الاتجاه</th>
             <td mat-cell *matCellDef="let element">{{element.cerPosition}}</td>
           </ng-container>
           
-          
-          <!-- textsPosition Column -->
-          <ng-container matColumnDef="textsPosition">
-            <th mat-header-cell mat-sort-header *matHeaderCellDef>مربع النص</th>
-            <td mat-cell *matCellDef="let element">{{element.textsPosition}}</td>
-          </ng-container>
 
           <!-- edit2 Column -->
           <ng-container matColumnDef="edit2">
-            <th mat-header-cell *matHeaderCellDef>تعديل الخصائص</th>
+            <th mat-header-cell *matHeaderCellDef>تعديل</th>
             <td mat-cell *matCellDef="let element">
               <div class="flex">
-                <a (click)="edit({rowID: element.rowID, certificateName: element.certificateName, certificatecatagory: element.certificatecatagoryID, langSex: element.langSexID, cerPosition: element.cerPositionID, textsPosition: element.textsPositionID}, 'edit')"
+                <a (click)="edit({rowID: element.rowID, certificateName: element.certificateName, certificatecatagory: element.certificatecatagoryID, langSex: element.langSexID, cerPosition: element.cerPositionID, cerPositionName: element.cerPosition}, 'edit')"
                 class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
                 mat-icon-button>
                   <mat-icon [icIcon]="icEdit" size="22px"></mat-icon>
@@ -114,8 +108,8 @@
                   <mat-icon [icIcon]="icEye" size="22px"></mat-icon>
                 </a>
 
-                <a (click)="formSettings({rowID: element.rowID, certificateName: element.certificateName, langSex: element.langSex, cerPosition: element.cerPosition, textsPosition: element.textsPosition,
-                                                                langSexType: element.langSexType, cerPositionType: element.cerPositionType, textsPositionType: element.textsPositionType})"
+                <a (click)="formSettings({rowID: element.rowID, certificateName: element.certificateName, langSex: element.langSex, cerPosition: element.cerPosition,
+                                                                langSexType: element.langSexType, cerPositionType: element.cerPositionType})"
                 class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
                 mat-icon-button>
                   <mat-icon [icIcon]="icSettings" size="22px"></mat-icon>

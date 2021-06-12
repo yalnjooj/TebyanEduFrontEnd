@@ -24,7 +24,7 @@ import icSmartDocument from '@iconify/icons-ic/golf-course';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ChangeDataFormDialog } from '../../../apps/social/social-profile/social-profile.component';
 import { ConformDialogComponent } from 'src/app/custom-layout/member/layout/dialogs/conformDialog/conform.dialog.component'
-import { CertificateFormComponent } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.form.component'
+import { CertificateFormComponent, Certificates } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.form.component'
 
 export interface PeriodicElement {
   id: number;
@@ -33,18 +33,15 @@ export interface PeriodicElement {
   certificateName: string;
   langSex: number;
   cerPosition: string;
-  textsPosition: string;
   updatedAt: string;
   createdAt: string;
 
   langSexType: string;
   cerPositionType: string;
-  textsPositionType: string;
 
   certificatecatagoryID: number;
   langSexID: number;
   cerPositionID: number;
-  textsPositionID: number;
 }
 @Component({
   selector: 'vex-blank',
@@ -53,7 +50,7 @@ export interface PeriodicElement {
 })
 export class CertificatesComponent implements OnInit {
   userID: number;
-  displayedColumns: string[] = ['id', 'certificateName', 'certificatecatagory', 'langSex', 'cerPosition', 'textsPosition','edit2', 'edit', 'updatedAt', 'createdAt'];
+  displayedColumns: string[] = ['id', 'certificateName', 'certificatecatagory', 'langSex', 'cerPosition', 'edit2', 'edit', 'updatedAt', 'createdAt'];
   dataSource: any
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -114,11 +111,6 @@ export class CertificatesComponent implements OnInit {
                 name
                 type
               }
-              textsPosition{
-                id
-                name
-                type
-              }
               updatedAt
               createdAt
             }
@@ -127,7 +119,7 @@ export class CertificatesComponent implements OnInit {
           variables: {
             uID: data.currentUser.id
           }
-      }).valueChanges.subscribe(( {data}: any ) => {
+      }).valueChanges.subscribe(({data}: any ) => {
 
         let e: PeriodicElement[] = [];
 
@@ -140,11 +132,9 @@ export class CertificatesComponent implements OnInit {
                 certificateName: element.certificatename,
                 langSex: element.langSex.name,
                 cerPosition: element.cerPosition.name,
-                textsPosition: element.textsPosition.name,
 
                 langSexType: element.langSex.type,
                 cerPositionType: element.cerPosition.type,
-                textsPositionType: element.textsPosition.type,
 
                 updatedAt: element.updatedAt,
                 createdAt: element.createdAt,
@@ -152,7 +142,6 @@ export class CertificatesComponent implements OnInit {
                 certificatecatagoryID: element.certificatecatagory.id,
                 langSexID: element.langSex.id,
                 cerPositionID: element.cerPosition.id,
-                textsPositionID: element.textsPosition.id
               })
             });
 
@@ -182,9 +171,9 @@ export class CertificatesComponent implements OnInit {
 
         this.dialog.open(DialogAddCertificate,{
           disableClose: false,
-          data: {cettificateIDs: id, type: 'edit', userID: this.userID}
+          data: {cettificateIDs: id, type: 'edit', userID: this.userID, typeView: true}
         }).afterClosed().subscribe(result => {
-          if(JSON.parse(result)) this.ngOnInit()
+          if(result) this.ngOnInit()
         }); 
       break;
 
@@ -232,6 +221,7 @@ export class CertificatesComponent implements OnInit {
     }
 
   }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -240,7 +230,7 @@ export class CertificatesComponent implements OnInit {
   openDialog(){
     this.dialog.open(DialogAddCertificate,{
       disableClose: true,
-      data: {userID: this.userID, type: 'add'}
+      data: {userID: this.userID, type: 'add', typeView: false}
     }).afterClosed().subscribe(result => {
       if(JSON.parse(result)) this.ngOnInit()
     }); 
@@ -252,7 +242,7 @@ export class CertificatesComponent implements OnInit {
       disableClose: true,
       width: '100vw',
       maxWidth: '100vw',
-      data: {data, userID: this.userID}
+      data: {uID: this.userID, cerID: data.rowID, cerPositionType: data.cerPositionType, certificateName: data.certificateName, cerPosition: data.cerPosition}
     }).afterClosed().subscribe(result => {
 
       if(JSON.parse(result)){
@@ -299,7 +289,7 @@ export class CertificatesComponent implements OnInit {
     <mat-form-field fxFlex="auto">
     <mat-label>النوع</mat-label>
     <mat-select formControlName="langSex">
-      <mat-option dir="rtl" required *ngFor="let data of langSex" value="{{data.id}}">{{data.name}}</mat-option>
+      <mat-option dir="rtl" [disabled]="typeView" required *ngFor="let data of langSex" value="{{data.id}}">{{data.name}}</mat-option>
     </mat-select>
   </mat-form-field>
   </div>
@@ -310,12 +300,6 @@ export class CertificatesComponent implements OnInit {
       <mat-option dir="rtl" required *ngFor="let data of cerPosition" value="{{data.id}}">{{data.name}}</mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field fxFlex="auto">
-  <mat-label>مربع النص</mat-label>
-  <mat-select formControlName="textsPosition">
-    <mat-option dir="rtl" required *ngFor="let data of textsPosition" value="{{data.id}}">{{data.name}}</mat-option>
-  </mat-select>
-</mat-form-field>
 </div>
 </mat-dialog-content>
 
@@ -337,14 +321,11 @@ export class DialogAddCertificate implements OnInit {
     category:  new FormControl(null, [Validators.required]),
     langSex: new FormControl( null, [Validators.required]),
     cerPosition:  new FormControl(null, [Validators.required]),
-    textsPosition:  new FormControl(null, [Validators.required]),
   });
   category: any;
   langSex: any;
   cerPosition: any;
-  textsPosition: any;
-
-
+  typeView: boolean;
 
 constructor(
   private fb: FormBuilder,
@@ -354,7 +335,9 @@ constructor(
   private ngxSpinnerService: NgxSpinnerService,
   public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
 
- async ngOnInit(){
+  ngOnInit(){
+    
+    this.typeView = this.data.typeView
 
   this.apollo.watchQuery({
     query: gql`
@@ -371,10 +354,7 @@ constructor(
           cerPosition{
             id
             name
-          }
-          textsPosition{
-            id
-            name
+            type
           }
         }
       }
@@ -386,7 +366,6 @@ constructor(
     this.category = data.mexTables.certificatecatagories
     this.langSex = data.mexTables.langSex
     this.cerPosition = data.mexTables.cerPosition
-    this.textsPosition = data.mexTables.textsPosition
 
     if(this.data.cettificateIDs){
       this.form = this.fb.group({
@@ -394,7 +373,6 @@ constructor(
       category:  new FormControl(this.data.cettificateIDs.certificatecatagory, [Validators.required]),
       langSex: new FormControl( this.data.cettificateIDs.langSex, [Validators.required]),
       cerPosition:  new FormControl(this.data.cettificateIDs.cerPosition, [Validators.required]),
-      textsPosition:  new FormControl(this.data.cettificateIDs.textsPosition, [Validators.required]),
     });
 
     }
@@ -410,17 +388,151 @@ constructor(
 
   savaData(){
 
-    if(this.form.invalid) return
-
+    
+ if(this.form.invalid) return
     this.ngxSpinnerService.show()
+    
+    const PageSite = {
+      V: {
+       100: {width: 210, height: 297},
+       85: {width: 178.5, height: 252.45},
+       70: {width: 147, height: 207.9},
+       55: {width: 115.5, height: 163.35},
+       40: {width: 84, height: 118.8},
+       25: {width: 52.5, height: 74.25}
+      },
+      H: {
+        100: {width: 297, height: 210},
+        85: {width: 252.45, height: 178.5},
+        70: {width: 207.9, height: 147},
+        55: {width: 163.35, height: 115.5},
+        40: {width: 118.8, height: 84},
+        25: {width: 74.25, height: 52.5}
+      }
+    }
+    let langSexID = this.form.get('langSex').value
+    let cerPositionID = this.form.get('cerPosition').value
 
     switch (this.data.type) {
       case 'add':
+
+       let dashboards: Certificates = {
+          view: {height: null, width: null, screenSize: null},
+          tabs: [{name: null, details: {contents: []}}]
+        }
+
+        let tabTypes = this.langSex.filter(function(value, index, arr){
+           return value.id == langSexID
+        })
+
+        let cerVH = this.cerPosition.filter(function(value, index, arr){
+          return value.id == cerPositionID
+       })
+
+        const defualtText = `<p>نص تجريبي لإدراج مربع نص في محتوى المستند النصي, <a href="https://ej2.syncfusion.com/home/" target='_blank'>toolbar</a>.
+        مما يعزز من العناية بتجربة المستخدم الناجحة. <span><span class="varablesCode">«</span>____<span class="varablesCode">»</span></span></p>`
         
+        dashboards.tabs.shift()
+        tabTypes[0].name.split('-').forEach((name: string, index: number) => {
+          dashboards.tabs.push({
+            name,
+            details: {contents: [
+                                  { content: `white.jpg` , type: "background" , cols: 50, rows: 50, y: 0, x: 0, dragEnabled: false, resizeEnabled: false, layerIndex :0},
+                                  { content: defualtText , type: "text" , cols: 10, rows: 10, y: 0, x: 0, resizeEnabled: true, layerIndex :1},
+                                  { content: `empty.png` , type: "img" , cols: 10, rows: 10, y: 10, x: 10, resizeEnabled: true, layerIndex :2},
+                                  { content: `qr-code.png` , type: "qr" , cols: 5, rows: 7, y: 20, x: 20, resizeEnabled: true, layerIndex :2}
+                                ]}
+          })
+    
+        })
+
+        dashboards.view.screenSize = 85
+
+        switch (cerVH[0].type) {
+        
+          case 'V':
+      
+            switch (dashboards.view.screenSize) {
+              case 100:
+                dashboards.view.width = PageSite.V[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.V[dashboards.view.screenSize].height
+                break;
+            
+              case 85:
+                dashboards.view.width = PageSite.V[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.V[dashboards.view.screenSize].height
+      
+                break;
+      
+              case 70:
+                dashboards.view.width = PageSite.V[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.V[dashboards.view.screenSize].height
+      
+                break;
+      
+              case 55:
+                dashboards.view.width = PageSite.V[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.V[dashboards.view.screenSize].height
+      
+                break;
+                
+              case 40:
+                dashboards.view.width = PageSite.V[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.V[dashboards.view.screenSize].height
+      
+                break;
+      
+              case 25:
+                dashboards.view.width = PageSite.V[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.V[dashboards.view.screenSize].height
+      
+                break;
+            }
+      
+            break;
+        
+          case 'H':
+          
+            switch (dashboards.view.screenSize) {
+              case 100:
+                dashboards.view.width = PageSite.H[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.H[dashboards.view.screenSize].height
+                break;
+            
+              case 85:
+                dashboards.view.width = PageSite.H[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.H[dashboards.view.screenSize].height
+                break;
+      
+              case 70:
+                dashboards.view.width = PageSite.H[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.H[dashboards.view.screenSize].height
+                break;
+      
+              case 55:
+                dashboards.view.width = PageSite.H[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.H[dashboards.view.screenSize].height
+                break;
+                
+              case 40:
+                dashboards.view.width = PageSite.H[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.H[dashboards.view.screenSize].height
+                break;
+      
+              case 25:
+                dashboards.view.width = PageSite.H[dashboards.view.screenSize].width
+                dashboards.view.height = PageSite.H[dashboards.view.screenSize].height
+                break;
+            }
+      
+            break;
+        }
+
+
         this.apollo.mutate({
           mutation: gql`
-            mutation createCertificate($uID: Int! $certificatename: String $lang_sex_ID: Int $certificatecatagory_ID: Int $cer_position_ID: Int $texts_position_ID: Int){
-              createCertificate(uID: $uID certificatename: $certificatename lang_sex_ID: $lang_sex_ID certificatecatagory_ID: $certificatecatagory_ID cer_position_ID: $cer_position_ID texts_position_ID: $texts_position_ID){
+            mutation createCertificate($uID: Int! $certificatename: String $lang_sex_ID: Int $certificatecatagory_ID: Int $cer_position_ID: Int $certificatesDetails: String!){
+              createCertificate(uID: $uID certificatename: $certificatename lang_sex_ID: $lang_sex_ID certificatecatagory_ID: $certificatecatagory_ID cer_position_ID: $cer_position_ID certificatesDetails: $certificatesDetails){
                   id    
               }
             }
@@ -431,7 +543,7 @@ constructor(
               lang_sex_ID: parseInt(this.form.get('langSex').value),
               certificatecatagory_ID: parseInt(this.form.get('category').value),
               cer_position_ID: parseInt(this.form.get('cerPosition').value),
-              texts_position_ID: parseInt(this.form.get('textsPosition').value)
+              certificatesDetails: JSON.stringify(dashboards)
             }
         }).subscribe(( {data}: any ) => {
     
@@ -450,11 +562,15 @@ constructor(
         break;
     
       case 'edit':
-
+        console.log(this.data.cettificateIDs.rowID)
+        console.log(this.form.get('certificateName').value)
+        console.log(this.form.get('langSex').value)
+        console.log(this.form.get('category').value)
+        console.log(this.form.get('cerPosition').value)
         this.apollo.mutate({
           mutation: gql`
-            mutation updateCertificate($id: ID! $certificatename: String $lang_sex_ID: Int $certificatecatagory_ID: Int $cer_position_ID: Int $texts_position_ID: Int){
-              updateCertificate(id: $id certificatename: $certificatename lang_sex_ID: $lang_sex_ID certificatecatagory_ID: $certificatecatagory_ID cer_position_ID: $cer_position_ID texts_position_ID: $texts_position_ID)
+            mutation updateCertificate($id: ID! $certificatename: String $lang_sex_ID: Int $certificatecatagory_ID: Int $cer_position_ID: Int){
+              updateCertificate(id: $id certificatename: $certificatename lang_sex_ID: $lang_sex_ID certificatecatagory_ID: $certificatecatagory_ID cer_position_ID: $cer_position_ID )
             }
             `,
             variables:{
@@ -463,7 +579,6 @@ constructor(
               lang_sex_ID: parseInt(this.form.get('langSex').value),
               certificatecatagory_ID: parseInt(this.form.get('category').value),
               cer_position_ID: parseInt(this.form.get('cerPosition').value),
-              texts_position_ID: parseInt(this.form.get('textsPosition').value)
             }
         }).subscribe(( {data}: any ) => {
     

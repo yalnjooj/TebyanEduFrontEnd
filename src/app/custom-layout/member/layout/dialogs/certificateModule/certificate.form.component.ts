@@ -11,8 +11,10 @@ import gql from 'graphql-tag';
 import { Certificate } from 'crypto';
 import { DisplayGrid, Draggable, GridsterComponent, GridsterConfig, GridsterItem, GridsterItemComponentInterface, GridType }  from 'angular-gridster2';
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
-import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, FontFamilyModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, FontFamilyModel, RichTextEditorComponent, ToolbarType } from '@syncfusion/ej2-angular-richtexteditor';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { CheckBoxComponent } from '@syncfusion/ej2-angular-buttons';
+import { ComponentsOverviewDialogsComponent } from 'src/app/custom-layout/admin/pages/ui/components/components-overview/components/components-overview-dialogs/components-overview-dialogs.component';
 
 // interface Certificates {
 //   view?: {height: number, width: number},
@@ -51,11 +53,11 @@ export interface Certificates {
     {
       name?: string,
       details?: {
-      background?: string,
-      contents?: Array<GridsterItem | {type?: 'img' | 'text' | 'background' | 'qr', content?: string, dragEnabled: boolean}>
+      contents?: Array<GridsterItem | {type?: 'img' | 'text' | 'background' | 'qr', content?: string, dragEnabled: boolean, cols: number, rows: number, x: number, y: number, }>
     }
   }>
 }
+
 
 interface Safe extends GridsterConfig {
   draggable: Draggable;
@@ -63,7 +65,6 @@ interface Safe extends GridsterConfig {
 
 @Component({
   selector: 'certificate-component',
-  encapsulation: ViewEncapsulation.None,
   templateUrl: './certificate.form.component.html',
   styleUrls: ['./certificate.form.component.css'],
   providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService],
@@ -90,38 +91,56 @@ export class CertificateFormComponent implements OnInit {
     view: {height: null, width: null, screenSize: null},
     tabs: [{name: null, details: {contents: []}}]
   }
+  dashboards2: Certificates = {
+    view: {height: null, width: null, screenSize: null},
+    tabs: [{name: null, details: {contents: []}}]
+  }
   @ViewChild('tabGroup') tabGroup;
-  // public tools: object = {
-  //   items: [
-  //          'Bold', 'Italic', 'Underline', 'StrikeThrough', '|',
-  //          'FontName', 'FontSize', 'FontColor', 'BackgroundColor', '|',
-  //          'LowerCase', 'UpperCase', '|', 'Undo', 'Redo', '|',
-  //          'Formats', 'Alignments', '|', 'OrderedList', 'UnorderedList', '|',
-  //          'Indent', 'Outdent', '|', 'CreateLink','CreateTable',
-  //          'Image', '|', 'ClearFormat', 'Print', 'SourceCode', '|', 'FullScreen']
-  //  };
+//   public tools: ToolbarModule = {
+//     items: ['Bold', 'Italic', 'Underline', 'StrikeThrough',
+//         'FontName', 'FontSize', 'FontColor', 'BackgroundColor',
+//         'LowerCase', 'UpperCase','SuperScript', 'SubScript', '|',
+//         'Formats', 'Alignments', 'OrderedList', 'UnorderedList',
+//         'Outdent', 'Indent', '|',
+//         'CreateTable', 'CreateLink', 'Image', 'FileManager', '|', 'ClearFormat', 'Print',
+//         'SourceCode', 'FullScreen', '|', 'Undo', 'Redo']
+// };
 
 
-  @ViewChild('inlineRTE')
-  public rteObj: RichTextEditorComponent;
+  @ViewChild('inlineRTE') inlineRTE: RichTextEditorComponent;
+  @ViewChild('rteFloatObj') rteFloatObj;
+  tabIndex: number;
+  isSaved: boolean = true;
+  tagsLenght1 = 0;
 
+  tagsNames: any = [{ start: 0, end: 0, startTag: 0, endTag: 0, text: '' }];
+
+  public fontFamily: Object = {
+    items: [
+      {text: "Cairo", value: "Cairo", command: "Font", subCommand: "FontName"},
+      {text: "Segoe UI", value: "Segoe UI", class: "e-segoe-ui",  command: "Font", subCommand: "FontName"},
+      {text: "Roboto", value: "Roboto",  command: "Font", subCommand: "FontName"}, // here font is added
+      {text: "Great vibes", value: "Great Vibes,cursive",  command: "Font", subCommand: "FontName"}, // here font is added
+      {text: "Impact", value: "Impact,Charcoal,sans-serif", class: "e-impact", command: "Font", subCommand: "FontName"},
+      {text: "Tahoma", value: "Tahoma,Geneva,sans-serif", class: "e-tahoma", command: "Font", subCommand: "FontName"},
+    ]
+  };
+  
   public toolbarSettings: ToolbarModule = {
-      items: ['Bold', 'Italic', 'Underline',
-          'Formats', '-', 'Alignments', 'OrderedList', 'UnorderedList',
-          'CreateLink']
+      items: [
+           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor',
+             '-', 'ClearFormat','CreateLink']
   };
   public format: FormatModel = {
       width: 'auto'
   };
-  public fontFamily: FontFamilyModel = {
-      width: 'auto'
-  };
+  // public fontFamily: FontFamilyModel = {
+  //     width: 'auto'
+  // };
   public inlineMode: object = { enable: true, onSelection: true };
-
   
   
   constructor(
-    private rd: Renderer2,
     private dialogRef: MatDialogRef<CertificateFormComponent>,
     @Inject(MAT_DIALOG_DATA) public dataFromCertificate: any,
     private ngxSpinnerService: NgxSpinnerService,
@@ -144,23 +163,26 @@ export class CertificateFormComponent implements OnInit {
     }
 
     static itemChange(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
-      // tslint:disable-next-line:no-console
-     // console.info('itemChanged', item, itemComponent);
+      // tslint:disable-next-line:no-console this.tabGroup.selectedIndex 
+    //  console.info('itemChanged', item, itemComponent);
+     // console.info('selectedIndex', this.tabInde);
+    //  this.dashboards.tabs[tap].details.contents.splice(this.dashboards.tabs[tap].details.contents.indexOf(item),1)
+
     }
   
     static itemResize(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
       // tslint:disable-next-line:no-console
-     // console.info('itemResized', item, itemComponent);
+    //  console.info('itemResized', item, itemComponent);
     }
   
     static itemInit(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
       // tslint:disable-next-line:no-console
-     // console.info('itemInitialized', item, itemComponent);
+     //console.info('itemInitialized', item, itemComponent);
     }
   
     static itemRemoved(item: GridsterItem, itemComponent: GridsterItemComponentInterface): void {
       // tslint:disable-next-line:no-console
-     // console.info('itemRemoved', item, itemComponent);
+      // console.info('itemRemoved', item, itemComponent,);
     }
   
     static itemValidate(item: GridsterItem): boolean {
@@ -183,13 +205,16 @@ export class CertificateFormComponent implements OnInit {
     }
 
 ngOnInit(){
+
+  this.ngxSpinnerService.show()
+
   this.options = {
     itemChangeCallback: CertificateFormComponent.itemChange,
     itemResizeCallback: CertificateFormComponent.itemResize,
     itemInitCallback: CertificateFormComponent.itemInit,
     itemRemovedCallback: CertificateFormComponent.itemRemoved,
     itemValidateCallback: CertificateFormComponent.itemValidate,
-  gridType: GridType.Fit,
+    gridType: GridType.Fit,
     displayGrid: DisplayGrid.Always,
     pushItems: false,
     swap: true,
@@ -224,90 +249,145 @@ ngOnInit(){
       enabled: true
     }
   };
-
   
   this.apollo.watchQuery({
-  query: gql`
-      query certificateDetail($uID: Int! $ceID: Int!){
-        certificateDetail(uID: $uID ceID: $ceID){
-          id
-          certificatesDetails
-          createdAt
-          updatedAt
-        }
+    query: gql`
+    query certificateDetails($id: Int! $uID: ID!){
+      certificateDetails(id: $id uID: $uID){
+        id
+        certificatesDetails
       }
-    `,
-    variables: {
-      uID: Number(this.dataFromCertificate.userID),
-      ceID: Number(this.dataFromCertificate.data.rowID)
     }
+  `,
+  variables: {
+    uID: parseInt(this.dataFromCertificate.uID),
+    id: parseInt(this.dataFromCertificate.cerID)
+  }
 }).valueChanges.subscribe(( {data}: any ) => {
 
-  if(data.certificateDetail[0] == undefined){
-    this.dashboards.tabs.shift()
-
-    switch (this.dataFromCertificate.data.cerPositionType) {
-      case 'V':
-        this.dashboards.view.width = 178.5
-        this.dashboards.view.height = 252.45
-        break;
-    
-      case 'H':
-        this.dashboards.view.width = 252.45
-        this.dashboards.view.height = 178.5
-        break;
-    }
- 
-    this.dataFromCertificate.data.langSex.split('-').forEach((name: string, index: number) => {
-      this.dashboards.tabs.push({
-        name,
-        details: {contents: [
-                              { content: `http://localhost:3000/uploadedFiles/profiles/white.jpg` , type: "background" , cols: 50, rows: 50, y: 0, x: 0, dragEnabled: false, resizeEnabled: false, layerIndex :0},
-                              { content: `http://localhost:3000/uploadedFiles/profiles/empty.png` , type: "text" , cols: 10, rows: 10, y: 0, x: 0, resizeEnabled: true, layerIndex :1},
-                              { content: `http://localhost:3000/uploadedFiles/profiles/empty.png` , type: "img" , cols: 10, rows: 10, y: 0, x: 0, resizeEnabled: true, layerIndex :2},
-                            ]}
-      })
-
-    })
-    return
-  }
-
+  this.dashboards = JSON.parse(data.certificateDetails[0].certificatesDetails)
+  this.dashboards2 = this.dashboards;
   
-  this.dashboards = JSON.parse(data.certificateDetail[0].certificatesDetails)
   this.changePosition(this.dashboards.view.screenSize)
 
-  this.dashboards.tabs.forEach(element =>{
-    element.details.contents.forEach(element =>{
-      
-      if((element.content != null)){
 
-        if(element.content == 'empty.png'){
+  let ofLE1: any = [];
+  let ofLE2: any = [];
+  this.dashboards.tabs.forEach((element, index) =>{
 
-            if(element.type == 'background'){
-              element.content = `http://localhost:3000/uploadedFiles/profiles/white.jpg`;
-            } else {
-              element.content = `http://localhost:3000/uploadedFiles/profiles/${element.content}`;
-            }
+    switch (index) {
+      case 0:
 
-        } else {
-          element.content = element.content;
-        }
-      }
-    })
+        ofLE1.push(element.details.contents)
+        break;
+
+      case 1:
+
+        ofLE2.push(element.details.contents)
+        break;
+
+    }
   })
 
+
+  if(ofLE2[0] == undefined){
+    this.tagsLenght1 = this.discoveryTags(ofLE1[0])
+  } else {
+    // console.log(ofLE1[0].concat(ofLE2[0]))
+    this.tagsLenght1 = this.discoveryTags(ofLE1[0].concat(ofLE2[0]))
+  }
+
+
+
+  this.ngxSpinnerService.hide()
 })
 
 }
 
+changeHtmlValue(inlineRTE, tap, item){
+
+  
+    this.isSaved = false;
+  
+    this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = inlineRTE.getHtml()
+    
+    let ofLE1: any = [];
+    let ofLE2: any = [];
+    this.dashboards.tabs.forEach((element, index) =>{
+  
+      switch (index) {
+        case 0:
+  
+          ofLE1.push(element.details.contents)
+          break;
+  
+        case 1:
+  
+          ofLE2.push(element.details.contents)
+          break;
+  
+      }
+    })
+  
+  
+    if(ofLE2[0] == undefined){
+      this.tagsLenght1 = this.discoveryTags(ofLE1[0])
+    } else {
+      // console.log(ofLE1[0].concat(ofLE2[0]))
+      this.tagsLenght1 = this.discoveryTags(ofLE1[0].concat(ofLE2[0]))
+    }
+  
+}
+
+// changeItemSize(tap, item){
+  
+// const newCols = item.cols
+// const newRows = item.rows
+// const newX = item.x
+// const newY = item.y
+// const oldCols = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].cols
+// const oldRows = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].rows
+// const oldX = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].x
+// const oldY = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].y
+
+// console.log(oldCols)
+// console.log(newCols)
+// console.log(newCols != oldCols)
+// console.log('----------------')
+
+// console.log(oldRows)
+// console.log(newRows)
+// console.log(newRows != oldRows)
+// console.log('----------------')
+
+// console.log(newX)
+// console.log(oldX)
+// console.log(newX != oldX)
+// console.log('----------------')
+
+
+// console.log(newY)
+// console.log(oldY)
+// console.log(newY != oldY)
+// console.log('----------------')
+
+
+// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].cols = item.cols
+// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].rows = item.rows
+// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].x = item.x
+// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].y = item.y
+
+// }
+
+
 ngAfterViewInit(){
-  this.tabGroup.selectedIndex
+  this.tabIndex = this.tabGroup.selectedIndex
 }
 
 
 
 changedOptions(tabGroup) {
-  this.tabGroup = tabGroup
+  this.tabIndex = tabGroup.selectedIndex
 
   if (this.options.api && this.options.api.optionsChanged) {
     this.options.api.optionsChanged();
@@ -317,14 +397,143 @@ changedOptions(tabGroup) {
 
 }
 
-removeItem($event, tap, item) {
-  $event.preventDefault();
-  $event.stopPropagation();
-  this.dashboards.tabs[tap].details.contents.splice(this.dashboards.tabs[tap].details.contents.indexOf(item),1)
+removeItem($event, tap, item, type) {
+
+  switch (type) {
+    case 'img':
+      
+  let deletFile = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content
+
+  if(deletFile == 'empty.png'){
+
+    this.dashboards.tabs[tap].details.contents.splice(this.dashboards.tabs[tap].details.contents.indexOf(item),1)
+
+    this.apollo.mutate({
+      mutation: gql`
+          mutation updateCertificate($id: ID! $certificatesDetails: String){
+            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+          }
+        `,
+        variables: {
+          id: parseInt(this.dataFromCertificate.cerID),
+          certificatesDetails: JSON.stringify(this.dashboards)
+        }
+    }).subscribe(( {data}: any ) => {
+      this.ngxSpinnerService.hide() 
+    })
+
+
+    this.ngxSpinnerService.hide() 
+return
+  }
+
+  
+  this.apollo.mutate({
+    mutation: gql`
+        mutation mutatFiles($files: Upload $status: String! $fileName: String){
+          mutatFiles(files: $files status: $status fileName: $fileName)
+        }
+      `,
+      variables: {
+        files: null,
+        fileName: deletFile,
+        status: 'delete'
+      },
+      context: {
+        useMultipart: true
+      }
+  }).subscribe(( {data}: any ) => {
+    
+    this.dashboards.tabs[tap].details.contents.splice(this.dashboards.tabs[tap].details.contents.indexOf(item),1)
+
+    this.apollo.mutate({
+      mutation: gql`
+          mutation updateCertificate($id: ID! $certificatesDetails: String){
+            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+          }
+        `,
+        variables: {
+          id: parseInt(this.dataFromCertificate.cerID),
+          certificatesDetails: JSON.stringify(this.dashboards)
+        }
+    }).subscribe(( {data}: any ) => {
+      this.ngxSpinnerService.hide() 
+    })
+
+
+    this.ngxSpinnerService.hide() 
+  })
+
+      break;
+  
+      case 'text':
+      case 'qr':
+    
+      this.dashboards.tabs[tap].details.contents.splice(this.dashboards.tabs[tap].details.contents.indexOf(item),1)
+  
+      this.apollo.mutate({
+        mutation: gql`
+            mutation updateCertificate($id: ID! $certificatesDetails: String){
+              updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+            }
+          `,
+          variables: {
+            id: parseInt(this.dataFromCertificate.cerID),
+            certificatesDetails: JSON.stringify(this.dashboards)
+          }
+      }).subscribe(( {data}: any ) => {
+        this.ngxSpinnerService.hide() 
+      })
+  
+  
+      this.ngxSpinnerService.hide()
+
+      break;
+  }
+
+
+
 }
 
 removeBackground(tap, item){
-  this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = 'http://localhost:3000/uploadedFiles/profiles/empty.png'
+
+ let deletFile = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content
+
+  this.apollo.mutate({
+    mutation: gql`
+        mutation mutatFiles($files: Upload $status: String! $fileName: String){
+          mutatFiles(files: $files status: $status fileName: $fileName)
+        }
+      `,
+      variables: {
+        files: null,
+        fileName: deletFile,
+        status: 'delete'
+      },
+      context: {
+        useMultipart: true
+      }
+  }).subscribe(( {data}: any ) => {
+    this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = 'white.jpg';
+
+    this.apollo.mutate({
+      mutation: gql`
+          mutation updateCertificate($id: ID! $certificatesDetails: String){
+            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+          }
+        `,
+        variables: {
+          id: parseInt(this.dataFromCertificate.cerID),
+          certificatesDetails: JSON.stringify(this.dashboards)
+        }
+    }).subscribe(( {data}: any ) => {
+      this.ngxSpinnerService.hide() 
+    })
+
+
+    this.ngxSpinnerService.hide() 
+  })
+
 }
 
 addItem(type) {
@@ -338,63 +547,238 @@ addItem(type) {
 
   switch (type) {
     case 'text':
-      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `http://localhost:3000/uploadedFiles/profiles/empty.png` , type: "text" , cols: 20, rows: 20, y: 0, x: 0, resizeEnabled: true, layerIndex :index+1});
+      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `<b>نص تجريبي</b>` , type: "text" , cols: 20, rows: 20, y: 0, x: 0, resizeEnabled: true, layerIndex :index+1});
       break;
   
     case 'img':
-      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `http://localhost:3000/uploadedFiles/profiles/empty.png` , type: "img" , cols: 10, rows: 10, y: 15, x: 15, resizeEnabled: true, layerIndex :index+1});
+      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `empty.png` , type: "img" , cols: 10, rows: 10, y: 15, x: 15, resizeEnabled: true, layerIndex :index+1});
       break;
 
     case 'qr':
-      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `http://localhost:3000/uploadedFiles/profiles/empty.png` , type: "qr" , cols: 7, rows: 7, y: 10, x: 10, resizeEnabled: true, layerIndex :index+1});
+      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `qr-code.png` , type: "qr" , cols: 5, rows: 7, y: 10, x: 10, resizeEnabled: true, layerIndex :index+1});
       break;
   }
 
 }
 
 
+onSelectFile(selectType, tap, item, file: File){
 
-onSelectFile(selectType, tap, item, file){
 
-   //Show image preview
- let reader = new FileReader();
- reader.readAsDataURL(file);
- 
-  switch (selectType) {
-
-    case 'Imagebackground':
-    reader.onload = (event: any) => {
-      this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = event.target.result;
-      }
-      break;
+  if(!file) return;
   
-    case 'ImageItem':
-      reader.onload = (event: any) => {
-        this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = event.target.result;
+  const imgSize = parseFloat(((file.size / (1024*1024)).toFixed(2)))
+  let message = 'لم يتم اختيار صورة !!';
+  var pattern = /image-*/;
+
+  
+
+    if (file.type.match(pattern)) {
+      if((imgSize > 1)){
+
+        message = 'يجب أن يكون حجم الصورة أقل من 1MB !!';
+
+        } else {
+          message = 'تم عرض الصورة بنجاح !!';
+
+          //Show image preview
+          switch (selectType) {
+        
+            case 'Imagebackground':
+
+              if(this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content == 'white.jpg'){  
+              console.log('create')
+
+                this.apollo.mutate({
+                  mutation: gql`
+                      mutation mutatFiles($files: Upload $status: String! $fileName: String){
+                        mutatFiles(files: $files status: $status fileName: $fileName)
+                      }
+                    `,
+                    variables: {
+                      files: file,
+                      fileName: null,
+                      status: 'create'
+                    },
+                    context: {
+                      useMultipart: true
+                    }
+                }).subscribe(( {data}: any ) => {
+
+                    this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = data.mutatFiles;
+
+                    this.apollo.mutate({
+                      mutation: gql`
+                          mutation updateCertificate($id: ID! $certificatesDetails: String){
+                            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+                          }
+                        `,
+                        variables: {
+                          id: parseInt(this.dataFromCertificate.cerID),
+                          
+                          certificatesDetails: JSON.stringify(this.dashboards)
+                        }
+                    }).subscribe(( {data}: any ) => {
+                      this.ngxSpinnerService.hide() 
+                    })
+
+
+                  this.ngxSpinnerService.hide() 
+                })
+
+                
+              } else {
+                console.log('update')
+                let updateFile = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content
+
+                this.apollo.mutate({
+                  mutation: gql`
+                      mutation mutatFiles($files: Upload $status: String! $fileName: String){
+                        mutatFiles(files: $files status: $status fileName: $fileName)
+                      }
+                    `,
+                    variables: {
+                      files: file,
+                      fileName: updateFile,
+                      status: 'update'
+                    },
+                    context: {
+                      useMultipart: true
+                    }
+                }).subscribe(( {data}: any ) => {
+
+                  this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = data.mutatFiles;
+
+                    this.apollo.mutate({
+                      mutation: gql`
+                          mutation updateCertificate($id: ID! $certificatesDetails: String){
+                            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+                          }
+                        `,
+                        variables: {
+                          id: parseInt(this.dataFromCertificate.cerID),
+                          
+                          certificatesDetails: JSON.stringify(this.dashboards)
+                        }
+                    }).subscribe(( {data}: any ) => {
+                      this.ngxSpinnerService.hide() 
+                    })
+
+
+                  this.ngxSpinnerService.hide() 
+                })
+
+              }
+
+              break;
+          
+            case 'ImageItem':
+
+              if(this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content == 'empty.png'){  
+                console.log('create')
+  
+                  this.apollo.mutate({
+                    mutation: gql`
+                        mutation mutatFiles($files: Upload $status: String! $fileName: String){
+                          mutatFiles(files: $files status: $status fileName: $fileName)
+                        }
+                      `,
+                      variables: {
+                        files: file,
+                        fileName: null,
+                        status: 'create'
+                      },
+                      context: {
+                        useMultipart: true
+                      }
+                  }).subscribe(( {data}: any ) => {
+  
+                   this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = data.mutatFiles;
+  
+
+                          
+                    this.apollo.mutate({
+                      mutation: gql`
+                          mutation updateCertificate($id: ID! $certificatesDetails: String){
+                            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+                          }
+                        `,
+                        variables: {
+                          id: parseInt(this.dataFromCertificate.cerID),
+                          
+                          certificatesDetails: JSON.stringify(this.dashboards)
+                        }
+                    }).subscribe(( {data}: any ) => {
+                      this.ngxSpinnerService.hide() 
+                    })
+  
+                    this.ngxSpinnerService.hide() 
+                  })
+  
+                  
+                } else {
+                  console.log('update')
+                  let updateFile = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content
+  
+                  this.apollo.mutate({
+                    mutation: gql`
+                        mutation mutatFiles($files: Upload $status: String! $fileName: String){
+                          mutatFiles(files: $files status: $status fileName: $fileName)
+                        }
+                      `,
+                      variables: {
+                        files: file,
+                        fileName: updateFile,
+                        status: 'update'
+                      },
+                      context: {
+                        useMultipart: true
+                      }
+                  }).subscribe(( {data}: any ) => {
+  
+                    this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].content = data.mutatFiles;
+  
+                      this.apollo.mutate({
+                        mutation: gql`
+                            mutation updateCertificate($id: ID! $certificatesDetails: String){
+                              updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+                            }
+                          `,
+                          variables: {
+                            
+                            ceID: parseInt(this.dataFromCertificate.ceID),
+                            certificatesDetails: JSON.stringify(this.dashboards)
+                          }
+                      }).subscribe(( {data}: any ) => {
+                        this.ngxSpinnerService.hide() 
+                      })
+  
+  
+                    this.ngxSpinnerService.hide() 
+                  })
+  
+                }                
+              break;
+          }
+
         }
-      break;
 
-  }
+    
+    } else {
+      message = 'صيغة غير مقبولة !!';
+    }
 
-}
-
-
-
-
-moveItem(mouseEvent, tap, item){
-
-  if (mouseEvent == 'mousedown') {
-    console.log(this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].dragEnabled)
-
-    this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].dragEnabled = true
-    console.log(this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].dragEnabled)
-  } else if (mouseEvent == 'mouseup') {
-
-   // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].dragEnabled = false
-
-  }
+      this.snackBar.open(message,'إغلاق', {
+        duration: 6000,
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+      });
   
+
+
 }
+
+
 
 changePosition(screenSize){
 
@@ -417,7 +801,7 @@ changePosition(screenSize){
     }
   }
 
-  switch (this.dataFromCertificate.data.cerPositionType) {
+  switch (this.dataFromCertificate.cerPositionType) {
 
     case 'V':
 
@@ -498,28 +882,123 @@ changePosition(screenSize){
   }
 }
 
+addVarablesCode(){
+  
+  this.inlineRTE.executeCommand('insertHTML', '<span style="font-size: 14pt;" class="varablesCode"><span style="font-size: 14pt; color: red;">«</span>____<span style="font-size: 14pt; color: red;">»</span></span>');
 
-  conform() {
-    this.dialogRef.close(true);
-  //  this.ngxSpinnerService.hide()  
+}
+
+discoveryTags(textVal){
+
+  let arrOFop = [{start: null, end: null, startTag: null,  endTag: null, text: null}]
+
+  let elementVal = textVal.filter((element, index)=>{
+    return element.type == 'text'
+  })
+  
+  let context = '';
+  elementVal.forEach((element, index)=>{
+    context += element.content
+  })
+
+
+  
+  const val = context.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, '');
+  arrOFop.shift()
+    var start: number;
+    var end: number;
+    var startTag: string;
+    var endTag: string;
+
+val.split('').forEach((value, index) =>{
+
+       if(value == '«'){
+       start = index;
+       startTag = value;
+     }
+
+    for(let i = index; val.length > i ; i++){
+
+       if(value == '»'){
+       end = index;
+       endTag = value; 
+
+    arrOFop.push({start, startTag, end, endTag, text: val.slice(start+1, end)})
+       break;
+     }
+
+     i++
+    }
+
+  })
+
+let mm =  arrOFop.filter(function(value, index, arr){
+  if(value.text.search('«') >= 1 || value.text.search('»') >= 1 || value.text.search('«»') >= 1){
+    return false
+  } else {
+    return true
   }
+    
+});
 
-  formSettings(data) {
-    this.dialog.open(CertificateFormComponent,{
-      disableClose: true,
-      width: '100vw',
-      maxWidth: '100vw',
-      data
-    }).afterClosed().subscribe(result => {
 
-      if(JSON.parse(result)){
-        this.snackBar.open('تم الحفظ','إغلاق', {
-          duration: 6000,
-          horizontalPosition: this.horizontalPosition,
-          verticalPosition: this.verticalPosition,
-        });
+function removeDuplicates(data, key) {
+  
+  return [
+    ...new Map(data.map(item => [key(item), item])).values()
+  ]
 
-      }
-    });  
-  }
+};
+
+
+this.tagsNames = removeDuplicates(mm, item => item.text)
+
+return this.tagsNames.length
+}
+
+
+conform() {
+    this.ngxSpinnerService.show()
+
+    this.apollo.mutate({
+      mutation: gql`
+          mutation updateCertificate($id: ID! $certificatesDetails: String){
+            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
+          }
+        `,
+        variables: {
+          id: parseInt(this.dataFromCertificate.cerID),
+          certificatesDetails: JSON.stringify(this.dashboards)
+        }
+    }).subscribe(( {data}: any ) => {
+      this.isSaved = true;
+      this.ngxSpinnerService.hide() 
+    })
+
+    this.ngxSpinnerService.hide() 
+   // this.dialogRef.close(true);
+}
+
+onCreate(){
+ // this.discoveryTags(textVal)
+}
+
+formSettings(data) {
+  this.dialog.open(CertificateFormComponent,{
+    disableClose: true,
+    width: '100vw',
+    maxWidth: '100vw',
+    data
+  }).afterClosed().subscribe(result => {
+
+    if(JSON.parse(result)){
+      this.snackBar.open('تم الحفظ','إغلاق', {
+        duration: 6000,
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+      });
+
+    }
+  });  
+}
 }
