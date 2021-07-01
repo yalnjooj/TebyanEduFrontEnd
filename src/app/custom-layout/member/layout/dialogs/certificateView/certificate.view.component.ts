@@ -1,22 +1,15 @@
-import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Inject, OnInit, ViewChild, NgZone, Renderer2, ViewChildren, QueryList, ChangeDetectionStrategy, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import icClose from '@iconify/icons-ic/twotone-close';
-import { Apollo} from 'apollo-angular';
+import { Apollo } from 'apollo-angular';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { fromEvent } from 'rxjs/internal/observable/fromEvent';
-import { debounceTime } from 'rxjs/operators';
 import gql from 'graphql-tag';
-import { Certificate } from 'crypto';
 import { DisplayGrid, Draggable, GridsterComponent, GridsterConfig, GridsterItem, GridsterItemComponentInterface, GridType }  from 'angular-gridster2';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
-import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, FontFamilyModel, RichTextEditorComponent, ToolbarType } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-import { CheckBoxComponent } from '@syncfusion/ej2-angular-buttons';
-import { ComponentsOverviewDialogsComponent } from 'src/app/custom-layout/admin/pages/ui/components/components-overview/components/components-overview-dialogs/components-overview-dialogs.component';
-import { Subscription } from 'rxjs';
-
+import { jsPDF } from 'jspdf'
+import domtoimage from 'dom-to-image';
 
 export interface Certificates {
   view?: {height?: number, width?: number, screenSize?: number},
@@ -24,26 +17,34 @@ export interface Certificates {
     {
       name?: string,
       details?: {
-      contents?: Array<GridsterItem | {type?: 'img' | 'text' | 'background' | 'qr', content?: string, dragEnabled: boolean, cols: number, rows: number, x: number, y: number, }>
-    }
+      contents?: Array<GridsterItem | {type?: 'img' | 'text' | 'background' | 'qr', content?: string, dragEnabled: boolean, resizeEnabled: boolean, cols: number, rows: number, x: number, y: number, }>
+    } 
   }>
 }
 
+
+
 @Component({
   selector: 'certificate-component',
-  templateUrl: './certificate.form.component.html',
-  styleUrls: ['./certificate.form.component.css'],
+  templateUrl: './certificate.view.component.html',
+  styleUrls: ['./certificate.view.component.css'],
   providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService],
   
   // changeDetection: ChangeDetectionStrategy.OnPush,
   // encapsulation: ViewEncapsulation.None
 })
-export class CertificateFormComponent implements OnInit, OnDestroy {
+export class CertificateViewComponent implements OnInit {
 
+  // certificates: Certificates = {view: {height: null, width: null}, tabs: [{ name: null, details: {background: null, components: {images: [{img: null, width: null, height: null, x: null, y: null, zIndex: null}], texts: [{text: null, width: null, height: null, x: null, y: null, zIndex: null}]}}}]}
 
   icClose = icClose;
   horizontalPosition: MatSnackBarHorizontalPosition = 'center';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+
+  /**
+ *<a (click)="formSettings({rowID: element.rowID, certificateName: element.certificateName, langSex: element.langSex, cerPosition: element.cerPosition, textsPosition: element.textsPosition,
+  langSexType: element.langSexType, cerPositionType: element.cerPositionType, textsPositionType: element.textsPositionType})"
+ */
 
   
   options: GridsterConfig;
@@ -67,8 +68,9 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
 // };
 
 
-  @ViewChild('inlineRTE') inlineRTE: RichTextEditorComponent;
-  @ViewChild('rteFloatObj') rteFloatObj;
+@ViewChild('inlineRTE') inlineRTE: RichTextEditorComponent;
+@ViewChild('inlineRTE') inlineRTE2: ElementRef;
+@ViewChild('rteFloatObj') rteFloatObj;
   tabIndex: number;
   isSaved: boolean = true;
   tagsLenght1 = 0;
@@ -101,12 +103,12 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
   
   
   constructor(
-    private dialogRef: MatDialogRef<CertificateFormComponent>,
+    private dialogRef: MatDialogRef<CertificateViewComponent>,
     @Inject(MAT_DIALOG_DATA) public dataFromCertificate: any,
     private ngxSpinnerService: NgxSpinnerService,
     public dialog: MatDialog,
     private apollo: Apollo,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar    ) { }
 
     static eventStart(item: GridsterItem, itemComponent: GridsterItemComponentInterface, event: MouseEvent): void {
       // tslint:disable-next-line:no-console
@@ -164,22 +166,20 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
      // console.info('gridSizeChanged', grid);
     }
 
-    private querySubscription: Subscription;
-
-    ngOnInit(){
+ngOnInit(){
 
   this.ngxSpinnerService.show()
 
   this.options = {
-    itemChangeCallback: CertificateFormComponent.itemChange,
-    itemResizeCallback: CertificateFormComponent.itemResize,
-    itemInitCallback: CertificateFormComponent.itemInit,
-    itemRemovedCallback: CertificateFormComponent.itemRemoved,
-    itemValidateCallback: CertificateFormComponent.itemValidate,
+    itemChangeCallback: CertificateViewComponent.itemChange,
+    itemResizeCallback: CertificateViewComponent.itemResize,
+    itemInitCallback: CertificateViewComponent.itemInit,
+    itemRemovedCallback: CertificateViewComponent.itemRemoved,
+    itemValidateCallback: CertificateViewComponent.itemValidate,
     gridType: GridType.Fit,
     displayGrid: DisplayGrid.Always,
     pushItems: false,
-    swap: true,
+    swap: false,
     swapWhileDragging: false,
     margin: 0,
     allowMultiLayer: true,
@@ -198,21 +198,21 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
     minCols: 1,
     draggable: {
       delayStart: 10,
-        enabled: true,
+        enabled: false,
         ignoreContentClass: 'gridster-item-content',
         ignoreContent: false,
         dragHandleClass: 'drag-handler',
-        stop: CertificateFormComponent.eventStop,
-        start: CertificateFormComponent.eventStart,
+        stop: CertificateViewComponent.eventStop,
+        start: CertificateViewComponent.eventStart,
         dropOverItems: false,
-        dropOverItemsCallback: CertificateFormComponent.overlapEvent,
+        dropOverItemsCallback: CertificateViewComponent.overlapEvent,
     },
     resizable: {
-      enabled: true
+      enabled: false
     }
   };
   
-this.querySubscription = this.apollo.watchQuery({
+  this.apollo.watchQuery({
     query: gql`
     query certificateDetails($id: Int! $uID: ID!){
       certificateDetails(id: $id uID: $uID){
@@ -228,11 +228,14 @@ this.querySubscription = this.apollo.watchQuery({
 }).valueChanges.subscribe(( {data}: any ) => {
 
   this.dashboards = JSON.parse(data.certificateDetails[0].certificatesDetails)
-  this.dashboards2 = this.dashboards;
   
   this.changePosition(this.dashboards.view.screenSize)
 
-
+  this.dashboards.tabs.forEach((element, index) =>{
+    element.details.contents.forEach(element =>{
+      element.resizeEnabled = false
+    })
+  })
   let ofLE1: any = [];
   let ofLE2: any = [];
   this.dashboards.tabs.forEach((element, index) =>{
@@ -301,45 +304,6 @@ changeHtmlValue(inlineRTE, tap, item){
   
 }
 
-// changeItemSize(tap, item){
-  
-// const newCols = item.cols
-// const newRows = item.rows
-// const newX = item.x
-// const newY = item.y
-// const oldCols = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].cols
-// const oldRows = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].rows
-// const oldX = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].x
-// const oldY = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].y
-
-// console.log(oldCols)
-// console.log(newCols)
-// console.log(newCols != oldCols)
-// console.log('----------------')
-
-// console.log(oldRows)
-// console.log(newRows)
-// console.log(newRows != oldRows)
-// console.log('----------------')
-
-// console.log(newX)
-// console.log(oldX)
-// console.log(newX != oldX)
-// console.log('----------------')
-
-
-// console.log(newY)
-// console.log(oldY)
-// console.log(newY != oldY)
-// console.log('----------------')
-
-
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].cols = item.cols
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].rows = item.rows
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].x = item.x
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].y = item.y
-
-// }
 
 
 ngAfterViewInit(){
@@ -919,30 +883,64 @@ return this.tagsNames.length
 }
 
 
-conform() {
+
+
+
+@ViewChild('print') printed: ElementRef;  
+
+async print(option) {
     this.ngxSpinnerService.show()
 
-    this.apollo.mutate({
-      mutation: gql`
-          mutation updateCertificate($id: ID! $certificatesDetails: String){
-            updateCertificate(id: $id certificatesDetails: $certificatesDetails)
-          }
-        `,
-        variables: {
-          id: parseInt(this.dataFromCertificate.cerID),
-          certificatesDetails: JSON.stringify(this.dashboards)
-        }
-    }).subscribe(( {data}: any ) => {
-      this.isSaved = true;
+    
+    const doc = new jsPDF(this.dataFromCertificate.cerPositionType == 'V'? 'p': 'l', 'mm', 'a4')
+    const width = doc.internal.pageSize.width;
+    const height = doc.internal.pageSize.height;
+  
+    const scale = 3
+    const node = this.printed.nativeElement
 
-      this.snackBar.open('تم الحفظ','إغلاق', {
-        duration: 6000,
-        horizontalPosition: this.horizontalPosition,
-        verticalPosition: this.verticalPosition,
-      });
+    const style = {
+        transform: 'scale('+scale+')',
+        transformOrigin: 'top left',
+        width: node.offsetWidth + "px",
+        height: node.offsetHeight + "px"
+    }
+
+    const param = {
+        height: node.offsetHeight * scale,
+        width: node.offsetWidth * scale,
+          quality: 1,
+        style
+    }
+
+     domtoimage.toJpeg(node, param).then( function (data){ 
+
+      doc.addImage(data, 'JPEG', 0, 0, width, height)
+
+      // var blobPDF =  new Blob([ doc.output('blob') ], { type : 'application/pdf'});
+      // var blobUrl = URL.createObjectURL(blobPDF);  //<--- THE ERROR APPEARS HERE
+      // window.open(blobUrl);  // will open a new tab
       
-      this.ngxSpinnerService.hide() 
-    })
+       /* BLOB*/ // doc.output('blob')
+
+switch (option) {
+  case 'save':
+       doc.save('demo.pdf')
+    // var link = document.createElement('a');
+    // link.download = 'my-image-name.jpg';
+    // link.href = data;
+    // link.click();
+    break;
+
+  case 'print':
+    doc.autoPrint({variant: 'non-conform'}); //javascript
+    doc.output('dataurlnewwindow');
+    break;
+}
+
+
+  })
+
 
     this.ngxSpinnerService.hide() 
    // this.dialogRef.close(true);
@@ -953,7 +951,7 @@ onCreate(){
 }
 
 formSettings(data) {
-  this.dialog.open(CertificateFormComponent,{
+  this.dialog.open(CertificateViewComponent,{
     disableClose: true,
     width: '100vw',
     maxWidth: '100vw',
@@ -970,10 +968,39 @@ formSettings(data) {
     }
   });  
 }
-
-ngOnDestroy() {
-  this.querySubscription.unsubscribe()
 }
+// fiex XXXXXXXXXXXXXXX SecurityError: Failed to read the 'cssRules' property from 'CSSStyleSheet': Cannot access rules XXXXXXXXXXXXXXXXXXXX
+// https://github.com/andytwoods/dom-to-image/commit/3ca3e7fa2f844fa69724dea91ccffd3e8547c7e9
 
 
-}
+/* CHANGE */
+
+// function getCssRules(styleSheets) {
+//   var cssRules = [];
+//   styleSheets.forEach(function (sheet) {
+//       try {
+//           util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
+//       } catch (e) {
+//           console.log('Error while reading CSS rules from ' + sheet.href, e.toString());
+//       }
+//   });
+//   return cssRules;
+// }
+
+/* TO */
+
+// function getCssRules(styleSheets) {
+//   var cssRules = [];
+//   styleSheets.forEach(function (sheet) {
+//       if (sheet.hasOwnProperty("cssRules")) {
+//           try {
+//               util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
+//           } catch (e) {
+//               console.log('Error while reading CSS rules from ' + sheet.href, e.toString());
+//           }
+//       }
+//   });
+//   return cssRules;
+// }
+
+// IN //node_modules\dom-to-image\src\dom-to-image.js

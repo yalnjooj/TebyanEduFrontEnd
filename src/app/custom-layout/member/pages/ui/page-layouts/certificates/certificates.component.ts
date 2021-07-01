@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import icDelete from '@iconify/icons-ic/twotone-delete';
 import icSearch from '@iconify/icons-ic/twotone-search';
 import icAdd from '@iconify/icons-ic/twotone-add';
@@ -25,6 +25,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ChangeDataFormDialog } from '../../../apps/social/social-profile/social-profile.component';
 import { ConformDialogComponent } from 'src/app/custom-layout/member/layout/dialogs/conformDialog/conform.dialog.component'
 import { CertificateFormComponent, Certificates } from 'src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.form.component'
+import { CertificateViewComponent } from 'src/app/custom-layout/member/layout/dialogs/certificateView/certificate.view.component'
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 export interface PeriodicElement {
   id: number;
@@ -48,7 +51,7 @@ export interface PeriodicElement {
   templateUrl: './certificates.component.html',
   styleUrls: ['./certificates.component.scss']
 })
-export class CertificatesComponent implements OnInit {
+export class CertificatesComponent implements OnInit, OnDestroy {
   userID: number;
   displayedColumns: string[] = ['id', 'certificateName', 'certificatecatagory', 'langSex', 'cerPosition', 'edit2', 'edit', 'updatedAt', 'createdAt'];
   dataSource: any
@@ -73,7 +76,8 @@ export class CertificatesComponent implements OnInit {
   constructor(public dialog: MatDialog,
               private apollo: Apollo,
               private ngxSpinnerService: NgxSpinnerService,
-              private snackBar: MatSnackBar) { }
+              private snackBar: MatSnackBar,
+              private router: Router) { }
 
 
 
@@ -236,27 +240,48 @@ export class CertificatesComponent implements OnInit {
     }); 
   }
 
+  afterClosed: Subscription;
+  formSettings(data, type) {
 
-  formSettings(data) {
-    this.dialog.open(CertificateFormComponent,{
-      disableClose: true,
-      width: '100vw',
-      maxWidth: '100vw',
-      data: {uID: this.userID, cerID: data.rowID, cerPositionType: data.cerPositionType, certificateName: data.certificateName, cerPosition: data.cerPosition}
-    }).afterClosed().subscribe(result => {
+    switch (type) {
 
-      if(JSON.parse(result)){
-        this.snackBar.open('تم الحفظ','إغلاق', {
-          duration: 6000,
-          horizontalPosition: this.horizontalPosition,
-          verticalPosition: this.verticalPosition,
-        });
+      case 'edit':
+        this.afterClosed = this.dialog.open(CertificateFormComponent,{
+          disableClose: true,
+          width: '100vw',
+          maxWidth: '100vw',
+          data: {uID: this.userID, cerID: data.rowID, cerPositionType: data.cerPositionType, certificateName: data.certificateName, cerPosition: data.cerPosition}
+        }).afterClosed().subscribe(result => {
+         
+        this.router.navigate([this.router.url]); 
+        window.location.reload()
 
-      }
-    });  
+        })
+        break;
+    
+      case 'view':
+      this.afterClosed = this.dialog.open(CertificateViewComponent,{
+          disableClose: true,
+          width: '100vw',
+          maxWidth: '100vw',
+          data: {uID: this.userID, cerID: data.rowID, cerPositionType: data.cerPositionType, certificateName: data.certificateName, cerPosition: data.cerPosition}
+        }).afterClosed().subscribe(result => {})
+        break;
+    }
+ 
+  }
+
+  ngOnDestroy() {
+    console.log('afterClosed', this.afterClosed)
+    this.afterClosed.unsubscribe()
   }
   
 }
+
+
+/**-------------------------------------------------------------------- */ 
+/**-------------------------------------------------------------------- */ 
+/**-------------------------------------------------------------------- */ 
 
 @Component({
   selector: 'dialog-add-certificate',

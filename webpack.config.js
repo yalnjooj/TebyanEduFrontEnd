@@ -1,4 +1,4 @@
-const path = require('path');
+var webpack = require('webpack');
 
 let sassImplementation;
 try {
@@ -9,7 +9,8 @@ try {
 }
 
 module.exports = {
-  // Fix for: https://github.com/recharts/recharts/issues/1463
+  // // Fix for: https://github.com/recharts/recharts/issues/1463
+
   node: {
     fs: 'empty'
   },
@@ -32,5 +33,10 @@ module.exports = {
         ]
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      canvg: "canvg"
+    })
+]
 };

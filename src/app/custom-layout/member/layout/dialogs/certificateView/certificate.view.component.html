@@ -1,0 +1,69 @@
+
+<mat-dialog-content  style="height: 40vw !important; max-height: 40vw !important;">
+
+    <mat-tab-group id="tabGroup" #tabGroup (selectedTabChange)="changedOptions(tabGroup)" animationDuration="0ms" mat-align-tabs="center">
+      <mat-tab  #tap *ngFor="let dashboard of dashboards.tabs; index as tapIndex" [label]="dashboard.name">
+
+        <div class="word-break: break-all" ngxPrintItemMarker directPrint="true"  #print id="print" dir="ltr" class="certificateBox" [style.width.mm]="dashboards.view.width" [style.height.mm]="dashboards.view.height" >   
+          <gridster class="doNotPrint" [options]="options">
+            <gridster-item #gridsterItem style="background: none;" [item]="item" *ngFor="let item of dashboard.details.contents; index as i">
+
+              <img #Imagebackground style="width: 100%; height: 100%;" *ngIf="(i === 0)" [src]="'http://localhost:3000/uploadedFiles/interiorPhotos/'+item.content">              
+
+              <div style="height: 100%; width: 100%;" *ngIf="!(i === 0)" class="button-holder footer">
+                <div dir="rtl" style="height: 100%; width: 100%;  padding-top: 20px;" class="gridster-item-content">
+
+                  <ng-container #image *ngIf="(item.type == 'img'); else text">
+                  <img #ImageItem style="width: 100%; height: 100%;" [src]="'http://localhost:3000/uploadedFiles/interiorPhotos/'+item.content">
+                  </ng-container>
+    
+                  <ng-template #text>
+                    <ng-container *ngIf="(item.type == 'text'); else qr">
+                      <div style="height: 100%;" class="col-lg-8 control-section">
+                        <div style="height: 100%;" class="sample-container">
+                            <div style="height: 100%;" class="default-section">
+                              <div style="height: 100%; width: 100%; background-color: none !important; position: fixed; z-index: 30;"></div>
+                                <ejs-richtexteditor
+                                (created)="onCreate()"
+                                [fontFamily]='fontFamily'
+                                id='inlineRTE'
+                                height="100%"
+                                class="inlineRTE"
+                                #inlineRTE
+                                [enableResize]="true"
+                                [inlineMode]='inlineMode'
+                                [toolbarSettings]='toolbarSettings'
+                                [format]='format'
+                                [saveInterval]="1"
+                                (change)="changeHtmlValue(inlineRTE, tapIndex, item)"
+                                [fontFamily]='fontFamily'
+                                [value]="item.content">
+                                </ejs-richtexteditor>
+                            </div>
+                        </div>
+                    </div>               
+                    </ng-container>
+                  </ng-template>
+
+                  <ng-template #qr>
+                    <ng-container>
+                      <img #QrItem style="width: 100%; height: 100%;" [src]="'http://localhost:3000/uploadedFiles/interiorPhotos/'+item.content">
+                    </ng-container>
+                  </ng-template>
+
+                </div>
+              </div>
+
+          </gridster-item>
+        </gridster>
+        </div>
+
+      </mat-tab>
+    </mat-tab-group>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="start">
+    <button mat-button color="accent" [mat-dialog-close]="false">إلغاء</button>
+    <!-- <button mat-button color="primary" (click)="print('print')">طباعة</button> -->
+    <button mat-button color="primary" (click)="print('save')">حفظ</button>
+  </mat-dialog-actions>

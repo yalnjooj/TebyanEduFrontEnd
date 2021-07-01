@@ -10,7 +10,7 @@
 </p>
 
 <mat-menu #tags="matMenu">
-  <button mat-menu-item *ngFor="let item of tagsNames; index as i" >{{item.text}}</button>
+  <button disabled mat-menu-item *ngFor="let item of tagsNames; index as i" >{{item.text}}</button>
 </mat-menu>
 
   <mat-menu  #menu="matMenu">
@@ -33,7 +33,7 @@
 </div>
 <!-- <span fxFlex></span> -->
 
-<mat-dialog-content  style="height: 49vw !important; max-height: 49vw !important;">
+<mat-dialog-content  style="height: 38vw !important; max-height: 38vw !important;">
 
     <mat-tab-group id="tabGroup" #tabGroup (selectedTabChange)="changedOptions(tabGroup)" animationDuration="0ms" mat-align-tabs="center">
       <mat-tab #tap *ngFor="let dashboard of dashboards.tabs; index as tapIndex" [label]="dashboard.name">
@@ -185,5 +185,5 @@
   <mat-dialog-actions align="start">
     <button mat-button color="accent" [mat-dialog-close]="false">إلغاء</button>
     <button mat-button color="primary" cdkFocusInitial (click)="conform()">حفظ</button>
-    {{isSaved}}
+    <!-- {{isSaved}} -->
   </mat-dialog-actions>

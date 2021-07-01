@@ -45,7 +45,21 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
 
   const opts: ApolloClientOptions<any> = {
     link,
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            currentUser: {
+              merge(existing = [], incoming: any) {
+                return { ...existing, ...incoming };
+                // this part of code is depends what you actually need to do, in my 
+               // case i had to save my incoming data as single object in cache
+              }
+            }
+          }
+        }
+      }
+    }),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: 'network-only',

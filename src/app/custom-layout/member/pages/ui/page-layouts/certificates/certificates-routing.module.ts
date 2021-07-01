@@ -9,8 +9,12 @@ const routes: Routes = [
     component: CertificatesComponent
   },
   {
-    path: 'noUsed!!!',
+    path: 'noUsed!!',
     loadChildren: () => import('src/app/custom-layout/member/layout/dialogs/certificateModule/certificate.form.module').then(m => m.CertificateFormModule),
+  },
+  {
+    path: 'noUsed!!!',
+    loadChildren: () => import('src/app/custom-layout/member/layout/dialogs/certificateView/certificate.view.module').then(m => m.CertificateViewModule),
   }
 ];
 
