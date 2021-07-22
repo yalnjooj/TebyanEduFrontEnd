@@ -120,6 +120,7 @@
                         <div style="height: 100%;" class="sample-container">
                             <div style="height: 100%;" class="default-section">
                                 <ejs-richtexteditor
+                                [enableRtl] = 'rtl'
                                 (created)="onCreate()"
                                 [fontFamily]='fontFamily'
                                 id='inlineRTE'
@@ -133,6 +134,7 @@
                                 [saveInterval]="1"
                                 (change)="changeHtmlValue(inlineRTE, tapIndex, item)"
                                 [fontFamily]='fontFamily'
+                                [fontSize]='fontSize'
                                 [value]="item.content">
                                 <!-- <ng-template #valueTemplate>
                                   <p>نص تجريبي لإدراج مربع نص في محتوى المستند النصي, <a href="https://ej2.syncfusion.com/home/" target='_blank'>toolbar</a>.

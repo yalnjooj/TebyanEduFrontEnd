@@ -1,0 +1,65 @@
+
+/* Arabic Fonts- */
+@font-face {
+  font-family: 'TheSansArabic-Plain';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./Bahij_TheSansArabic-Plain.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'TheSansArabic-Bold';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./Bahij_TheSansArabic-Bold.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'Sadokart-Bold';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./19720-sadokartbold_3.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'AL-Mohanad-Bold';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./AL-Mohanad-Extra-Bold.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'AL-Mohanad';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./AL-Mohanad.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'Aljazeera';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./Aljazeera.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'cocon-next-arabic';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./cocon-next-arabic.woff2) format('woff2');
+  
+}
+
+@font-face {
+  font-family: 'Thanks';
+  font-style: normal;
+  font-weight: 400;
+  src: url(./Thanks.woff2) format('woff2');
+  
+}

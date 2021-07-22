@@ -72,31 +72,56 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
   tabIndex: number;
   isSaved: boolean = true;
   tagsLenght1 = 0;
-
+  public rtl = true;
   tagsNames: any = [{ start: 0, end: 0, startTag: 0, endTag: 0, text: '' }];
 
   public fontFamily: Object = {
+    default: 'AL-Mohanad',
     items: [
-      {text: "Cairo", value: "Cairo", command: "Font", subCommand: "FontName"},
-      {text: "Segoe UI", value: "Segoe UI", class: "e-segoe-ui",  command: "Font", subCommand: "FontName"},
+      {text: "TheSansArabic-Plain", value: "TheSansArabic-Plain", command: "Font", subCommand: "FontName"},
+      {text: "TheSansArabic-Bold", value: "TheSansArabic-Bold", command: "Font", subCommand: "FontName"},
+      {text: "Sadokart-Bold", value: "Sadokart-Bold", command: "Font", subCommand: "FontName"},
+      {text: "AL-Mohanad-Bold", value: "AL-Mohanad-Bold", command: "Font", subCommand: "FontName"},
+      {text: "AL-Mohanad", value: "AL-Mohanad", command: "Font", subCommand: "FontName"},
+      {text: "Aljazeera", value: "Aljazeera", command: "Font", subCommand: "FontName"},
+      {text: "cocon-next-arabic", value: "cocon-next-arabic", command: "Font", subCommand: "FontName"},
+      {text: "Thanks", value: "Thanks", command: "Font", subCommand: "FontName"},
       {text: "Roboto", value: "Roboto",  command: "Font", subCommand: "FontName"}, // here font is added
-      {text: "Great vibes", value: "Great Vibes,cursive",  command: "Font", subCommand: "FontName"}, // here font is added
-      {text: "Impact", value: "Impact,Charcoal,sans-serif", class: "e-impact", command: "Font", subCommand: "FontName"},
-      {text: "Tahoma", value: "Tahoma,Geneva,sans-serif", class: "e-tahoma", command: "Font", subCommand: "FontName"},
+      // {text: "Impact", value: "Impact,Charcoal,sans-serif", class: "e-impact", command: "Font", subCommand: "FontName"},
+      // {text: "Tahoma", value: "Tahoma,Geneva,sans-serif", class: "e-tahoma", command: "Font", subCommand: "FontName"},
     ]
   };
+
+  public fontSize: Object = {
+    width: '40px',
+    items: [
+    { text: '8 pt', value: '8pt' },
+    { text: '10 pt', value: '10pt' },
+    { text: '12 pt', value: '12pt' },
+    { text: '14 pt', value: '14pt' },
+    { text: '16 pt', value: '16pt' },
+    { text: '18 pt', value: '18pt' },
+    { text: '20 pt', value: '20pt' },
+    { text: '30 pt', value: '30pt' },
+    { text: '40 pt', value: '40pt' },
+    { text: '80 pt', value: '80pt' },
+    // { text: '60 pt', value: '60pt' },
+    // { text: '70 pt', value: '70pt' },
+    // { text: '80 pt', value: '80pt' },
+    // { text: '90 pt', value: '90pt' }
+  ]
+}
   
   public toolbarSettings: ToolbarModule = {
       items: [
-           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor',
-             '-', 'ClearFormat','CreateLink']
+           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat'
+          ]
   };
   public format: FormatModel = {
       width: 'auto'
   };
-  // public fontFamily: FontFamilyModel = {
-  //     width: 'auto'
-  // };
+
+  
   public inlineMode: object = { enable: true, onSelection: true };
   
   

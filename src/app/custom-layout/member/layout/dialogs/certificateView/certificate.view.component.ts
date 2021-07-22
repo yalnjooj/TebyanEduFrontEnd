@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import icClose from '@iconify/icons-ic/twotone-close';
@@ -42,8 +42,8 @@ export class CertificateViewComponent implements OnInit {
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
   /**
- *<a (click)="formSettings({rowID: element.rowID, certificateName: element.certificateName, langSex: element.langSex, cerPosition: element.cerPosition, textsPosition: element.textsPosition,
-  langSexType: element.langSexType, cerPositionType: element.cerPositionType, textsPositionType: element.textsPositionType})"
+ *<a (click)='formSettings({rowID: element.rowID, certificateName: element.certificateName, langSex: element.langSex, cerPosition: element.cerPosition, textsPosition: element.textsPosition,
+  langSexType: element.langSexType, cerPositionType: element.cerPositionType, textsPositionType: element.textsPositionType})'
  */
 
   
@@ -74,23 +74,29 @@ export class CertificateViewComponent implements OnInit {
   tabIndex: number;
   isSaved: boolean = true;
   tagsLenght1 = 0;
-
+  public rtl = true;
   tagsNames: any = [{ start: 0, end: 0, startTag: 0, endTag: 0, text: '' }];
 
   public fontFamily: Object = {
+    default: 'AL-Mohanad',
     items: [
-      {text: "Cairo", value: "Cairo", command: "Font", subCommand: "FontName"},
-      {text: "Segoe UI", value: "Segoe UI", class: "e-segoe-ui",  command: "Font", subCommand: "FontName"},
+      {text: 'TheSansArabic-Plain', value: 'TheSansArabic-Plain', command: 'Font', subCommand: 'TheSansArabic-Plain'},
+      {text: 'TheSansArabic-Bold', value: 'TheSansArabic-Bold', command: 'Font', subCommand: 'TheSansArabic-Bold'},
+      {text: 'Sadokart-Bold', value: 'Sadokart-Bold', command: 'Font', subCommand: 'Sadokart-Bold'},
+      {text: 'AL-Mohanad-Bold', value: 'AL-Mohanad-Bold', command: 'Font', subCommand: 'AL-Mohanad-Bold'},
+      {text: 'AL-Mohanad', value: 'AL-Mohanad', command: 'Font', subCommand: 'AL-Mohanad'},
+      {text: 'Aljazeera', value: 'Aljazeera', command: 'Font', subCommand: 'Aljazeera'},
+      {text: 'cocon-next-arabic', value: 'cocon-next-arabic', command: 'Font', subCommand: 'cocon-next-arabic'},
+      {text: 'Thanks', value: 'Thanks', command: 'Font', subCommand: 'Thanks'},
       {text: "Roboto", value: "Roboto",  command: "Font", subCommand: "FontName"}, // here font is added
-      {text: "Great vibes", value: "Great Vibes,cursive",  command: "Font", subCommand: "FontName"}, // here font is added
-      {text: "Impact", value: "Impact,Charcoal,sans-serif", class: "e-impact", command: "Font", subCommand: "FontName"},
-      {text: "Tahoma", value: "Tahoma,Geneva,sans-serif", class: "e-tahoma", command: "Font", subCommand: "FontName"},
+      // {text: 'Impact', value: 'Impact,Charcoal,sans-serif', class: 'e-impact', command: 'Font', subCommand: 'FontName'},
+      // {text: 'Tahoma', value: 'Tahoma,Geneva,sans-serif', class: 'e-tahoma', command: 'Font', subCommand: 'FontName'},
     ]
   };
   
   public toolbarSettings: ToolbarModule = {
       items: [
-           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor',
+           'Bold', 'Italic',  'FontName', '-', 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor',
              '-', 'ClearFormat','CreateLink']
   };
   public format: FormatModel = {
@@ -473,15 +479,15 @@ addItem(type) {
 
   switch (type) {
     case 'text':
-      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `<b>نص تجريبي</b>` , type: "text" , cols: 20, rows: 20, y: 0, x: 0, resizeEnabled: true, layerIndex :index+1});
+      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `<b>نص تجريبي</b>` , type: 'text' , cols: 20, rows: 20, y: 0, x: 0, resizeEnabled: true, layerIndex :index+1});
       break;
   
     case 'img':
-      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `empty.png` , type: "img" , cols: 10, rows: 10, y: 15, x: 15, resizeEnabled: true, layerIndex :index+1});
+      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `empty.png` , type: 'img' , cols: 10, rows: 10, y: 15, x: 15, resizeEnabled: true, layerIndex :index+1});
       break;
 
     case 'qr':
-      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `qr-code.png` , type: "qr" , cols: 5, rows: 7, y: 10, x: 10, resizeEnabled: true, layerIndex :index+1});
+      this.dashboards.tabs[this.tabGroup.selectedIndex].details.contents.push({ content: `qr-code.png` , type: 'qr' , cols: 5, rows: 7, y: 10, x: 10, resizeEnabled: true, layerIndex :index+1});
       break;
   }
 
@@ -810,7 +816,7 @@ changePosition(screenSize){
 
 addVarablesCode(){
   
-  this.inlineRTE.executeCommand('insertHTML', '<span style="font-size: 14pt;" class="varablesCode"><span style="font-size: 14pt; color: red;">«</span>____<span style="font-size: 14pt; color: red;">»</span></span>');
+  this.inlineRTE.executeCommand('insertHTML', `<span style='font-size: 14pt;' class='varablesCode'><span style='font-size: 14pt; color: red;'>«</span>____<span style='font-size: 14pt; color: red;'>»</span></span>`);
 
 }
 
@@ -886,27 +892,27 @@ return this.tagsNames.length
 
 
 
-@ViewChild('print') printed: ElementRef;  
 
 async print(option) {
     this.ngxSpinnerService.show()
 
-    
+
     const doc = new jsPDF(this.dataFromCertificate.cerPositionType == 'V'? 'p': 'l', 'mm', 'a4')
     const width = doc.internal.pageSize.width;
     const height = doc.internal.pageSize.height;
   
     const scale = 3
-    const node = this.printed.nativeElement
-
+    const node: any = document.getElementById('tabGroup').children.item(1).children.item(this.tabIndex).children.item(0).children.item(0)
+          node.href = ""
     const style = {
         transform: 'scale('+scale+')',
         transformOrigin: 'top left',
-        width: node.offsetWidth + "px",
-        height: node.offsetHeight + "px"
+        width: node.offsetWidth + 'px',
+        height: node.offsetHeight + 'px'
     }
-
+    //window.getComputedStyle(node)
     const param = {
+        fontFamily: "AL-Mohanad",
         height: node.offsetHeight * scale,
         width: node.offsetWidth * scale,
           quality: 1,
@@ -992,7 +998,7 @@ formSettings(data) {
 // function getCssRules(styleSheets) {
 //   var cssRules = [];
 //   styleSheets.forEach(function (sheet) {
-//       if (sheet.hasOwnProperty("cssRules")) {
+//       if (sheet.hasOwnProperty('cssRules')) {
 //           try {
 //               util.asArray(sheet.cssRules || []).forEach(cssRules.push.bind(cssRules));
 //           } catch (e) {
@@ -1001,6 +1007,51 @@ formSettings(data) {
 //       }
 //   });
 //   return cssRules;
+// }
+
+// IN //node_modules\dom-to-image\src\dom-to-image.js
+
+
+
+/////////////////FONTS PROBLEM/////////////////////
+///https://github.com/tsayen/dom-to-image/issues/225
+
+/* CHANGE */
+// function copyStyle(source, target) {
+//   if (source.cssText) target.cssText = source.cssText;
+//   else copyProperties(source, target);
+
+//   function copyProperties(source, target) {
+//       util.asArray(source).forEach(function (name) {
+//           target.setProperty(
+//               name,
+//               source.getPropertyValue(name),
+//               source.getPropertyPriority(name)
+//           );
+//       });
+//   }
+// }
+
+
+/* TO */
+// function copyStyle(source, target) {
+//   target.fontStretch == '';
+
+//   if (source.cssText) target.cssText = source.cssText;
+//   else copyProperties(source, target);
+
+//   target.fontStretch = 'normal';
+//   // here's my fix
+
+//   function copyProperties(source, target) {
+//       util.asArray(source).forEach(function (name) {
+//           target.setProperty(
+//               name,
+//               source.getPropertyValue(name),
+//               source.getPropertyPriority(name)
+//           );
+//       });
+//   }
 // }
 
 // IN //node_modules\dom-to-image\src\dom-to-image.js
