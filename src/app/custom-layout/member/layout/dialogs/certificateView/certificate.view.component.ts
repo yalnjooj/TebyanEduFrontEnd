@@ -900,19 +900,18 @@ async print(option) {
     const doc = new jsPDF(this.dataFromCertificate.cerPositionType == 'V'? 'p': 'l', 'mm', 'a4')
     const width = doc.internal.pageSize.width;
     const height = doc.internal.pageSize.height;
-  
-    const scale = 3
     const node: any = document.getElementById('tabGroup').children.item(1).children.item(this.tabIndex).children.item(0).children.item(0)
-          node.href = ""
+
+    const scale = Math.min(node.offsetWidth/width, node.offsetHeight/height)
+
     const style = {
         transform: 'scale('+scale+')',
         transformOrigin: 'top left',
         width: node.offsetWidth + 'px',
         height: node.offsetHeight + 'px'
     }
-    //window.getComputedStyle(node)
+
     const param = {
-        fontFamily: "AL-Mohanad",
         height: node.offsetHeight * scale,
         width: node.offsetWidth * scale,
           quality: 1,
@@ -929,20 +928,20 @@ async print(option) {
       
        /* BLOB*/ // doc.output('blob')
 
-switch (option) {
-  case 'save':
-       doc.save('demo.pdf')
-    // var link = document.createElement('a');
-    // link.download = 'my-image-name.jpg';
-    // link.href = data;
-    // link.click();
-    break;
+    switch (option) {
+      case 'save':
+          doc.save('demo.pdf')
+        // var link = document.createElement('a');
+        // link.download = 'my-image-name.jpg';
+        // link.href = data;
+        // link.click();
+        break;
 
-  case 'print':
-    doc.autoPrint({variant: 'non-conform'}); //javascript
-    doc.output('dataurlnewwindow');
-    break;
-}
+      case 'print':
+        doc.autoPrint({variant: 'non-conform'}); //javascript
+        doc.output('dataurlnewwindow');
+        break;
+    }
 
 
   })

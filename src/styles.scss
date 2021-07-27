@@ -2,7 +2,8 @@
 @import "~highlight.js/styles/androidstudio.css";
 // Vex Core
 @import "./@vex/styles/core";
-
+@import url("https://cdn.syncfusion.com/ej2/material.css");
+@import "./assets/ej2/fonts/Fonts.css";
 // @font-face {
 //   font-family: "TheSansArabic-Plain";
 //   src: local("TheSansArabic-Plain"), url(./assets/ej2/fonts/TheSansArabic-Plain.ttf) format("ttf");

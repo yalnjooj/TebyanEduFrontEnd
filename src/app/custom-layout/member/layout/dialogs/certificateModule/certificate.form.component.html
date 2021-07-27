@@ -118,10 +118,11 @@
                       <!-- <span style="margin-left: 10px; color: blueviolet">{{item.layerIndex}} | type: {{item.type}}</span> -->
                       <div style="height: 100%;" class="col-lg-8 control-section">
                         <div style="height: 100%;" class="sample-container">
-                            <div style="height: 100%;" class="default-section">
+                            <div  id="rteSection" style="height: 100%;" class="default-section">
                                 <ejs-richtexteditor
                                 [enableRtl] = 'rtl'
                                 (created)="onCreate()"
+                                (actionComplete)='actionCompleteHandler($event)'
                                 [fontFamily]='fontFamily'
                                 id='inlineRTE'
                                 height="100%"
@@ -144,6 +145,49 @@
                                     
                                 </ejs-richtexteditor>
                                 
+                                <ejs-dialog
+                                #Dialog
+                                id="rteDialog"
+                                [buttons]='dlgButtons'
+                                (overlayClick)="dialogOverlay()"
+                                [header]='header'
+                                [visible]='false'
+                                [showCloseIcon]='false'
+                                width='43%'
+                                [target]='target'
+                                (created)="dialogCreate()"
+                                [isModal]='true'>
+                                    <ng-template #content>
+                                        <div id="rteSpecial_char">
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div><br />
+                                            <div class="char_block" title="number">«number»</div>
+                                        </div>
+                                    </ng-template>
+                                </ejs-dialog>
+
                             </div>
                         </div>
                     </div>               
@@ -177,6 +221,8 @@
                 </div>
               </div> 
           </gridster-item>
+          <ng-container *ngTemplateOutlet="gridsterItem"></ng-container>
+
         </gridster>
       </div>
         

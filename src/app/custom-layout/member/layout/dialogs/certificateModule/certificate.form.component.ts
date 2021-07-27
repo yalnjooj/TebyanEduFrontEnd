@@ -11,11 +11,13 @@ import gql from 'graphql-tag';
 import { Certificate } from 'crypto';
 import { DisplayGrid, Draggable, GridsterComponent, GridsterConfig, GridsterItem, GridsterItemComponentInterface, GridType }  from 'angular-gridster2';
 import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
-import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, FontFamilyModel, RichTextEditorComponent, ToolbarType } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, FontFamilyModel, RichTextEditorComponent, ToolbarType, NodeSelection } from '@syncfusion/ej2-angular-richtexteditor';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-import { CheckBoxComponent } from '@syncfusion/ej2-angular-buttons';
+import { ButtonModel, CheckBoxComponent } from '@syncfusion/ej2-angular-buttons';
 import { ComponentsOverviewDialogsComponent } from 'src/app/custom-layout/admin/pages/ui/components/components-overview/components/components-overview-dialogs/components-overview-dialogs.component';
 import { Subscription } from 'rxjs';
+import { Dialog } from '@syncfusion/ej2-popups';
+import { Browser } from '@syncfusion/ej2-base';
 
 
 export interface Certificates {
@@ -32,10 +34,11 @@ export interface Certificates {
 @Component({
   selector: 'certificate-component',
   templateUrl: './certificate.form.component.html',
+  // encapsulation: ViewEncapsulation.None,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./certificate.form.component.css'],
   providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService],
   
-  // changeDetection: ChangeDetectionStrategy.OnPush,
   // encapsulation: ViewEncapsulation.None
 })
 export class CertificateFormComponent implements OnInit, OnDestroy {
@@ -108,13 +111,21 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
     // { text: '60 pt', value: '60pt' },
     // { text: '70 pt', value: '70pt' },
     // { text: '80 pt', value: '80pt' },
-    // { text: '90 pt', value: '90pt' }
+    // { text: '90 pt', value: '90pt' },
+    // { text: '100 pt', value: '100pt' },
+    // { text: '110 pt', value: '110pt' },
+    // { text: '120 pt', value: '120pt' }
   ]
 }
   
   public toolbarSettings: ToolbarModule = {
       items: [
-           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat'
+           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat',
+           {
+            tooltipText: 'Insert Symbol',
+            template: '<button class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  style="width:100%">'
+                + '<div class="e-tbar-btn-text" style="font-weight: 500;"> Ω</div></button>'
+        }
           ]
   };
   public format: FormatModel = {
@@ -191,7 +202,7 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
 
     private querySubscription: Subscription;
 
-    ngOnInit(){
+ngOnInit(){
 
   this.ngxSpinnerService.show()
 
@@ -326,50 +337,20 @@ changeHtmlValue(inlineRTE, tap, item){
   
 }
 
-// changeItemSize(tap, item){
-  
-// const newCols = item.cols
-// const newRows = item.rows
-// const newX = item.x
-// const newY = item.y
-// const oldCols = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].cols
-// const oldRows = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].rows
-// const oldX = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].x
-// const oldY = this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].y
 
-// console.log(oldCols)
-// console.log(newCols)
-// console.log(newCols != oldCols)
-// console.log('----------------')
-
-// console.log(oldRows)
-// console.log(newRows)
-// console.log(newRows != oldRows)
-// console.log('----------------')
-
-// console.log(newX)
-// console.log(oldX)
-// console.log(newX != oldX)
-// console.log('----------------')
-
-
-// console.log(newY)
-// console.log(oldY)
-// console.log(newY != oldY)
-// console.log('----------------')
-
-
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].cols = item.cols
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].rows = item.rows
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].x = item.x
-// // this.dashboards.tabs[tap].details.contents[this.dashboards.tabs[tap].details.contents.indexOf(item)].y = item.y
-
-// }
-
+@ViewChild('Dialog')  gridsterItem;
+@ViewChild('gridsterItem')  text;
 
 ngAfterViewInit(){
   this.tabIndex = this.tabGroup.selectedIndex
+  
+  console.log(this.text)
+//   console.log(document.getElementById('tabGroup').children.item(1).children.item(this.tabIndex).children.item(0).children.item(0)
+//   .children.item(0).children.item(0).children.item(0)
+// )
+
 }
+
 
 
 
@@ -973,9 +954,6 @@ conform() {
    // this.dialogRef.close(true);
 }
 
-onCreate(){
- // this.discoveryTags(textVal)
-}
 
 formSettings(data) {
   this.dialog.open(CertificateFormComponent,{
@@ -998,6 +976,96 @@ formSettings(data) {
 
 ngOnDestroy() {
   this.querySubscription.unsubscribe()
+}
+
+
+
+@ViewChild('inlineRTE') rteObj: RichTextEditorComponent;
+
+@ViewChild('Dialog')  dialogObj: Dialog;
+
+ selection: NodeSelection = new NodeSelection();
+ range: Range;
+ customBtn: HTMLElement;
+ dialogCtn: HTMLElement;
+ saveSelection: NodeSelection;
+
+ dlgButtons: { [key: string]: ButtonModel }[] = [
+  { buttonModel: { content: 'Insert', isPrimary: true }, click: this.onInsert.bind(this) },
+  { buttonModel: { content: 'Cancel' }, click: this.dialogOverlay.bind(this) }
+];
+ header = 'Special Characters';
+ target: HTMLElement = document.getElementById('rteSection');
+ height: string | number = '350px';
+
+ onCreate(): void {
+  
+  let l = '<button class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  style="width:100%">'
+  + '<div class="e-tbar-btn-text" style="font-weight: 500;"> Ω</div></button>';
+
+
+  var parser = new DOMParser();
+	var doc = parser.parseFromString(l, 'text/html');
+
+  this.customBtn = document.getElementById('custom_tbar') as HTMLElement;
+
+  doc.body.childNodes.item(0) as HTMLElement
+
+  console.log(this.customBtn)
+
+  this.dialogCtn = document.getElementById('rteSpecial_char') as HTMLElement;
+  this.dialogObj.target = document.getElementById('rteSection');
+  this.customBtn.onclick = (e: Event) => {
+      (this.rteObj.contentModule.getEditPanel() as HTMLElement).focus();
+      this.dialogObj.element.style.display = '';
+      this.range = this.selection.getRange(document);
+      this.saveSelection = this.selection.save(this.range, document);
+      this.dialogObj.show();
+  };
+}
+ dialogCreate(): void {
+  this.dialogCtn = document.getElementById('rteSpecial_char');
+  this.dialogCtn.onclick = (e: Event) => {
+      const target: HTMLElement = e.target as HTMLElement;
+      const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+      if (target.classList.contains('char_block')) {
+          target.classList.add('e-active');
+          if (activeEle) {
+              activeEle.classList.remove('e-active');
+          }
+      }
+  };
+}
+ onInsert(): void {
+  const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+  if (activeEle) {
+      if (this.rteObj.formatter.getUndoRedoStack().length === 0) {
+          this.rteObj.formatter.saveData();
+      }
+      if (Browser.isDevice && Browser.isIos) {
+          this.saveSelection.restore();
+      }
+      this.rteObj.executeCommand('insertText', activeEle.textContent);
+      this.rteObj.formatter.saveData();
+      (this.rteObj as any).formatter.enableUndo(this.rteObj);
+  }
+  this.dialogOverlay();
+}
+
+ dialogOverlay(): void {
+  const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+  if (activeEle) {
+      activeEle.classList.remove('e-active');
+  }
+  this.dialogObj.hide();
+}
+
+ actionCompleteHandler(e: any): void {
+  if (e.requestType === 'SourceCode') {
+  this.rteObj.getToolbar().querySelector('#custom_tbar').parentElement.classList.add('e-overlay');
+  } else if (e.requestType === 'Preview') {
+  this.rteObj.getToolbar().querySelector('#custom_tbar').parentElement.classList.remove('e-overlay');
+  }
 }
 
 
