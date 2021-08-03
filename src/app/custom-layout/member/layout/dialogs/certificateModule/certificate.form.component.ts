@@ -1,5 +1,5 @@
 import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Inject, OnInit, ViewChild, NgZone, Renderer2, ViewChildren, QueryList, ChangeDetectionStrategy, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild, NgZone, Renderer2, ViewChildren, QueryList, ChangeDetectionStrategy, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import icClose from '@iconify/icons-ic/twotone-close';
@@ -41,7 +41,7 @@ export interface Certificates {
   
   // encapsulation: ViewEncapsulation.None
 })
-export class CertificateFormComponent implements OnInit, OnDestroy {
+export class CertificateFormComponent  implements OnInit, AfterViewInit, OnDestroy {
 
 
   icClose = icClose;
@@ -118,14 +118,15 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
   ]
 }
   
+
+
+public inlineMode: object = { enable: true, onSelection: true };
+
+
+
   public toolbarSettings: ToolbarModule = {
       items: [
-           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat',
-           {
-            tooltipText: 'Insert Symbol',
-            template: '<button class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  style="width:100%">'
-                + '<div class="e-tbar-btn-text" style="font-weight: 500;"> Ω</div></button>'
-        }
+           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat'
           ]
   };
   public format: FormatModel = {
@@ -133,8 +134,7 @@ export class CertificateFormComponent implements OnInit, OnDestroy {
   };
 
   
-  public inlineMode: object = { enable: true, onSelection: true };
-  
+ 
   
   constructor(
     private dialogRef: MatDialogRef<CertificateFormComponent>,
@@ -338,16 +338,9 @@ changeHtmlValue(inlineRTE, tap, item){
 }
 
 
-@ViewChild('Dialog')  gridsterItem;
-@ViewChild('gridsterItem')  text;
 
-ngAfterViewInit(){
+ async ngAfterViewInit(){
   this.tabIndex = this.tabGroup.selectedIndex
-  
-  console.log(this.text)
-//   console.log(document.getElementById('tabGroup').children.item(1).children.item(this.tabIndex).children.item(0).children.item(0)
-//   .children.item(0).children.item(0).children.item(0)
-// )
 
 }
 
@@ -850,10 +843,13 @@ changePosition(screenSize){
   }
 }
 
-addVarablesCode(){
-  
-  this.inlineRTE.executeCommand('insertHTML', '<span style="font-size: 14pt;" class="varablesCode"><span style="font-size: 14pt; color: red;">«</span>____<span style="font-size: 14pt; color: red;">»</span></span>');
+@ViewChild('inlineRTE') public rteObj: RichTextEditorComponent;
 
+focusTextArea(inlineRTE){
+this.rteObj = inlineRTE
+}
+addVarablesCode(type, tag){
+  this.rteObj.executeCommand('insertHTML', `<span style="font-size: 12pt;" class="varablesCode"><span style="font-size: 12pt; color: red;">«</span>${tag}<span style="font-size: 12pt; color: red;">»</span></span>`)
 }
 
 discoveryTags(textVal){
@@ -976,96 +972,6 @@ formSettings(data) {
 
 ngOnDestroy() {
   this.querySubscription.unsubscribe()
-}
-
-
-
-@ViewChild('inlineRTE') rteObj: RichTextEditorComponent;
-
-@ViewChild('Dialog')  dialogObj: Dialog;
-
- selection: NodeSelection = new NodeSelection();
- range: Range;
- customBtn: HTMLElement;
- dialogCtn: HTMLElement;
- saveSelection: NodeSelection;
-
- dlgButtons: { [key: string]: ButtonModel }[] = [
-  { buttonModel: { content: 'Insert', isPrimary: true }, click: this.onInsert.bind(this) },
-  { buttonModel: { content: 'Cancel' }, click: this.dialogOverlay.bind(this) }
-];
- header = 'Special Characters';
- target: HTMLElement = document.getElementById('rteSection');
- height: string | number = '350px';
-
- onCreate(): void {
-  
-  let l = '<button class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  style="width:100%">'
-  + '<div class="e-tbar-btn-text" style="font-weight: 500;"> Ω</div></button>';
-
-
-  var parser = new DOMParser();
-	var doc = parser.parseFromString(l, 'text/html');
-
-  this.customBtn = document.getElementById('custom_tbar') as HTMLElement;
-
-  doc.body.childNodes.item(0) as HTMLElement
-
-  console.log(this.customBtn)
-
-  this.dialogCtn = document.getElementById('rteSpecial_char') as HTMLElement;
-  this.dialogObj.target = document.getElementById('rteSection');
-  this.customBtn.onclick = (e: Event) => {
-      (this.rteObj.contentModule.getEditPanel() as HTMLElement).focus();
-      this.dialogObj.element.style.display = '';
-      this.range = this.selection.getRange(document);
-      this.saveSelection = this.selection.save(this.range, document);
-      this.dialogObj.show();
-  };
-}
- dialogCreate(): void {
-  this.dialogCtn = document.getElementById('rteSpecial_char');
-  this.dialogCtn.onclick = (e: Event) => {
-      const target: HTMLElement = e.target as HTMLElement;
-      const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
-      if (target.classList.contains('char_block')) {
-          target.classList.add('e-active');
-          if (activeEle) {
-              activeEle.classList.remove('e-active');
-          }
-      }
-  };
-}
- onInsert(): void {
-  const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
-  if (activeEle) {
-      if (this.rteObj.formatter.getUndoRedoStack().length === 0) {
-          this.rteObj.formatter.saveData();
-      }
-      if (Browser.isDevice && Browser.isIos) {
-          this.saveSelection.restore();
-      }
-      this.rteObj.executeCommand('insertText', activeEle.textContent);
-      this.rteObj.formatter.saveData();
-      (this.rteObj as any).formatter.enableUndo(this.rteObj);
-  }
-  this.dialogOverlay();
-}
-
- dialogOverlay(): void {
-  const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
-  if (activeEle) {
-      activeEle.classList.remove('e-active');
-  }
-  this.dialogObj.hide();
-}
-
- actionCompleteHandler(e: any): void {
-  if (e.requestType === 'SourceCode') {
-  this.rteObj.getToolbar().querySelector('#custom_tbar').parentElement.classList.add('e-overlay');
-  } else if (e.requestType === 'Preview') {
-  this.rteObj.getToolbar().querySelector('#custom_tbar').parentElement.classList.remove('e-overlay');
-  }
 }
 
 

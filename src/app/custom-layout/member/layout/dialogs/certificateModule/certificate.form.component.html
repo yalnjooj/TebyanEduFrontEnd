@@ -16,6 +16,7 @@
   <mat-menu  #menu="matMenu">
     <!-- <button mat-menu-item [matMenuTriggerFor]="size">حجم المستند</button> -->
     <button mat-menu-item [matMenuTriggerFor]="toggle">إدراج</button>
+    <button mat-menu-item [matMenuTriggerFor]="codes">إضافة رمز</button>
   </mat-menu>
   <!-- <mat-menu #size="matMenu">
     <button mat-menu-item (click)="changePosition(100)">100%</button>
@@ -25,10 +26,29 @@
     <button mat-menu-item (click)="changePosition(40)">40%</button>
     <button mat-menu-item (click)="changePosition(25)">25%</button>
   </mat-menu> -->
-<mat-menu #toggle="matMenu">
+  <mat-menu #toggle="matMenu">
     <button mat-menu-item (click)="addItem('qr')">باركود</button>
     <button mat-menu-item (click)="addItem('text')">مربع نص</button>
     <button mat-menu-item (click)="addItem('img')">صورة</button>
+  </mat-menu>
+  <mat-menu #codes="matMenu">
+    <button mat-menu-item [matMenuTriggerFor]="codesAR">عربي</button>
+    <button mat-menu-item [matMenuTriggerFor]="codesEN">إنجليزي</button>
+    <button mat-menu-item [matMenuTriggerFor]="codesMX">مشتركة</button>
+  </mat-menu>
+  <mat-menu #codesAR="matMenu">
+    <button mat-menu-item (click)="addVarablesCode('AR', 'الإسم')">الإسم</button>
+    <button mat-menu-item (click)="addVarablesCode('AR', 'العمر')">العمر</button>
+    <button mat-menu-item (click)="addVarablesCode('AR', 'الطول')">الطول</button>
+  </mat-menu>
+  <mat-menu #codesEN="matMenu">
+    <button mat-menu-item (click)="addVarablesCode('EN', 'Name')">Name</button>
+    <button mat-menu-item (click)="addVarablesCode('EN', 'Age')">Age</button>
+    <button mat-menu-item (click)="addVarablesCode('EN', 'Tall')">Tall</button>
+  </mat-menu>
+  <mat-menu #codesMX="matMenu">
+    <button mat-menu-item (click)="addVarablesCode('MX', 'Current_Date')">Current Date</button>
+    <button mat-menu-item (click)="addVarablesCode('MX', 'Auto_Serial')">Auto Serial</button>
   </mat-menu>
 </div>
 <!-- <span fxFlex></span> -->
@@ -37,7 +57,6 @@
 
     <mat-tab-group id="tabGroup" #tabGroup (selectedTabChange)="changedOptions(tabGroup)" animationDuration="0ms" mat-align-tabs="center">
       <mat-tab #tap *ngFor="let dashboard of dashboards.tabs; index as tapIndex" [label]="dashboard.name">
-
         <div dir="ltr" class="certificateBox" [style.width.mm]="dashboards.view.width" [style.height.mm]="dashboards.view.height" >   
           <gridster [options]="options">
             <gridster-item #gridsterItem style="background: none;" [item]="item" *ngFor="let item of dashboard.details.contents; index as i">
@@ -105,7 +124,7 @@
                   </span>
 
                   <mat-menu #menuBox="matMenu">
-                    <button mat-menu-item (click)="addVarablesCode()">إضافة رمز</button>
+                    <!-- <button mat-menu-item (click)="addVarablesCode()">إضافة رمز</button> -->
                     <button style="color: red;" (click)="removeItem($event, tapIndex, item, 'text')" mat-menu-item>حذف</button>
                     <button mat-menu-item [matMenuTriggerFor]="moveTo">..تحريك إلى</button>
                   </mat-menu>
@@ -113,6 +132,7 @@
                     <button mat-menu-item (click)="gridsterItem.bringToFront(1);">الأمام</button>
                     <button mat-menu-item (click)="item.layerIndex == 1? item.layerIndex = 1 : gridsterItem.sendToBack(1);">الخلف</button>
                   </mat-menu>
+
                   
                           <!-- بداية المحتوى -->
                       <!-- <span style="margin-left: 10px; color: blueviolet">{{item.layerIndex}} | type: {{item.type}}</span> -->
@@ -121,22 +141,21 @@
                             <div  id="rteSection" style="height: 100%;" class="default-section">
                                 <ejs-richtexteditor
                                 [enableRtl] = 'rtl'
-                                (created)="onCreate()"
-                                (actionComplete)='actionCompleteHandler($event)'
                                 [fontFamily]='fontFamily'
                                 id='inlineRTE'
                                 height="100%"
                                 class="inlineRTE"
-                                #inlineRTE
                                 [enableResize]="true"
                                 [inlineMode]='inlineMode'
-                                [toolbarSettings]='toolbarSettings'
                                 [format]='format'
                                 [saveInterval]="1"
                                 (change)="changeHtmlValue(inlineRTE, tapIndex, item)"
                                 [fontFamily]='fontFamily'
                                 [fontSize]='fontSize'
-                                [value]="item.content">
+                                [value]="item.content"
+                                #inlineRTE
+                                (click)="focusTextArea(inlineRTE)"
+                                [toolbarSettings]='toolbarSettings'>
                                 <!-- <ng-template #valueTemplate>
                                   <p>نص تجريبي لإدراج مربع نص في محتوى المستند النصي, <a href="https://ej2.syncfusion.com/home/" target='_blank'>toolbar</a>.
                                       مما يعزز من العناية بتجربة المستخدم الناجحة. <span><span class="varablesCode">«</span>____<span class="varablesCode">»</span></span></p>
@@ -144,49 +163,8 @@
 
                                     
                                 </ejs-richtexteditor>
-                                
-                                <ejs-dialog
-                                #Dialog
-                                id="rteDialog"
-                                [buttons]='dlgButtons'
-                                (overlayClick)="dialogOverlay()"
-                                [header]='header'
-                                [visible]='false'
-                                [showCloseIcon]='false'
-                                width='43%'
-                                [target]='target'
-                                (created)="dialogCreate()"
-                                [isModal]='true'>
-                                    <ng-template #content>
-                                        <div id="rteSpecial_char">
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div><br />
-                                            <div class="char_block" title="number">«number»</div>
-                                        </div>
-                                    </ng-template>
-                                </ejs-dialog>
+      
+                                <!-- <ng-container *ngTemplateOutlet="Dialog"></ng-container> -->
 
                             </div>
                         </div>
@@ -221,7 +199,6 @@
                 </div>
               </div> 
           </gridster-item>
-          <ng-container *ngTemplateOutlet="gridsterItem"></ng-container>
 
         </gridster>
       </div>
