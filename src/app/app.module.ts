@@ -11,15 +11,19 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { GraphQLModule } from 'src/app/graphql.module';
+import { CommonModule } from '@angular/common';
 
 
 export function rootLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json')
 }
 
+
 @NgModule({
+
   declarations: [AppComponent],
   imports: [
+    CommonModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
@@ -38,7 +42,6 @@ export function rootLoaderFactory(http: HttpClient) {
     GraphQLModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, Renderer2, Pipe } from '@angular/core';
+import { Component, Inject, LOCALE_ID, Renderer2, Pipe, ChangeDetectionStrategy } from '@angular/core';
 import { ConfigService } from '../@vex/services/config.service';
 import { Settings } from 'luxon';
 import { DOCUMENT } from '@angular/common';
@@ -18,7 +18,8 @@ import { TranslateConfigService } from 'src/@vex/services/translate-config.servi
 @Component({
   selector: 'vex-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
 

@@ -153,7 +153,7 @@ export class CertificatesComponent implements OnInit, OnDestroy {
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
 
-        })
+        }) 
 
      this.ngxSpinnerService.hide()
    
@@ -182,7 +182,7 @@ export class CertificatesComponent implements OnInit, OnDestroy {
       break;
 
       case 'view':
-        console.log(id)
+        // console.log(id)
 
         break;
 
@@ -253,8 +253,8 @@ export class CertificatesComponent implements OnInit, OnDestroy {
           data: {uID: this.userID, cerID: data.rowID, cerPositionType: data.cerPositionType, certificateName: data.certificateName, cerPosition: data.cerPosition}
         }).afterClosed().subscribe(result => {
          
-        this.router.navigate([this.router.url]); 
-        window.location.reload()
+        // this.router.navigate([this.router.url]); 
+        // window.location.reload()
 
         })
         break;
@@ -272,8 +272,7 @@ export class CertificatesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('afterClosed', this.afterClosed)
-    this.afterClosed.unsubscribe()
+    // this.afterClosed.unsubscribe()
   }
   
 }
@@ -587,11 +586,6 @@ constructor(
         break;
     
       case 'edit':
-        console.log(this.data.cettificateIDs.rowID)
-        console.log(this.form.get('certificateName').value)
-        console.log(this.form.get('langSex').value)
-        console.log(this.form.get('category').value)
-        console.log(this.form.get('cerPosition').value)
         this.apollo.mutate({
           mutation: gql`
             mutation updateCertificate($id: ID! $certificatename: String $lang_sex_ID: Int $certificatecatagory_ID: Int $cer_position_ID: Int){

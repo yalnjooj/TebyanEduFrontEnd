@@ -1,20 +1,14 @@
-import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
-import { Component, ElementRef, Inject, OnInit, ViewChild, NgZone, Renderer2, ViewChildren, QueryList, ChangeDetectionStrategy, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild, ViewEncapsulation, OnDestroy, AfterViewInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import icClose from '@iconify/icons-ic/twotone-close';
 import { Apollo} from 'apollo-angular';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { fromEvent } from 'rxjs/internal/observable/fromEvent';
-import { debounceTime } from 'rxjs/operators';
 import gql from 'graphql-tag';
-import { Certificate } from 'crypto';
-import { DisplayGrid, Draggable, GridsterComponent, GridsterConfig, GridsterItem, GridsterItemComponentInterface, GridType }  from 'angular-gridster2';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
-import { ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService, FormatModel, FontFamilyModel, RichTextEditorComponent, ToolbarType, NodeSelection } from '@syncfusion/ej2-angular-richtexteditor';
+import { DisplayGrid, GridsterComponent, GridsterConfig, GridsterItem, GridsterItemComponentInterface, GridType }  from 'angular-gridster2';
+import { ToolbarService, LinkService, ImageService, HtmlEditorService, QuickToolbarService, FormatModel, RichTextEditorComponent, NodeSelection } from '@syncfusion/ej2-angular-richtexteditor';
 import { ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-import { ButtonModel, CheckBoxComponent } from '@syncfusion/ej2-angular-buttons';
-import { ComponentsOverviewDialogsComponent } from 'src/app/custom-layout/admin/pages/ui/components/components-overview/components/components-overview-dialogs/components-overview-dialogs.component';
+import { ButtonModel } from '@syncfusion/ej2-angular-buttons';
 import { Subscription } from 'rxjs';
 import { Dialog } from '@syncfusion/ej2-popups';
 import { Browser } from '@syncfusion/ej2-base';
@@ -37,9 +31,8 @@ export interface Certificates {
   // encapsulation: ViewEncapsulation.None,
   // changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./certificate.form.component.css'],
-  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, TableService, QuickToolbarService],
+  providers: [ToolbarService, LinkService, ImageService, HtmlEditorService, QuickToolbarService],
   
-  // encapsulation: ViewEncapsulation.None
 })
 export class CertificateFormComponent  implements OnInit, AfterViewInit, OnDestroy {
 
@@ -123,10 +116,20 @@ export class CertificateFormComponent  implements OnInit, AfterViewInit, OnDestr
 public inlineMode: object = { enable: true, onSelection: true };
 
 
+public selection: NodeSelection = new NodeSelection();
+public range: Range;
+public customBtn: HTMLElement;
+public dialogCtn: HTMLElement;
+public saveSelection: NodeSelection;
 
   public toolbarSettings: ToolbarModule = {
       items: [
-           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat'
+           'Bold', 'Italic',  'FontName', "-", 'FontSize', 'Alignments','-', 'FontColor', 'BackgroundColor', 'ClearFormat',
+           {
+               tooltipText: 'Insert Symbol',
+               template: '<button class="e-tbar-btn e-btn" tabindex="-1" id="custom_tbar"  style="width:100%">'
+                   + '<div class="e-tbar-btn-text" style="font-weight: 500;"> Ω</div></button>'
+           }
           ]
   };
   public format: FormatModel = {
@@ -972,6 +975,80 @@ formSettings(data) {
 
 ngOnDestroy() {
   this.querySubscription.unsubscribe()
+}
+
+
+
+
+public dlgButtons: { [key: string]: ButtonModel }[] = [
+  { buttonModel: { content: 'Insert', isPrimary: true }, click: this.onInsert.bind(this) },
+  { buttonModel: { content: 'Cancel' }, click: this.dialogOverlay.bind(this) }
+];
+public header = 'Special Characters';
+public target: HTMLElement = document.getElementById('rteSection');
+public height: string | number = '350px';
+
+@ViewChild('Dialog') public dialogObj: any;
+
+public onCreate(): void {
+  this.customBtn = document.getElementById('custom_tbar') as HTMLElement;
+  this.dialogCtn = document.getElementById('rteSpecial_char') as HTMLElement;
+  this.dialogObj.target = document.getElementById('rteSection');
+  this.customBtn.onclick = (e: Event) => {
+
+    console.log(this.dialogObj.nativeElement );
+
+    
+      (this.rteObj.contentModule.getEditPanel() as HTMLElement).focus();
+      this.dialogObj.element.style.display = '';
+      this.range = this.selection.getRange(document);
+      this.saveSelection = this.selection.save(this.range, document);
+      this.dialogObj.show();
+  };
+}
+public dialogCreate(): void {
+  this.dialogCtn = document.getElementById('rteSpecial_char');
+  this.dialogCtn.onclick = (e: Event) => {
+      const target: HTMLElement = e.target as HTMLElement;
+      const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+      if (target.classList.contains('char_block')) {
+          target.classList.add('e-active');
+          if (activeEle) {
+              activeEle.classList.remove('e-active');
+          }
+      }
+  };
+}
+public onInsert(): void {
+  const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+  if (activeEle) {
+      if (this.rteObj.formatter.getUndoRedoStack().length === 0) {
+          this.rteObj.formatter.saveData();
+      }
+      if (Browser.isDevice && Browser.isIos) {
+          this.saveSelection.restore();
+      }
+      this.rteObj.executeCommand('insertText', activeEle.textContent);
+      this.rteObj.formatter.saveData();
+      (this.rteObj as any).formatter.enableUndo(this.rteObj);
+  }
+  this.dialogOverlay();
+}
+
+public dialogOverlay(): void {
+  const activeEle: Element = this.dialogObj.element.querySelector('.char_block.e-active');
+  if (activeEle) {
+      activeEle.classList.remove('e-active');
+  }
+  this.dialogObj.hide();
+}
+
+public actionCompleteHandler(e: any): void {
+  if (e.requestType === 'SourceCode') {
+  this.rteObj.getToolbar().querySelector('#custom_tbar').parentElement.classList.add('e-overlay');
+  } else if (e.requestType === 'Preview') {
+  this.rteObj.getToolbar().querySelector('#custom_tbar').parentElement.classList.remove('e-overlay');
+  }
 }
 
 

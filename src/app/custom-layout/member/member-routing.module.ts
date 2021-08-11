@@ -3,7 +3,6 @@ import { RouterModule } from '@angular/router';
 import { MemberComponent } from './member.component';
 import { VexRoutes } from 'src/@vex/interfaces/vex-route.interface';
 
-// loadChildren: () => import('src/app/custom-layout/member/pages/dashboards/dashboard-analytics/dashboard-analytics.module').then(m => m.DashboardAnalyticsModule)
 const routes: VexRoutes = [
   {
     path: '',
@@ -15,7 +14,7 @@ const routes: VexRoutes = [
       },
       {
         path: '',
-        loadChildren: () => import('src/app/custom-layout/member/pages/ui/page-layouts/certificates/certificates.module').then(m => m.CertificatesModule),
+          loadChildren: () => import('src/app/custom-layout/member/pages/ui/page-layouts/courses/tebyan-level1/tebyan-level1.module').then(m => m.TebyanLevel1Module),
       },
       {
         path: 'apps',

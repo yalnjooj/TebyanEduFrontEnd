@@ -9,6 +9,18 @@
 //   src: local("TheSansArabic-Plain"), url(./assets/ej2/fonts/TheSansArabic-Plain.ttf) format("ttf");
 // }
 
+// @import '~@angular/material/theming';
+// @import '~@nader-eloshaiker/mat-datetimepicker/datetimepicker/datetimepicker-theme.scss';
+ @import './assets/css/datetimepicker-theme.scss';
+
+@include mat-core();
+$app-primary: mat-palette($mat-indigo);
+$app-accent:  mat-palette($mat-pink);
+$app-warn:    mat-palette($mat-red);
+$theme: mat-light-theme($app-primary, $app-accent, $app-warn);
+// @include angular-material-theme($theme);
+@include mat-datetimepicker-theme($theme);
+
 // * {
 //   font-family: "TheSansArabic-Plain";
 // }

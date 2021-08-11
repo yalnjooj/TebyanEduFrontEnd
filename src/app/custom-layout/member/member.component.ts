@@ -96,68 +96,61 @@ export class MemberComponent implements OnInit {
           children: [
             {
               type: 'dropdown',
-              label: 'التخطيطات',
+              label: 'الدورات التدريبية',
               icon: icViewCompact,
               children: [
                 {
                   type: 'dropdown',
-                  label: 'Card',
+                  label: 'دورات مناهج تبيان',
+                  icon: icPictureInPicture,
                   children: [
                     {
                       type: 'link',
-                      label: 'Default',
-                      route: '/member/ui/page-layouts/card',
-                      routerLinkActiveOptions: { exact: true }
+                      label: 'دورة تبيان المستوى الأول',
+                      icon: icPictureInPicture,
+                      route: '/member/ui/page-layouts/tebyan-level1'    
                     },
                     {
                       type: 'link',
-                      label: 'Tabbed',
-                      route: '/member/ui/page-layouts/card/tabbed',
+                      label: 'دورة تبيان المستوى الثاني',
+                      icon: icPictureInPicture,
+                      route: '/member/ui/page-layouts/tebyan-level2'    
                     },
                     {
                       type: 'link',
-                      label: 'Large Header',
-                      route: '/member/ui/page-layouts/card/large-header',
-                      routerLinkActiveOptions: { exact: true }
+                      label: 'دورة الإشراف',
+                      icon: icPictureInPicture,
+                      route: '/member/ui/page-layouts/supervision-course'    
                     },
                     {
                       type: 'link',
-                      label: 'Tabbed & Large Header',
-                      route: '/member/ui/page-layouts/card/large-header/tabbed'
+                      label: 'دورة المدربين المستوى الأول',
+                      icon: icPictureInPicture,
+                      route: '/member/ui/page-layouts/coaches-course1'    
+                    },
+                    {
+                      type: 'link',
+                      label: 'دورة المدربين المستوى الثاني',
+                      icon: icPictureInPicture,
+                      route: '/member/ui/page-layouts/coaches-course2'    
                     }
-                  ]
+                  ],
                 },
                 {
-                  type: 'dropdown',
-                  label: 'Simple',
-                  children: [
-                    {
-                      type: 'link',
-                      label: 'Default',
-                      route: '/member/ui/page-layouts/simple',
-                      routerLinkActiveOptions: { exact: true }
-                    },
-                    {
-                      type: 'link',
-                      label: 'Tabbed',
-                      route: '/member/ui/page-layouts/simple/tabbed',
-                    },
-                    {
-                      type: 'link',
-                      label: 'Large Header',
-                      route: '/member/ui/page-layouts/simple/large-header',
-                      routerLinkActiveOptions: { exact: true }
-                    },
-                    {
-                      type: 'link',
-                      label: 'Tabbed & Large Header',
-                      route: '/member/ui/page-layouts/simple/large-header/tabbed'
-                    }
-                  ]
+                  type: 'link',
+                  label: 'الدورات العامة',
+                  icon: icPictureInPicture,
+                  route: '/member/ui/page-layouts/general-courses'
                 },
                 {
                   type: 'link',
                   label: 'اعداد نماذج الشهادات',
+                  icon: icPictureInPicture,
+                  route: '/member/ui/page-layouts/certificates'
+                },
+                {
+                  type: 'link',
+                  label: 'القوائم المصنفة',
                   icon: icPictureInPicture,
                   route: '/member/ui/page-layouts/certificates'
                 },

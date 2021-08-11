@@ -54,7 +54,8 @@
             ],
             "styles": [
               "src/@vex/styles/tailwind.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/app/datePicker/datetimepicker-theme.scss"
             ],
             "scripts": [],
             "customWebpackConfig": {

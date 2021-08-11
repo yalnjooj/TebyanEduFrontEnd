@@ -22,7 +22,8 @@ import { MemberComponent } from './member.component';
     FooterModule,
     ConfigPanelModule,
     SidebarModule,
-    QuickpanelModule
+    QuickpanelModule,
+    
   ]
 })
 export class MemberModule { }

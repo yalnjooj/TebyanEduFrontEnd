@@ -13,7 +13,6 @@ import {MatTabsModule} from '@angular/material/tabs';
 import { GridsterModule } from 'angular-gridster2';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 
 import { ViewImagsModule } from 'src/@vex/pipes/view-Imags/view-Imags.module';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
@@ -33,7 +32,6 @@ import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor'
     GridsterModule,
     MatCheckboxModule,
     FormsModule,
-    BrowserModule,
     ViewImagsModule,
     RichTextEditorAllModule,
     ],
