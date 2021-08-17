@@ -9,6 +9,7 @@ import * as xml from 'highlight.js/lib/languages/xml';
 import * as scss from 'highlight.js/lib/languages/scss';
 import * as typescript from 'highlight.js/lib/languages/typescript';
 import { HighlightService } from './highlight.service';
+import { CommonModule } from '@angular/common';
 
 /**
  * Import every language you wish to highlight here
@@ -33,7 +34,7 @@ export function hljsLanguages() {
     HighlightService
   ],
   declarations: [HighlightDirective],
-  imports: [],
+  imports: [CommonModule],
   exports: [HighlightDirective],
 })
 export class HighlightModule {

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,8 +11,14 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { GraphQLModule } from 'src/app/graphql.module';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import { DateAdapter, MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import  ar from 'date-fns/locale/ar';
+import localeAr from "@angular/common/locales/ar";
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import {MatDividerModule} from '@angular/material/divider';
 
+registerLocaleData(localeAr)
 
 export function rootLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json')
@@ -20,7 +26,16 @@ export function rootLoaderFactory(http: HttpClient) {
 
 
 @NgModule({
-
+  providers: [
+    {
+      provide: LOCALE_ID,
+      useValue: "ar-SA"
+    },
+    {
+      provide: MAT_DATE_LOCALE,
+      useExisting: LOCALE_ID
+    }
+  ],
   declarations: [AppComponent],
   imports: [
     CommonModule,
@@ -39,7 +54,11 @@ export function rootLoaderFactory(http: HttpClient) {
     VexModule,
     CustomLayoutModule,
     NgxSpinnerModule,
-    GraphQLModule
+    GraphQLModule,
+    // MatNativeDateModule,
+    // ReactiveFormsModule,
+    // FormsModule,
+    MatDividerModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]

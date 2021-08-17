@@ -26,29 +26,22 @@ import { MatInputModule } from '@angular/material/input';
 import { TebyanLevel1RoutingModule } from './tebyan-level1-routing.module';
 import { DialogAddNewCourse, TebyanLevel1Component } from './tebyan-level1.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatMomentDateModule } from '@angular/material-moment-adapter';
-import { MatMomentDatetimeModule } from '@nader-eloshaiker/mat-datetimepicker-moment';
-import { AppMomentModule } from "../../../../../../../datePicker/moment/moment.module";
-import { AppNativeModule } from "../../../../../../../datePicker/native/native.module";
+// import { AppMomentModule } from "../../../../../../../datePicker/moment/moment.module";
+// import { AppNativeModule } from "../../../../../../../datePicker/native/native.module";
 
 import { MAT_DATE_LOCALE } from "@angular/material/core";
-import { CommonModule, registerLocaleData } from "@angular/common";
-import localeEn from "@angular/common/locales/en";
+import { CommonModule } from "@angular/common";
+import ar from "@angular/common/locales/ar-SA";
+// import { MyDateTimeModule } from '../../../../../../../datePicker/my-date-time/my-date-time.module';
+// import { MyDateModule } from '../../../../../../../datePicker/my-date/my-date.module';
+// import { MyTimeModule } from '../../../../../../../datePicker/my-time/my-time.module';
+import { CalendarModule, TimePickerModule, DateTimePickerModule, DatePickerModule  } from '@syncfusion/ej2-angular-calendars';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatDividerModule} from '@angular/material/divider';
 
-
-registerLocaleData(localeEn);
 
 @NgModule({
-  providers: [
-    // {
-    //   provide: LOCALE_ID,
-    //   useValue: "au-EN"
-    // },
-    {
-      provide: MAT_DATE_LOCALE,
-      useExisting: LOCALE_ID
-    }
-  ],
   declarations: [TebyanLevel1Component, DialogAddNewCourse],
   imports: [
     CommonModule,
@@ -76,11 +69,25 @@ registerLocaleData(localeEn);
     MatFormFieldModule,
     MatInputModule,
     TebyanLevel1RoutingModule,
-    MatDatepickerModule,
-    MatMomentDateModule,
-    MatMomentDatetimeModule,
-    AppMomentModule,
-    AppNativeModule
+    // MatDatepickerModule,
+    // MatNativeDatetimeModule,
+    // MatMomentDateModule,
+    // MatMomentDatetimeModule,
+    // AppMomentModule,
+    // AppNativeModule,
+    // MyDateTimeModule,
+    // MyDateModule,
+    // MyTimeModule,
+    // MatDatetimepickerModule,
+    CalendarModule,
+    TimePickerModule,
+    DateTimePickerModule,
+    DatePickerModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatDividerModule
+
+
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
