@@ -41,7 +41,6 @@ export interface PeriodicElement {
   catagory: string;
   coache: string;
   typePlace: string;
-  organisationName: string;
   hours: number;
   days: number;
   status: boolean;
@@ -71,7 +70,7 @@ export class TebyanLevel1Component implements OnInit {
 
 
   userID: number;
-  displayedColumns: string[] = ['id', 'courseNo', 'level', 'catagory', 'beneficiaryType', 'hours', 'days', 'courcesDates', 'startTime', 'typePlace', 'coache', 'organisationName', 'edit2', 'edit', 'updatedAt', 'createdAt'];
+  displayedColumns: string[] = ['id', 'courseNo', 'level', 'catagory', 'beneficiaryType', 'courcesDates', 'startTime', 'typePlace', 'coache', 'edit2', 'edit','status', 'updatedAt', 'createdAt'];
   dataSource: any
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -119,13 +118,8 @@ export class TebyanLevel1Component implements OnInit {
             course(uID: $uID){
               id
               status
-              hours
-              days
               start_time
-              test_1
-              test_2
-              oral_test
-              written_test
+              courcesDates
               updatedAt
               createdAt
 
@@ -153,18 +147,6 @@ export class TebyanLevel1Component implements OnInit {
                 id
                 companyType
               }
-              certificate1{
-                id
-                certificatename
-              }
-              certificate2{
-                id
-                certificatename
-              }
-              certificate3{
-                id
-                certificatename
-              }
             }
           }
           `,
@@ -173,32 +155,21 @@ export class TebyanLevel1Component implements OnInit {
           }
       }).valueChanges.subscribe(({data}: any ) => {
 
-        let e: PeriodicElement[] = [];
+        let e: any[] = [];
 
           data.course.forEach((element, index) => {
             e.push({
                 id: index + 1,
                 courseNo: element.id,
                 courceName: element.courceName.name,
+                courcesDates: JSON.parse(element.courcesDates)[0],
                 beneficiaryType: element.beneficiaryType.companyType,
                 level: element.level.name,
                 startTime: new Date (new Date().toDateString() + ' ' + element.start_time),
                 catagory: element.catagory.name,
                 coache: element.coache.name,
                 typePlace: element.typePlace.name,
-                hours: element.hours,
-                days: element.days,
                 status: element.status,
-                organisationName: 'مدارس الطموح',
-                courcesDates: '2020/01/01',
-                // trainingPlace: element.trainingPlace,
-                test1: element.test_1,
-                test2: element.test_2,
-                oralTest: element.oral_test,
-                writtenTest: element.written_test,
-                certificateName1: element.certificate1.certificatename,
-                certificateName2: element.certificate2.certificatename,
-                certificateName3: element.certificate3.certificatename,
                 updatedAt: element.updatedAt,
                 createdAt: element.createdAt,
               })
@@ -235,8 +206,8 @@ export class TebyanLevel1Component implements OnInit {
   addNewCourse(){
     this.dialog.open(DialogAddNewCourse,{
       disableClose: true,
-      width: '100vw',
-      maxWidth: '100vw',
+      // width: '100vw',
+      // maxWidth: '100vw',
       data: {userID: this.userID}
     }).afterClosed().subscribe(result => {
       if(JSON.parse(result)) this.ngOnInit()
@@ -298,6 +269,7 @@ import { default as numbers } from "cldr-data/main/ar/numbers.json";
 import { default as timeZoneNames } from "cldr-data/main/ar/timeZoneNames.json";
 import { default as weekData } from "cldr-data/supplemental/weekData.json"; // To load the culture based first day of week
 import { CalendarComponent } from '@syncfusion/ej2-angular-calendars';
+import { MaskedDateTimeService } from '@syncfusion/ej2-angular-calendars';
 
 // loadCldr(
 //   require('cldr-data/supplemental/numberingSystems.json'),
@@ -321,13 +293,6 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
  </div>
 
 
-  
- <!-- <app-native-datetime></app-native-datetime> -->
-<!-- <app-moment-datetime></app-moment-datetime> -->
-
-
-
-
     <mat-dialog-content id="form-element" class="form-vertical" [formGroup]="form" class="mat-typography" novalidate>
 
 
@@ -336,97 +301,6 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
       <mat-divider></mat-divider>
     </mat-list>
 
-
-
-
-
-
-
-
-
-           
-    
-    <!-- 
-  <ejs-calendar [firstDayOfWeek]='2' [values]='dateValusesDate' locale='ar' (change)='onChange($event)' [isMultiSelection]='true' enableRtl='true'></ejs-calendar>
-<ejs-timepicker enableRtl='true' locale='ar' [value]='dateValueTime' [min]='minValueTime' [max]='maxValueTime' [strictMode]='isStrictModeTime'></ejs-timepicker>
-<ejs-datetimepicker enableRtl='true' locale='ar' [value]='dateTime' [min]='minDateTime' [max]='maxDateTime'></ejs-datetimepicker>
-<ejs-datepicker enableRtl='true' locale='ar' id="datepicker" [min]='minDate' [max]='maxDate'></ejs-datepicker>
-
-<div *ngIf="onChangeValuesDate.length > 0; else ngDates">
-  <h2 *ngFor="let val of onChangeValuesDate; index as i">
-      {{order(i+1)}}: {{val | date:'EEEE, d/M/y'}}
-  </h2>
-</div>
-<<ng-template #ngDates>
-  لم يتم اختيار التاريخ!!
-</ng-template>
-<br>
-<h3>{{onChangeValuesDate}}</h3>
-  
-  
-   -->
-    
-
-<!--
-    <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-      <mat-form-field  fxFlex="auto" appearance="fill">
-      <mat-label>Choose a date</mat-label>
-      <input type="time" matInput [matDatepicker]="picker">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-      
-      <mat-form-field  fxFlex="auto" appearance="fill">
-      <mat-label>Choose a date</mat-label>
-      <input type="date" matInput [matDatepicker]="picker">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field  fxFlex="auto" appearance="fill">
-      <mat-label>Choose a date</mat-label>
-      <input type="datetime-local" matInput [matDatepicker]="picker">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-
-      <mat-form-field  fxFlex="auto" appearance="fill">
-      <mat-label>Choose a date</mat-label>
-      <input type="datetime" matInput [matDatepicker]="picker">
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
-
-  
-    </div>
-<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-
-    <mat-form-field fxFlex="auto">
-    <mat-label>الوقت</mat-label>
-    <mat-datetimepicker-toggle [for]="timePicker" matSuffix></mat-datetimepicker-toggle>
-    <mat-datetimepicker #timePicker type="time" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
-    <input matInput formControlName="time" [matDatetimepicker]="timePicker" required>
-    <mat-error *ngIf="form.get('time').errors?.required">حقل مطلوب</mat-error>
-  </mat-form-field>
-
-  <mat-form-field fxFlex="auto">
-    <mat-label>الوقت والتاريخ</mat-label>
-    <mat-datetimepicker-toggle [for]="datetimePicker" matSuffix></mat-datetimepicker-toggle>
-    <mat-datetimepicker #datetimePicker type="datetime" startView="month" openOnFocus="true" timeInterval="5"></mat-datetimepicker>
-    <input matInput formControlName="dateTime" [matDatetimepicker]="datetimePicker" required>
-    <mat-error *ngIf="form.get('dateTime').errors?.required">حقل مطلوب</mat-error>
-  </mat-form-field>
-    </div> 
-   <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-  <mat-form-field fxFlex="auto">
-    <mat-label>التاريخ</mat-label>
-    <mat-datetimepicker-toggle [for]="datePicker" matSuffix></mat-datetimepicker-toggle>
-    <mat-datetimepicker #datePicker type="date" openOnFocus="true"></mat-datetimepicker>
-    <input matInput formControlName="date" [matDatetimepicker]="datePicker" required>
-    <mat-error *ngIf="form.get('date').errors?.required">حقل مطلوب</mat-error>
-  </mat-form-field>
-
-    </div> -->
 
     <mat-accordion>
 
@@ -463,6 +337,7 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
         <mat-select formControlName="catagory">
           <mat-option dir="rtl" required *ngFor="let data of catagory" [value]="data.id">{{data.name}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('catagory').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
       <mat-form-field fxFlex="auto">
@@ -470,24 +345,26 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
         <mat-select formControlName="level">
           <mat-option dir="rtl" required *ngFor="let data of level" [value]="data.id">{{data.name}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('level').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
       <mat-form-field fxFlex="auto">
         <mat-label>عدد الساعات</mat-label>
         <input type="number" matInput formControlName="hours" required>
+        <mat-error *ngIf="form.get('hours').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
-
     </div>
 
     <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
 
-      <ejs-timepicker id='startTime' formControlName="startTime" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="وقت بدء الدورة" enableRtl='true' locale='ar'></ejs-timepicker>
+      <ejs-timepicker  [enableMask]="enableMaskSupport" id='startTime' formControlName="startTime" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="وقت بدء الدورة" enableRtl='true' locale='ar'></ejs-timepicker>
 
       <mat-form-field fxFlex="auto">
         <mat-label>المقر</mat-label>
         <mat-select formControlName="typePlace">
           <mat-option dir="rtl" required *ngFor="let data of typePlace" [value]="data.id">{{data.name}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('typePlace').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
   </div>
@@ -507,13 +384,15 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
         <mat-select formControlName="coache">
           <mat-option dir="rtl" required *ngFor="let data of coache" [value]="data.id">{{data.name}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('typePlace').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
       <mat-form-field fxFlex="auto">
         <mat-label>نوع المستفيد</mat-label>
         <mat-select formControlName="beneficiaryType">
-          <mat-option (click)="data.companyType == 'جهات'? show=true : show=false" dir="rtl" disabled="false"  required *ngFor="let data of beneficiaryType" selected="6" [value]="data.id">{{data.companyType}}</mat-option>
+          <mat-option (click)="data.companyType == 'جهات'? show=true : show=false; resetInputs(data.id)" dir="rtl" disabled="false"  required *ngFor="let data of beneficiaryType" selected="6" [value]="data.id">{{data.companyType}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('beneficiaryType').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
       </div>
 
@@ -526,6 +405,7 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
         <mat-select formControlName="companyProfiles">
           <mat-option (click)="getCoordinator(data.id)" dir="rtl" disabled="false"  required *ngFor="let data of companyProfiles" selected="6" [value]="data.id">{{data.companyName}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('companyProfiles').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
       <mat-form-field fxFlex="auto">
@@ -533,11 +413,13 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
         <mat-select formControlName="coordinator">
           <mat-option dir="rtl" disabled="false"  required *ngFor="let data of coordinator" selected="6" [value]="data._01_personal.id">{{data._01_personal.name_AR}}</mat-option>
         </mat-select>
+        <mat-error *ngIf="form.get('coordinator').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
       <mat-form-field fxFlex="auto">
         <mat-label>اكتب اسم القاعة</mat-label>
-        <input formControlName="trainingPlace" required matInput type="text">
+        <input formControlName="trainingPlace" matInput type="text">
+        <mat-error *ngIf="form.get('trainingPlace').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
 
@@ -548,10 +430,10 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
       <mat-divider></mat-divider>
     </mat-list>
     <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-      <ejs-datetimepicker id='test1' formControlName="test1" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار الاول" enableRtl='true' locale='ar'></ejs-datetimepicker>
-      <ejs-datetimepicker id='test2' formControlName="test2" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار الثاني" enableRtl='true' locale='ar'></ejs-datetimepicker>
-      <ejs-datetimepicker id='oralTest' formControlName="oralTest" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار الشفوي" enableRtl='true' locale='ar'></ejs-datetimepicker>
-      <ejs-datetimepicker id='writtenTest' formControlName="writtenTest" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار التحريري" enableRtl='true' locale='ar'></ejs-datetimepicker>
+      <ejs-datetimepicker [enableMask]="enableMaskSupport" id='test1' formControlName="test1" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار القصير الأول" enableRtl='true' locale='ar'></ejs-datetimepicker>
+      <ejs-datetimepicker [enableMask]="enableMaskSupport" id='test2' formControlName="test2" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار القصير الثاني" enableRtl='true' locale='ar'></ejs-datetimepicker>
+      <ejs-datetimepicker [enableMask]="enableMaskSupport" id='oralTest' formControlName="oralTest" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار الشفوي" enableRtl='true' locale='ar'></ejs-datetimepicker>
+      <ejs-datetimepicker [enableMask]="enableMaskSupport" id='writtenTest' formControlName="writtenTest" (blur)="onFocusOut()" floatLabelType='Auto' fxFlex="auto" placeholder="الاختبار التحريري" enableRtl='true' locale='ar'></ejs-datetimepicker>
     </div>
     <br>
 
@@ -567,6 +449,7 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
       <mat-select formControlName="certificateModels1">
         <mat-option dir="rtl" required *ngFor="let data of certificateModels" [value]="data.id">{{data.certificatename}}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.get('certificateModels1').errors?.required">حقل مطلوب</mat-error>
     </mat-form-field>
 
     <mat-form-field fxFlex="auto">
@@ -574,6 +457,7 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
       <mat-select formControlName="certificateModels2">
         <mat-option dir="rtl" [disabled]="'false'" required *ngFor="let data of certificateModels" [value]="data.id">{{data.certificatename}}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.get('certificateModels2').errors?.required">حقل مطلوب</mat-error>
     </mat-form-field>
 
     <mat-form-field fxFlex="auto">
@@ -581,73 +465,38 @@ loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
       <mat-select formControlName="certificateModels3">
         <mat-option dir="rtl" [disabled]="'false'" required *ngFor="let data of certificateModels" [value]="data.id">{{data.certificatename}}</mat-option>
       </mat-select>
+      <mat-error *ngIf="form.get('certificateModels3').errors?.required">حقل مطلوب</mat-error>
     </mat-form-field>
 
   </div>
 
-  <!-- <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-    <mat-form-field fxFlex="auto">
-      <mat-label>إسم المستند</mat-label>
-        <md-input-container>
-          <input type="text" formControlName="certificateName" matInput required>
-        </md-input-container>
-      <mat-icon matSuffix [icIcon]="icSmartDocument"></mat-icon>
-    </mat-form-field>
-  </div> 
-
-   <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-
-    <mat-form-field fxFlex="auto">
-      <mat-label>التصنيف</mat-label>
-      <mat-select formControlName="category">
-        <mat-option dir="rtl" required *ngFor="let data of category" value="{{data.id}}">{{data.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field fxFlex="auto">
-    <mat-label>النوع</mat-label>
-    <mat-select formControlName="langSex">
-      <mat-option dir="rtl" [disabled]="'false'" required *ngFor="let data of langSex" value="{{data.id}}">{{data.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  </div>
-
-  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
-
-  <mat-form-field fxFlex="auto">
-    <mat-label>وضعية المستند</mat-label>
-    <mat-select formControlName="cerPosition">
-      <mat-option dir="rtl" required *ngFor="let data of cerPosition" value="{{data.id}}">{{data.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-</div>  -->
 
 </mat-dialog-content>
 
 <mat-dialog-actions align="start">
   <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
   <button mat-raised-button color="primary" (click)="savaData()" cdkFocusInitial>حفظ</button>
-  <button mat-raised-button (click)="form.reset()">مسح</button>
+  <button mat-raised-button (click)="form.reset(); coordinator = null">مسح</button>
 </mat-dialog-actions>
 
   `,
-  styleUrls: ['./tebyan-level1.component.scss']
+  styleUrls: ['./tebyan-level1.component.scss'],
+  providers: [MaskedDateTimeService]
 })
 
 
 export class DialogAddNewCourse implements OnInit {
   show = false;
+  public enableMaskSupport: boolean = true;
   panelOpenState = false;
   formObject: FormValidator;
   options: FormValidatorModel = {
     rules: {
         'test1': {
-            required: [true, "حقل الاختبار الأول مطلوب"]
+            required: [true, "حقل الاختبار القصير الأول مطلوب"]
         },
         'test2': {
-          required: [true, "حقل الاختبار الثاني مطلوب"]
+          required: [true, "حقل الاختبار القصير الثاني مطلوب"]
         },
         'oralTest': {
           required: [true, "حقل الاختبار  الشفوي مطلوب"]
@@ -802,17 +651,6 @@ public onFocusOut(): void {
     test2:  new FormControl(null, [Validators.required]),
     oralTest:  new FormControl(null, [Validators.required]),
     writtenTest:  new FormControl(null, [Validators.required])
-
-    // organisationName:  new FormControl(null, [Validators.required]),
-    // startTime:  new FormControl(null, [Validators.required]),
-    // trainingPlace: new FormControl( null, [Validators.required]),
-    // hours:  new FormControl(null, [Validators.required, Validators.pattern(patternsNumber)]),
-    // days:  new FormControl(null, [Validators.required, Validators.pattern(patternsNumber)]),
-    // test1:  new FormControl(null, [Validators.required]),
-    // test2:  new FormControl(null, [Validators.required]),
-    // oralTest:  new FormControl(null, [Validators.required]),
-    // writtenTest:  new FormControl(null, [Validators.required]),
-    // courcesDates:  new FormControl(null, [Validators.required]),
   });
 
 
@@ -840,7 +678,7 @@ constructor(
 
   ngOnInit(){
 
-    this.dateValusesDate = [new Date('8/7/2020'), new Date('8/8/2020'), new Date('8/9/2020')];
+    // this.dateValusesDate = [new Date('8/7/2020'), new Date('8/8/2020'), new Date('8/9/2020')];
 
     this.formObject = new FormValidator('#form-element', this.options);
     //  setCulture("ar");
@@ -856,7 +694,12 @@ constructor(
       'ar': {
       'datetimepicker': {
       placeholder:"اختر التاريخ والوقت",
-      today:"اليوم"
+      today:"اليوم",
+      day: 'يوم',
+      month: 'شهر',
+      year: 'سنة',
+      hour: 'ساعة',
+      minute: 'دقيقة'
       }
       }
       });
@@ -864,7 +707,9 @@ constructor(
       L10n.load({
       'ar': {
       'timepicker': {
-      placeholder:"اختر الوقت"
+      placeholder:"اختر الوقت",
+      hour: 'ساعة',
+      minute: 'دقيقة'
       }
       }
       });
@@ -873,7 +718,10 @@ constructor(
       'ar': {
       'datepicker': {
       placeholder:"اختر التاريخ",
-      today:"اليوم"
+      today:"اليوم",
+      day: 'يوم',
+      month: 'شهر',
+      year: 'سنة'
       }
       }
       });
@@ -949,27 +797,20 @@ constructor(
       certificateModels1:  new FormControl(null, [Validators.required]),
       certificateModels2:  new FormControl(null, [Validators.required]),
       certificateModels3:  new FormControl(null, [Validators.required]),
-      companyProfiles:  new FormControl(null, [Validators.required]),
-      coordinator:  new FormControl(null, [Validators.required]),
 
-      trainingPlace:  new FormControl(null, [Validators.required]),
+      companyProfiles:  new FormControl(null),
+      coordinator:  new FormControl(null),
+      trainingPlace:  new FormControl(null),
+
+
       startTime: [null, Validators.required],
       test1:  new FormControl(null, [Validators.required]),
       test2:  new FormControl(null, [Validators.required]),
       oralTest:  new FormControl(null, [Validators.required]),
       writtenTest:  new FormControl(null, [Validators.required])
-
-      // organisationName:  new FormControl(null, [Validators.required]),
-      // startTime:  new FormControl(null, [Validators.required]),
-      // trainingPlace: new FormControl( null, [Validators.required]),
-      // hours:  new FormControl(null, [Validators.required, Validators.pattern(patternsNumber)]),
-      // days:  new FormControl(null, [Validators.required, Validators.pattern(patternsNumber)]),
-      // test1:  new FormControl(null, [Validators.required]),
-      // test2:  new FormControl(null, [Validators.required]),
-      // oralTest:  new FormControl(null, [Validators.required]),
-      // writtenTest:  new FormControl(null, [Validators.required]),
-      // courcesDates:  new FormControl(null, [Validators.required]),
     });
+
+
 
     this.ngxSpinnerService.hide()
 
@@ -980,7 +821,35 @@ constructor(
 
   }
 
+resetInputs(id){
 
+  switch (id) {
+    case '3':
+
+    this.form.get('companyProfiles').setValidators(Validators.required)
+    this.form.get('coordinator').setValidators(Validators.required)
+    this.form.get('trainingPlace').setValidators(Validators.required)
+
+      break;
+
+    case '7':
+
+
+      this.form.get('companyProfiles').reset()
+      this.form.get('coordinator').reset()
+      this.form.get('trainingPlace').reset()
+    
+
+      this.form.controls['companyProfiles'].setErrors(null)
+      this.form.controls['coordinator'].setErrors(null)
+      this.form.controls['trainingPlace'].setErrors(null)
+
+      this.coordinator = null
+      break;
+  }
+
+  
+}
   getCoordinator(id){
     this.ngxSpinnerService.show()
 
@@ -1012,70 +881,161 @@ constructor(
 
   savaData(){
 
-    console.log(this.form.invalid)
+    !this.dateValusesDate.length? alert('لم يتم اختيارعدد أيام الدورة !') : null;
+    this.form.invalid? alert('لم يتم اختيار جميع الحقول !') : null
 
-    // console.log('uID', parseInt(this.data.userID))
-    // console.log('courseName', parseInt(this.form.get('catagory').value == null? null: this.form.get('catagory').value == '1'? '5':'6'))
-    console.log('courcesDates',  this.dateValusesDate)
-
-    // console.log('catagory',  parseInt(this.form.get('catagory').value))
-    // console.log('level',  parseInt(this.form.get('level').value))
-    // console.log('hours',  parseInt(this.form.get('hours').value))
-    // console.log('startTime',  this.form.get('startTime').value)
-    // console.log('trainingPlace',  this.form.get('trainingPlace').value)
-    // console.log('coache',  parseInt(this.form.get('coache').value))
-    // console.log('beneficiaryType', parseInt(this.form.get('beneficiaryType').value))
-    // console.log('companyProfiles',  parseInt(this.form.get('companyProfiles').value))
-    // console.log('coordinator',  parseInt(this.form.get('coordinator').value))
-    // console.log('typePlace',  parseInt(this.form.get('typePlace').value))
-    // console.log('test1',  this.form.get('test1').value)
-    // console.log('test2',  this.form.get('test2').value)
-    // console.log('oralTest',  this.form.get('oralTest').value)
-    // console.log('writtenTest',  this.form.get('writtenTest').value)
-    // console.log('certificateModels1',  parseInt(this.form.get('certificateModels1').value))
-    // console.log('certificateModels2',  parseInt(this.form.get('certificateModels2').value))
-    // console.log('certificateModels3',  parseInt(this.form.get('certificateModels3').value))
-
-
- if(this.form.invalid) return
+    
+    if(!(!(this.form.invalid) && (Boolean(this.dateValusesDate.length)))) return;
+    
+    
     this.ngxSpinnerService.show()
     
 
+        this.apollo.mutate({
+          mutation: gql`
+            mutation createCourse($uID: Int! $courseName: Int! $courcesDates: Date! $catagory: Int! $level: Int! $hours: Int! $startTime: Date! $trainingPlace: String! $coache: Int! $beneficiaryType: Int! $companyProfiles: Int! $coordinator: Int! $typePlace: Int! $test1: Date! $test2: Date! $oralTest: Date! $writtenTest: Date! $certificateModels1: Int! $certificateModels2: Int! $certificateModels3: Int!){
+              createCourse(uID: $uID courseName: $courseName courcesDates: $courcesDates catagory: $catagory level: $level hours: $hours startTime: $startTime trainingPlace: $trainingPlace coache: $coache beneficiaryType: $beneficiaryType companyProfiles: $companyProfiles coordinator: $coordinator typePlace: $typePlace test1: $test1 test2: $test2 oralTest: $oralTest writtenTest: $writtenTest certificateModels1: $certificateModels1 certificateModels2: $certificateModels2 certificateModels3: $certificateModels3){
+                  id    
+              }
+            }
+            `,
+            variables:{
+              uID: parseInt(this.data.userID),
+              courseName: parseInt(this.form.get('catagory').value == null? null: this.form.get('catagory').value == '1'? '5':'6'),
+              courcesDates:  this.dateValusesDate,
+              catagory:  parseInt(this.form.get('catagory').value),
+              level:  parseInt(this.form.get('level').value),
+              hours:  parseInt(this.form.get('hours').value),
+              startTime: this.form.get('startTime').value,
+              typePlace:  parseInt(this.form.get('typePlace').value),
+              coache:  parseInt(this.form.get('coache').value),
+              beneficiaryType: parseInt(this.form.get('beneficiaryType').value),
+              companyProfiles:  isNaN(parseInt(this.form.get('companyProfiles').value))? 777000111 : parseInt(this.form.get('companyProfiles').value),
+              coordinator:  isNaN(parseInt(this.form.get('coordinator').value))? 777000111 : parseInt(this.form.get('companyProfiles').value),
+              trainingPlace:  (this.form.get('trainingPlace').value == null)? '777000111' : this.form.get('trainingPlace').value,
+              test1: this.form.get('test1').value,
+              test2: this.form.get('test2').value,
+              oralTest: this.form.get('oralTest').value,
+              writtenTest: this.form.get('writtenTest').value,
+              certificateModels1:  parseInt(this.form.get('certificateModels1').value),
+              certificateModels2:  parseInt(this.form.get('certificateModels2').value),
+              certificateModels3:  parseInt(this.form.get('certificateModels3').value)
+          
+            }
+        }).subscribe(( {data}: any ) => {
 
-      //   this.apollo.mutate({
-      //     mutation: gql`
-      //       mutation createCertificate($uID: Int! $certificatename: String $lang_sex_ID: Int $certificatecatagory_ID: Int $cer_position_ID: Int $certificatesDetails: String!){
-      //         createCertificate(uID: $uID certificatename: $certificatename lang_sex_ID: $lang_sex_ID certificatecatagory_ID: $certificatecatagory_ID cer_position_ID: $cer_position_ID certificatesDetails: $certificatesDetails){
-      //             id    
-      //         }
-      //       }
-      //       `,
-      //       variables:{
-      //         uID: parseInt(this.data.us erID),
-              // courceName:  parseInt(this.form.get('sex').value == '1'? '5':'6'),
-              // beneficiaryType:  parseInt(this.form.get('beneficiaryType').value),
-              // level:  parseInt(this.form.get('level').value),
-              // sex:  parseInt(this.form.get('sex').value),
-              // coache:  parseInt(this.form.get('coache').value),
-              // typePlace:  parseInt(this.form.get('typePlace').value),
-              // certificateModels1:  parseInt(this.form.get('certificateModels1').value),
-              // certificateModels2:  parseInt(this.form.get('certificateModels2').value),
-              // certificateModels3:  parseInt(this.form.get('certificateModels3').value),
+        this.dialogRef.close(true);
+        this.ngxSpinnerService.hide()
+    
+        this.snackBar.open('تمت إضافة البرنامج بنجاح','إغلاق', {
+          duration: 6000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+        });
+    
+      })
 
-      //       }
-      //   }).subscribe(( {data}: any ) => {
-    
-      //   this.dialogRef.close(true);
-      //   this.ngxSpinnerService.hide()
-    
-      //   this.snackBar.open('تمت إضافة البرنامج بنجاح','إغلاق', {
-      //     duration: 6000,
-      //     horizontalPosition: this.horizontalPosition,
-      //     verticalPosition: this.verticalPosition,
-      //   });
-    
-      // })
+
       this.ngxSpinnerService.hide()
 
     }
 }
+
+
+
+// this.apollo.watchQuery({
+//   query: gql`
+//       query course($uID: ID!){
+//       course(uID: $uID){
+//         id
+//         status
+//         hours
+//         days
+//         start_time
+//         test_1
+//         test_2
+//         oral_test
+//         written_test
+//         updatedAt
+//         createdAt
+
+//         level{
+//           id
+//           name
+//         }
+//         catagory{
+//           id
+//           name
+//         }
+//         typePlace{
+//           id
+//           name
+//         }
+//         courceName{
+//           id
+//           name
+//         }
+//         coache{
+//           id
+//           name
+//         }
+//         beneficiaryType{
+//           id
+//           companyType
+//         }
+//         certificate1{
+//           id
+//           certificatename
+//         }
+//         certificate2{
+//           id
+//           certificatename
+//         }
+//         certificate3{
+//           id
+//           certificatename
+//         }
+//       }
+//     }
+//     `,
+//     variables: {
+//       uID: data.currentUser.id
+//     }
+// }).valueChanges.subscribe(({data}: any ) => {
+
+//   let e: PeriodicElement[] = [];
+
+//     data.course.forEach((element, index) => {
+//       e.push({
+//           id: index + 1,
+//           courseNo: element.id,
+//           courceName: element.courceName.name,
+//           beneficiaryType: element.beneficiaryType.companyType,
+//           level: element.level.name,
+//           startTime: new Date (new Date().toDateString() + ' ' + element.start_time),
+//           catagory: element.catagory.name,
+//           coache: element.coache.name,
+//           typePlace: element.typePlace.name,
+//           hours: element.hours,
+//           days: element.days,
+//           status: element.status,
+//           organisationName: 'مدارس الطموح',
+//           courcesDates: '2020/01/01',
+//           // trainingPlace: element.trainingPlace,
+//           test1: element.test_1,
+//           test2: element.test_2,
+//           oralTest: element.oral_test,
+//           writtenTest: element.written_test,
+//           certificateName1: element.certificate1.certificatename,
+//           certificateName2: element.certificate2.certificatename,
+//           certificateName3: element.certificate3.certificatename,
+//           updatedAt: element.updatedAt,
+//           createdAt: element.createdAt,
+//         })
+//       });
+    
+//     this.dataSource = new MatTableDataSource(e);
+//     this.dataSource.sort = this.sort;
+//     this.dataSource.paginator = this.paginator;
+
+//   })
