@@ -1,0 +1,96 @@
+<div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
+    <p><b>{{catagoryId == 1? 'دورة إعداد معلم مناهج التبيان' : 'دورة إعداد معلمة مناهج التبيان'}}</b></p>
+    
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            البيانات الأساسية للدورة
+          </mat-panel-title>
+          <mat-panel-description>
+            <p>{{catagoryId == 1? 'دورة إعداد معلم مناهج التبيان' : 'دورة إعداد معلمة مناهج التبيان'}}</p>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        
+        <table class="table1" style="margin: auto;">
+          <tr>
+            <th class="th1 td1 th2 td2 fontSize">رقم الدورة</th>
+            <td class="th1 td1 th2 td2 fontSize">{{data.courseNo}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">المستوى</th>
+            <td class="th1 td1 th2 td2 fontSize">{{levelNumber}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">بداية الدورة</th>
+            <td class="th1 td1 th2 td2 fontSize">{{dateValusesDate[0] | date:'dd-MM-yyyy':'+0300'}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">نهاية الدورة</th>
+            <td class="th1 td1 th2 td2 fontSize">{{dateValusesDate[dateValusesDate.length -1] | date:'dd-MM-yyyy':'+0300'}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">وقت البدء</th>
+            <td class="th1 td1 th2 td2 fontSize">{{start_time | date: 'h:mm a'}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">الفئة المستهدفة</th>
+            <td class="th1 td1 th2 td2 fontSize">{{catagoryName}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">اسم المدرب</th>
+            <td class="th1 td1 th2 td2 fontSize">{{coacheName}}</td>
+    
+          </tr>
+          <tr>
+            <th class="th1 td1 th2 td2 fontSize">اسم الجهة</th>
+            <td class="th1 td1 th2 td2 fontSize">{{companyProfilesName}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">نوع المقر</th>
+            <td class="th1 td1 th2 td2 fontSize">{{typePlaceName}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">اسم المنسق</th>
+            <td class="th1 td1 th2 td2 fontSize">{{coordinatorName}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">عدد الأيام التدريبية</th>
+            <td class="th1 td1 th2 td2 fontSize">{{dateValusesDate.length}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">عدد الساعات التدريبية</th>
+            <td class="th1 td1 th2 td2 fontSize">{{hours}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">نوع المستفيد</th>
+            <td class="th1 td1 th2 td2 fontSize">{{beneficiaryTypeName}}</td>
+    
+            <th class="th1 td1 th2 td2 fontSize">اسم القاعة</th>
+            <td class="th1 td1 th2 td2 fontSize">{{trainingPlace}}</td>
+          </tr>
+        </table>
+
+      </mat-expansion-panel>
+    </mat-accordion>
+    <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
+       <mat-icon [icIcon]="icClose"></mat-icon>
+     </button>
+   </div>
+  
+  
+      <mat-dialog-content id="form-element" class="form-vertical" class="mat-typography" novalidate>
+  
+        <mat-tab-group selectedIndex="0" mat-align-tabs="center" animationDuration="0ms">
+          <mat-tab label="بيانات المتدربين"> <vex-teachers-data [courseNo]="data.courseNo"></vex-teachers-data> </mat-tab>
+          <mat-tab label="الحضور والغياب"> <vex-attendance></vex-attendance> </mat-tab>
+          <mat-tab label="المشاركات اليومية"> <vex-participations></vex-participations> </mat-tab>
+          <mat-tab label="الانشطة المنزلية"> <vex-activities></vex-activities> </mat-tab>
+          <mat-tab label="الاختبارات القصيرة"> <vex-short-tests></vex-short-tests> </mat-tab>
+          <mat-tab label="درجات الاختبار الشفهي"> <vex-oral-exam></vex-oral-exam> </mat-tab>
+          <mat-tab label="درجات الاختبار التحريري"> <vex-written-exam></vex-written-exam> </mat-tab>
+          <mat-tab label="الدرجات النهائية"> <vex-final-grades></vex-final-grades> </mat-tab>
+        </mat-tab-group>
+
+
+
+
+
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="start">
+      <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
+      <button mat-raised-button color="primary"  cdkFocusInitial>حفظ</button>
+      <button mat-raised-button >مسح</button>
+    </mat-dialog-actions>
+    

@@ -47,6 +47,7 @@
     "apexcharts": "^3.26.1",
     "apollo-angular": "^2.2.0",
     "apollo-link": "^1.2.14",
+    "apollo-link-error": "^1.1.13",
     "apollo-link-ws": "^1.0.20",
     "cldr-data": "^36.0.0",
     "date-fns": "~2.16.1",

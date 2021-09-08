@@ -1,7 +1,6 @@
 <vex-page-layout>
 
-    <vex-page-layout-header class="pb-16" fxLayout="column" fxLayoutAlign="center start">
-      <h1>دورة إعداد معلم ـة مناهج التبيان الجزء الأول والثاني</h1>
+    <vex-page-layout-header class="pb-0" fxLayout="column" fxLayoutAlign="center start">
     </vex-page-layout-header>
   
     <vex-page-layout-content class="-mt-6">
@@ -9,9 +8,9 @@
       <div class="card overflow-auto -mt-16">
         <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
           <h2 class="title my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none" fxHide.xs>
-            <span>{{dataSource?.filteredData.length}} نموذج</span>
+            <span>{{dataSource?.filteredData.length}} عدد المشاركين</span>
           </h2>
-  
+
           <div class="bg-card rounded-full border px-4"
                fxFlex="400px"
                fxFlex.lt-md="auto"
@@ -30,12 +29,12 @@
             <mat-icon [icIcon]="icSearch"></mat-icon>
           </button>
   
-          <button (click)="addNewCourse()"
+          <button (click)="addNewStudent()"
                   class="ml-4"
                   color="primary"
                   fxFlex="none"
                   mat-mini-fab
-                  matTooltip="إضافة نموذج جديد"
+                  matTooltip="إضافة مشارك جديد"
                   type="button">
             <mat-icon [icIcon]="icAdd"></mat-icon>
           </button>
@@ -58,86 +57,84 @@
   
             <!-- courseNo Column -->
             <ng-container matColumnDef="courseNo">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>رقم الدورة</th>
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>الاسم</th>
               <td mat-cell *matCellDef="let element">{{element.courseNo}}#</td>
             </ng-container>
   
   
             <!-- level Column -->
             <ng-container matColumnDef="level">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>المستوى</th>
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>المهنة</th>
               <td mat-cell *matCellDef="let element">{{element.level}}</td>
             </ng-container>
   
   
             <!-- catagory Column -->
             <ng-container matColumnDef="catagory">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>الفئة</th>
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>الجنسية</th>
               <td mat-cell *matCellDef="let element">{{element.catagory}}</td>
             </ng-container>
   
   
             <!-- beneficiaryType Column -->
             <ng-container matColumnDef="beneficiaryType">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>المستفيد</th>
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>تاريخ الميلاد</th>
               <td mat-cell *matCellDef="let element">{{element.beneficiaryType}}</td>
             </ng-container>
 
               
-              <!-- courceDate Column -->
-              <ng-container matColumnDef="courceDate">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef>تاريخ البدء</th>
-                <td mat-cell *matCellDef="let element">{{element.courceDate | date:'dd-MM-yyyy':'+0300'}}</td>
+              <!-- courcesDates Column -->
+              <ng-container matColumnDef="courcesDates">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>المؤهل</th>
+                <td mat-cell *matCellDef="let element">{{element.courcesDates | date:'dd-MM-yyyy':'+0300'}}</td>
               </ng-container>
 
 
 
             <!-- startTime Column -->
             <ng-container matColumnDef="startTime">
-                <th mat-header-cell mat-sort-header *matHeaderCellDef>وقت البدء</th>
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>التخصص</th>
                 <td mat-cell *matCellDef="let element">{{element.startTime | date: 'h:mm a'}}</td>
               </ng-container>
               
               <!-- typePlace Column -->
               <ng-container matColumnDef="typePlace">
-                  <th mat-header-cell mat-sort-header *matHeaderCellDef>المقر</th>
+                  <th mat-header-cell mat-sort-header *matHeaderCellDef>مقدار الحفظ</th>
                   <td mat-cell *matCellDef="let element">{{element.typePlace}}</td>
                 </ng-container>
     
-              <!-- coache Column -->
-              <ng-container matColumnDef="coache">
-                  <th mat-header-cell mat-sort-header *matHeaderCellDef>اسم المدرب</th>
+              <!-- tajwid Column -->
+              <ng-container matColumnDef="tajwid">
+                  <th mat-header-cell mat-sort-header *matHeaderCellDef>الإلمام بأحكام التجويد</th>
                   <td mat-cell *matCellDef="let element">{{element.coache}}</td>
                 </ng-container>
 
+              <!-- YearsOfExperience Column -->
+              <ng-container matColumnDef="YearsOfExperience">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>سنوات الخبرة</th>
+                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+              </ng-container>
 
-            <!-- view Column -->
-            <ng-container matColumnDef="view">
-              <th mat-header-cell *matHeaderCellDef>عرض</th>
-              <td mat-cell *matCellDef="let element">
-                <div class="flex">
-                  <a (click)="viewCourse(element.courseNo)"
-                  class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
-                  mat-icon-button>
-                    <mat-icon [icIcon]="icEye" size="22px"></mat-icon>
-                  </a>
-                </div>
-              </td>
-            </ng-container>
 
-            <!-- edit2 Column -->
-            <ng-container matColumnDef="edit2">
-              <th mat-header-cell *matHeaderCellDef>تعديل</th>
-              <td mat-cell *matCellDef="let element">
-                <div class="flex">
-                  <a (click)="editCourse(element.courseNo)"
-                  class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
-                  mat-icon-button>
-                    <mat-icon [icIcon]="icEdit" size="22px"></mat-icon>
-                  </a>
-                </div>
-              </td>
-            </ng-container>
+              <!-- IdentificationNo Column -->
+              <ng-container matColumnDef="IdentificationNo">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>رقم الهوية</th>
+                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+              </ng-container>
+
+              <!-- phoneNo Column -->
+              <ng-container matColumnDef="phoneNo">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>رقم الجوال</th>
+                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+              </ng-container>
+
+
+              <!-- email Column -->
+              <ng-container matColumnDef="email">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>الإيميل</th>
+                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+              </ng-container>
+
 
             <!-- edit Column -->
             <ng-container matColumnDef="edit">
@@ -145,18 +142,7 @@
               <td mat-cell *matCellDef="let element">
                 <div class="flex">
   
-                  <a (click)="manageCourse(element.courcesDates, element.courseNo)"
-                  class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
-                  mat-icon-button>
-                    <mat-icon [icIcon]="icModule" size="22px"></mat-icon>
-                  </a>
-  
-                  <a (click)="formSettings({rowID: element.rowID, certificateName: element.certificateName, langSex: element.langSex, cerPosition: element.cerPosition,
-                                                                  langSexType: element.langSexType, cerPositionType: element.cerPositionType}, 'edit')"
-                  class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
-                  mat-icon-button>
-                    <mat-icon [icIcon]="icPrint" size="22px"></mat-icon>
-                  </a>
+
   
                   <a (click)="deleteCourse(element.courseNo)"
                   class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
@@ -167,13 +153,7 @@
               </td>
             </ng-container>
             
-            
-            <!-- status Column -->
-            <ng-container matColumnDef="status">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>الحالة</th>
-              <td mat-cell *matCellDef="let element"><mat-slide-toggle (click)="checkeStatus(element.status, element.courseNo)" [checked]="element.status"></mat-slide-toggle></td>
-            </ng-container>
-
+                     
             
             
             <!-- updatedAt Column -->
@@ -207,5 +187,3 @@
     </vex-page-layout-content>
   
   </vex-page-layout>
-
-  

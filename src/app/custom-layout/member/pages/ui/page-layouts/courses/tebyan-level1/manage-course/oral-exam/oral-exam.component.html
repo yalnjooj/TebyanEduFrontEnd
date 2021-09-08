@@ -1,0 +1,131 @@
+
+<vex-page-layout>
+
+    <vex-page-layout-header class="pb-0" fxLayout="column" fxLayoutAlign="center start">
+    </vex-page-layout-header>
+  
+    <vex-page-layout-content class="-mt-6">
+  
+      <div class="card overflow-auto -mt-16">
+        <div class="bg-app-bar px-6 h-16 border-b sticky left-0" fxLayout="row" fxLayoutAlign="start center">
+          <h2 class="title my-0 ltr:pr-4 rtl:pl-4 ltr:mr-4 rtl:ml-4 ltr:border-r rtl:border-l" fxFlex="none" fxHide.xs>
+            <span>{{dataSource?.filteredData.length}} عدد المشاركين</span>
+          </h2>
+  
+          <div class="bg-card rounded-full border px-4"
+               fxFlex="400px"
+               fxFlex.lt-md="auto"
+               fxLayout="row"
+               fxLayoutAlign="start center">
+            <ic-icon [icIcon]="icSearch" size="20px"></ic-icon>
+            <input #input (keyup)="applyFilter($event)"
+                   class="px-4 py-3 border-0 outline-none w-full bg-transparent"
+                   placeholder="بحث..."
+                   type="search">
+          </div>
+  
+          <span fxFlex></span>
+  
+          <button class="ml-4" fxFlex="none" fxHide.gt-xs mat-icon-button type="button">
+            <mat-icon [icIcon]="icSearch"></mat-icon>
+          </button>
+  
+          <button (click)="addNewStudent()"
+                  class="ml-4"
+                  color="primary"
+                  fxFlex="none"
+                  mat-mini-fab
+                  matTooltip="إضافة مشارك جديد"
+                  type="button">
+            <mat-icon [icIcon]="icAdd"></mat-icon>
+          </button>
+        </div>
+  
+        <dir style="position: relative; height: 400px; overflow: auto;">
+  
+        <table [dataSource]="dataSource" class="w-full" mat-table matSort>
+  
+            <!--- Note that these columns can be defined in any order.
+                  The actual rendered columns are set as a property on the row definition" -->
+  
+            <!-- index Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>ت</th>
+              <td mat-cell *matCellDef="let element">{{element.id}}</td>
+            </ng-container>
+  
+            
+  
+            <!-- courseNo Column -->
+            <ng-container matColumnDef="courseNo">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>الاسم</th>
+              <td mat-cell *matCellDef="let element">{{element.courseNo}}#</td>
+            </ng-container>
+  
+  
+            <!-- level Column -->
+            <ng-container matColumnDef="level">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>حالات الحروف</th>
+              <td mat-cell *matCellDef="let element">{{element.level}}</td>
+            </ng-container>
+  
+  
+            <!-- catagory Column -->
+            <ng-container matColumnDef="catagory">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>القراءة المباشرة</th>
+              <td mat-cell *matCellDef="let element">{{element.catagory}}</td>
+            </ng-container>
+  
+  
+            <!-- beneficiaryType Column -->
+            <ng-container matColumnDef="beneficiaryType">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>التهجي</th>
+              <td mat-cell *matCellDef="let element">{{element.beneficiaryType}}</td>
+            </ng-container>
+
+              
+              <!-- courcesDates Column -->
+              <ng-container matColumnDef="courcesDates">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>تلاوة</th>
+                <td mat-cell *matCellDef="let element">{{element.courcesDates | date:'dd-MM-yyyy':'+0300'}}</td>
+              </ng-container>
+
+
+
+            <!-- startTime Column -->
+            <ng-container matColumnDef="startTime">
+                <th mat-header-cell mat-sort-header *matHeaderCellDef>طرق التدريس</th>
+                <td mat-cell *matCellDef="let element">{{element.startTime | date: 'h:mm a'}}</td>
+              </ng-container>
+              
+              <!-- typePlace Column -->
+              <ng-container matColumnDef="typePlace">
+                  <th mat-header-cell mat-sort-header *matHeaderCellDef>المجموع</th>
+                  <td mat-cell *matCellDef="let element">{{element.typePlace}}</td>
+                </ng-container>
+    
+            
+            <!-- updatedAt Column -->
+            <ng-container matColumnDef="updatedAt">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>آخر تعديل</th>
+              <td mat-cell *matCellDef="let element">{{element.updatedAt | date:'dd-MM-yyyy':'+0300'}}</td>
+            </ng-container>
+            
+            
+  
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="lite-row"></tr>
+          
+              <!-- Row shown when there is no matching data. -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" colspan="4">لاتوجد نتائج "{{input.value}}"</td>
+            </tr>
+        </table>
+      </dir>
+  
+        <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]" [pageSize]="10" showFirstLastButtons></mat-paginator>
+      </div>
+  
+    </vex-page-layout-content>
+  
+  </vex-page-layout>

@@ -24,7 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { TebyanLevel1RoutingModule } from './tebyan-level1-routing.module';
-import { DialogAddNewCourse, TebyanLevel1Component } from './tebyan-level1.component';
+import { DialogAddNewCourse, TebyanLevel1Component, DialogEditCourse, DialogViewCourse } from './tebyan-level1.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 // import { AppMomentModule } from "../../../../../../../datePicker/moment/moment.module";
 // import { AppNativeModule } from "../../../../../../../datePicker/native/native.module";
@@ -39,10 +39,22 @@ import { CalendarModule, TimePickerModule, DateTimePickerModule, DatePickerModul
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatDividerModule} from '@angular/material/divider';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { ManageCourseComponent } from './manage-course/manage-course.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import { AttendanceComponent } from './manage-course/attendance/attendance.component';
+import { TeachersDataComponent, AddNewStudent } from './manage-course/teachers-data/teachers-data.component';
+import { ParticipationsComponent } from './manage-course/participations/participations.component';
+import { ActivitiesComponent } from './manage-course/activities/activities.component';
+import { ShortTestsComponent } from './manage-course/short-tests/short-tests.component';
+import { OralExamComponent } from './manage-course/oral-exam/oral-exam.component';
+import { WrittenExamComponent } from './manage-course/written-exam/written-exam.component';
+import { FinalGradesComponent } from './manage-course/final-grades/final-grades.component';
+import { SortPipe } from 'src/@vex/pipes/sort.pipe'
 
 
 @NgModule({
-  declarations: [TebyanLevel1Component, DialogAddNewCourse],
+  declarations: [SortPipe, TebyanLevel1Component, DialogAddNewCourse, DialogEditCourse, DialogViewCourse, ManageCourseComponent, AttendanceComponent, TeachersDataComponent, AddNewStudent, ParticipationsComponent, ActivitiesComponent, ShortTestsComponent, OralExamComponent, WrittenExamComponent, FinalGradesComponent],
   imports: [
     CommonModule,
     SecondaryToolbarModule,
@@ -85,11 +97,12 @@ import {MatDividerModule} from '@angular/material/divider';
     DatePickerModule,
     MatExpansionModule,
     MatGridListModule,
-    MatDividerModule
-
-
+    MatDividerModule,
+    MatSlideToggleModule,
+    MatTabsModule
 
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  providers: [SortPipe]
 })
 export class TebyanLevel1Module { }

@@ -95,3 +95,24 @@ span.e-clear {
   .secondary {
     color: green;
   }
+
+  .table1, .th1, .td1 {
+    border: 1px solid black;
+    border-collapse: collapse;
+  }
+ .th2, .td2 {
+    padding: 5px;
+    text-align: center;
+  }
+
+th.th1 {
+  background-color: #d3d3d3ef
+}
+
+.fontSize{
+  font-size: small;
+}
+
+ejs-datepicker {
+  min-width: 100px;
+}

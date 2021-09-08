@@ -313,7 +313,7 @@ export class CertificatesComponent implements OnInit, OnDestroy {
     <mat-form-field fxFlex="auto">
     <mat-label>النوع</mat-label>
     <mat-select formControlName="langSex">
-      <mat-option dir="rtl" [disabled]="typeView" required *ngFor="let data of langSex" value="{{data.id}}">{{data.name}}</mat-option>
+      <mat-option dir="rtl" [disabled]="typeView" required *ngFor="let data of langSex" [value]="data.id">{{data.name}}</mat-option>
     </mat-select>
   </mat-form-field>
   </div>
@@ -321,7 +321,7 @@ export class CertificatesComponent implements OnInit, OnDestroy {
   <mat-form-field fxFlex="auto">
     <mat-label>وضعية المستند</mat-label>
     <mat-select formControlName="cerPosition">
-      <mat-option dir="rtl" required *ngFor="let data of cerPosition" value="{{data.id}}">{{data.name}}</mat-option>
+      <mat-option dir="rtl" required *ngFor="let data of cerPosition" [value]="data.id">{{data.name}}</mat-option>
     </mat-select>
   </mat-form-field>
 </div>
