@@ -55,84 +55,84 @@
   
             
   
-            <!-- courseNo Column -->
-            <ng-container matColumnDef="courseNo">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>الاسم</th>
-              <td mat-cell *matCellDef="let element">{{element.courseNo}}#</td>
-            </ng-container>
-  
-  
-            <!-- level Column -->
-            <ng-container matColumnDef="level">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>المهنة</th>
-              <td mat-cell *matCellDef="let element">{{element.level}}</td>
+            <!-- name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>اسم المتدرب</th>
+              <td mat-cell *matCellDef="let element">{{element.name}}</td>
             </ng-container>
   
   
             <!-- catagory Column -->
             <ng-container matColumnDef="catagory">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>الجنسية</th>
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>المهنة</th>
               <td mat-cell *matCellDef="let element">{{element.catagory}}</td>
             </ng-container>
   
   
-            <!-- beneficiaryType Column -->
-            <ng-container matColumnDef="beneficiaryType">
+            <!-- nationality Column -->
+            <ng-container matColumnDef="nationality">
+              <th mat-header-cell mat-sort-header *matHeaderCellDef>الجنسية</th>
+              <td mat-cell *matCellDef="let element">{{element.nationality}}</td>
+            </ng-container>
+  
+  
+            <!-- birthDay Column -->
+            <ng-container matColumnDef="birthDay">
               <th mat-header-cell mat-sort-header *matHeaderCellDef>تاريخ الميلاد</th>
-              <td mat-cell *matCellDef="let element">{{element.beneficiaryType}}</td>
+              <td mat-cell *matCellDef="let element">{{element.birthDay | date:'dd-MM-yyyy'}}</td>
             </ng-container>
 
               
-              <!-- courcesDates Column -->
-              <ng-container matColumnDef="courcesDates">
+              <!-- qualification Column -->
+              <ng-container matColumnDef="qualification">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef>المؤهل</th>
-                <td mat-cell *matCellDef="let element">{{element.courcesDates | date:'dd-MM-yyyy':'+0300'}}</td>
+                <td mat-cell *matCellDef="let element">{{element.qualification}}</td>
               </ng-container>
 
 
 
-            <!-- startTime Column -->
-            <ng-container matColumnDef="startTime">
+            <!-- specialization Column -->
+            <ng-container matColumnDef="specialization">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef>التخصص</th>
-                <td mat-cell *matCellDef="let element">{{element.startTime | date: 'h:mm a'}}</td>
+                <td mat-cell *matCellDef="let element">{{element.specialization}}</td>
               </ng-container>
               
-              <!-- typePlace Column -->
-              <ng-container matColumnDef="typePlace">
+              <!-- memorizing Column -->
+              <ng-container matColumnDef="memorizing">
                   <th mat-header-cell mat-sort-header *matHeaderCellDef>مقدار الحفظ</th>
-                  <td mat-cell *matCellDef="let element">{{element.typePlace}}</td>
+                  <td mat-cell *matCellDef="let element">{{element.memorizing}}</td>
                 </ng-container>
     
               <!-- tajwid Column -->
               <ng-container matColumnDef="tajwid">
                   <th mat-header-cell mat-sort-header *matHeaderCellDef>الإلمام بأحكام التجويد</th>
-                  <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+                  <td mat-cell *matCellDef="let element">{{element.tajwid}}</td>
                 </ng-container>
 
-              <!-- YearsOfExperience Column -->
-              <ng-container matColumnDef="YearsOfExperience">
+              <!-- experience Column -->
+              <ng-container matColumnDef="experience">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef>سنوات الخبرة</th>
-                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+                <td mat-cell *matCellDef="let element">{{element.experience}}</td>
               </ng-container>
 
 
-              <!-- IdentificationNo Column -->
-              <ng-container matColumnDef="IdentificationNo">
+              <!-- idnfcation Column -->
+              <ng-container matColumnDef="idnfcation">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef>رقم الهوية</th>
-                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+                <td mat-cell *matCellDef="let element">{{element.idnfcation}}</td>
               </ng-container>
 
-              <!-- phoneNo Column -->
-              <ng-container matColumnDef="phoneNo">
+              <!-- phone Column -->
+              <ng-container matColumnDef="phone">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef>رقم الجوال</th>
-                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+                <td mat-cell *matCellDef="let element">{{element.phone}}</td>
               </ng-container>
 
 
               <!-- email Column -->
               <ng-container matColumnDef="email">
                 <th mat-header-cell mat-sort-header *matHeaderCellDef>الإيميل</th>
-                <td mat-cell *matCellDef="let element">{{element.coache}}</td>
+                <td mat-cell *matCellDef="let element">{{element.email}}</td>
               </ng-container>
 
 
@@ -144,7 +144,7 @@
   
 
   
-                  <a (click)="deleteCourse(element.courseNo)"
+                  <a (click)="deleteCourse(element.id)"
                   class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
                   mat-icon-button>
                     <mat-icon [icIcon]="icDelete" color="warn" size="22px"></mat-icon>

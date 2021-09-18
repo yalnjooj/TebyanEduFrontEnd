@@ -883,8 +883,11 @@ constructor(
       return parseInt(value.id) == 1 || parseInt(value.id) == 3
      })
 
+    this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
+      return parseInt(value.id) == 1 || parseInt(value.id) == 2
+     })
+
      
-    this.catagory = data.mexCourseTables.catagory
     this.coache = data.mexCourseTables.coache
     this.typePlace = data.mexCourseTables.typePlace
     this.certificateModels = data.mexCourseTables.certificateModels
@@ -1084,7 +1087,7 @@ resetInputs(id){
 
     <mat-grid-list cols="2" rowHeight="20rem">
       <mat-grid-tile>
-        <ejs-calendar #ejCalendar (created)='onCreate()' [firstDayOfWeek]='2' [values]='dateValusesDate' locale='ar' (change)='onChange($event)' [isMultiSelection]='true' enableRtl='true'></ejs-calendar>
+        <ejs-calendar #ejCalendar (created)='onCreate()'  (renderDayCell)='$event.isDisabled = true' [firstDayOfWeek]='2' [values]='dateValusesDate' locale='ar' (change)='onChange($event)' [isMultiSelection]='true' enableRtl='true'></ejs-calendar>
       </mat-grid-tile>
       <mat-grid-tile>
         <div class="ex1" *ngIf="dateValusesDate?.length > 0; else ngDates">
@@ -1247,7 +1250,7 @@ resetInputs(id){
 <mat-dialog-actions align="start">
   <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
   <button mat-raised-button color="primary" (click)="savaData()" cdkFocusInitial>حفظ</button>
-  <button mat-raised-button (click)="form.reset(); coordinator = null">مسح</button>
+  <!-- <button mat-raised-button (click)="form.reset(); coordinator = null">مسح</button> -->
 </mat-dialog-actions>
 
   `,
@@ -1287,18 +1290,18 @@ export class DialogEditCourse implements OnInit {
 @ViewChild('ejCalendar') ejCalendar: CalendarComponent;
 
 onCreate() {
-  let clearBtn: HTMLElement = document.createElement('button');
-  let footerElement: any = document.getElementsByClassName('e-footer-container')[0];
-  //creates the custom element for clear button
-  clearBtn.className = 'e-btn e-clear e-flat';
-  clearBtn.textContent = 'مسح';
-  footerElement.prepend(clearBtn);
-  this.ejCalendar.element.appendChild(footerElement);
-  let proxy = this;
-  // custom click handler to update the value property with null values.
-  document.querySelector('.e-footer-container .e-clear').addEventListener('click', function() {
-      proxy.ejCalendar.values = null;
-  })
+  // let clearBtn: HTMLElement = document.createElement('button');
+  // let footerElement: any = document.getElementsByClassName('e-footer-container')[0];
+  // //creates the custom element for clear button
+  // clearBtn.className = 'e-btn e-clear e-flat';
+  // clearBtn.textContent = 'مسح';
+  // footerElement.prepend(clearBtn);
+  // this.ejCalendar.element.appendChild(footerElement);
+  // let proxy = this;
+  // // custom click handler to update the value property with null values.
+  // document.querySelector('.e-footer-container .e-clear').addEventListener('click', function() {
+  //     proxy.ejCalendar.values = null;
+  // })
 }
 
 public onFocusOut(): void {
@@ -1406,7 +1409,7 @@ public onFocusOut(): void {
   
   form = this.fb.group({
     beneficiaryType:  new FormControl({value: null, disabled: true}, [Validators.required]),
-    level:  new FormControl(null, [Validators.required]),
+    level:  new FormControl({value: null, disabled: true}, [Validators.required]),
     hours:  new FormControl(null, [Validators.required]),
     catagory:  new FormControl(null, [Validators.required]),
     coache:  new FormControl(null, [Validators.required]),
@@ -1551,8 +1554,11 @@ constructor(
           return parseInt(value.id) == 1 || parseInt(value.id) == 3
          })
     
+        this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
+          return parseInt(value.id) == 1 || parseInt(value.id) == 2
+         })
+    
          
-        this.catagory = data.mexCourseTables.catagory
         this.coache = data.mexCourseTables.coache
         this.typePlace = data.mexCourseTables.typePlace
         this.certificateModels = data.mexCourseTables.certificateModels
@@ -2196,8 +2202,11 @@ constructor(
           return parseInt(value.id) == 1 || parseInt(value.id) == 3
          })
     
+        this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
+          return parseInt(value.id) == 1 || parseInt(value.id) == 2
+         })
+    
          
-        this.catagory = data.mexCourseTables.catagory
         this.coache = data.mexCourseTables.coache
         this.typePlace = data.mexCourseTables.typePlace
         this.certificateModels = data.mexCourseTables.certificateModels

@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild, AfterContentInit, ElementRef, Renderer2 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { Apollo } from 'apollo-angular';
@@ -17,6 +17,8 @@ import icMap from '@iconify/icons-ic/twotone-map';
 import icFocus from '@iconify/icons-ic/center-focus-strong';
 import icFilterList from '@iconify/icons-ic/twotone-filter-list';
 import icSettings from '@iconify/icons-ic/twotone-settings';
+import icSmartphone from '@iconify/icons-ic/twotone-smartphone';
+import icSmartemail from '@iconify/icons-ic/twotone-email';
 import icModule from '@iconify/icons-ic/view-module';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -25,6 +27,7 @@ import gql from 'graphql-tag';
 import icClose from '@iconify/icons-ic/twotone-close';
 import icPrint from '@iconify/icons-ic/print';
 import { Subscription } from 'rxjs';
+import { MatTableDataSource } from '@angular/material/table';
 
   @Component({
     selector: 'vex-teachers-data',
@@ -95,8 +98,10 @@ import { Subscription } from 'rxjs';
   oralTest: any
   writtenTest: any
 
-  displayedColumns: string[] = ['id', 'courseNo', 'level', 'catagory', 'beneficiaryType', 'courcesDates', 'startTime', 'typePlace', 'tajwid', 'YearsOfExperience', 'IdentificationNo', 'phoneNo', 'email', 'edit', 'updatedAt', 'createdAt'];
-  dataSource: any
+
+
+  displayedColumns: string[] = ['id', 'name', 'catagory', 'nationality', 'birthDay', 'qualification', 'specialization', 'memorizing', 'tajwid', 'experience', 'idnfcation', 'phone', 'email', 'edit', 'updatedAt', 'createdAt'];
+  dataSource: any;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   
@@ -111,10 +116,134 @@ import { Subscription } from 'rxjs';
 
 
 
-
-
   ngOnInit(): void {
     
+    this.apollo.watchQuery({
+      query: gql`
+          query coursesdetails($coursesId: Int!) {
+            coursesdetails(coursesId: $coursesId) {
+              id
+              studentId
+              specialization
+              memorizing
+              tajwid
+              experience
+
+              case_Letters
+              direct_Reading
+              spelling
+              recitation
+              teaching_Methods
+
+              short_test1
+              short_test2
+
+              written_test
+
+              createdAt
+              updatedAt
+              
+              coursesId
+              catagoryId
+              catagory{
+                id
+                name
+              }
+              qualification{
+                id
+                qualification
+              }
+              email{
+                _01_personalId
+                email
+              }
+              phone{
+                _01_personalId
+                phone
+              }
+              birthDay{
+                id
+                birthDay
+              }
+              nationality{
+                id
+                nationalityMaleAr
+                nationalityFemaleAr
+              }
+              countryOfResidence{
+                id
+                countrylityNameAr
+              }
+              region{
+                id
+                nameAr
+              }
+              city{
+                id
+                nameAr
+              }
+              neighborhood{
+                id
+                nameAr
+              }
+              student{
+                id
+                name_AR
+                idnfcation
+              }
+              sex{
+                id
+                sex
+            }
+            }
+        }
+        `,
+        variables: {
+          coursesId: parseInt(this.courseNo)
+        }
+    }).valueChanges.subscribe( async ( {data}: any ) => {
+
+        let e: any[] = [];
+
+      data.coursesdetails.forEach((element, index) => {
+
+        e.push({
+          id: index+1,
+          name: element.student.name_AR,
+          catagory: element.catagory.name,
+          nationality: element.sex.id == 2? element.nationality.nationalityFemaleAr : element.nationality.nationalityMaleAr,
+          birthDay: element.birthDay.birthDay,
+          qualification: element.qualification.qualification,
+          specialization: element.specialization,
+          memorizing: element.memorizing,
+          tajwid: element.tajwid? 'ملم':'غير ملم',
+          experience: element.experience,
+          idnfcation: element.student.idnfcation,
+          phone: element.phone.phone,
+          email: element.email.email,
+          createdAt: element.createdAt,
+          updatedAt: element.updatedAt,
+
+          caseLetters: element.case_Letters,
+          directReading: element.direct_Reading,
+          spelling: element.spelling,
+          recitation: element.recitation,
+          teachingMethods: element.teaching_Methods,
+
+          shortTest1: element.short_test1,
+          shortTest2: element.short_test2,
+
+          writtenTest: element.written_test
+
+        })
+
+      });
+
+      this.dataSource = new MatTableDataSource(e);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+
+    })
 
   }
 
@@ -132,9 +261,7 @@ import { Subscription } from 'rxjs';
           maxWidth: '100vw',
           data: {courseNo: this.courseNo}
         }).afterClosed().subscribe(result => {
-         
-        // this.router.navigate([this.router.url]); 
-        // window.location.reload()
+          if(JSON.parse(result)) this.ngOnInit()
 
         })
   }
@@ -159,7 +286,7 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
   selector: 'vex-addNewStudent',
   template: `
     <div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
-  <p>إنشاء نموذج جديد</p>
+  <p>{{status?.message || 'إضافة جديدة'}}</p>
 
   <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
      <mat-icon [icIcon]="icClose"></mat-icon>
@@ -179,7 +306,7 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
 
       <mat-form-field fxFlex="auto">
         <mat-label>رقم الهوية</mat-label>
-        <input type="text" matInput formControlName="id" required>
+        <input type="text" matInput id="id" formControlName="id"  (keyup)="searchId($event)" required>
         <mat-error *ngIf="form.get('id').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
@@ -217,13 +344,29 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
 
       <mat-form-field fxFlex="auto">
         <mat-label>رقم الجوال</mat-label>
-        <input type="number" matInput formControlName="phone" required>
+        <md-input-container>
+          <input type="text" matInput formControlName="phone" required>
+        </md-input-container>
+        <mat-icon matSuffix [icIcon]="icSmartphone"></mat-icon>
         <mat-error *ngIf="form.get('phone').errors?.required">حقل مطلوب</mat-error>
+      </mat-form-field>
+      
+      <mat-form-field fxFlex="90px">
+      <mat-label>اختر مفتاح الدولة</mat-label>
+        <mat-select formControlName="companyPhoneKey" required>
+          <mat-option dir="rtl" *ngFor="let infoo of countries" [value]="infoo.id">
+            <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{infoo.ISO2Code}}.png" />
+            {{infoo.PHONECODE}}+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field fxFlex="auto">
         <mat-label>البريد الإلكتروني</mat-label>
-        <input type="email" matInput formControlName="email" required>
+        <md-input-container>
+          <input type="email" matInput formControlName="email" required>
+        </md-input-container>
+        <mat-icon [icIcon]="icSmartemail" class="mr-2" matPrefix></mat-icon>  
         <mat-error *ngIf="form.get('email').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
@@ -232,7 +375,10 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
       <mat-form-field fxFlex="auto">
         <mat-label>الجنسية</mat-label>
         <mat-select formControlName="nationality">
-          <mat-option dir="rtl" required *ngFor="let data of nationalities | sort:'asc':'nationality'" [value]="data.id">{{data.nationality}}</mat-option>
+          <mat-option dir="rtl" required *ngFor="let data of nationalities | sort:'asc':'nationality'" [value]="data.id">
+          <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{data.ISO2Code}}.png" />
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.nationality}}
+          </mat-option>
         </mat-select>
         <mat-error *ngIf="form.get('nationality').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
@@ -240,7 +386,10 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
       <mat-form-field fxFlex="auto">
         <mat-label>بلد الإقامة</mat-label>
         <mat-select formControlName="residence">
-          <mat-option dir="rtl" required *ngFor="let data of countries | sort:'asc':'countrylityNameAr'" (click)="residenceCountryId(data.id)" [value]="data.id">{{data.countrylityNameAr}}</mat-option>
+          <mat-option dir="rtl" required *ngFor="let data of countries | sort:'asc':'countrylityNameAr'" (click)="residenceCountryId(data.id)" [value]="data.id">
+          <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{data.ISO2Code}}.png" />  
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.countrylityNameAr}}
+          </mat-option>
         </mat-select>
         <mat-error *ngIf="form.get('residence').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
@@ -297,7 +446,7 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
 
       <mat-form-field fxFlex="auto">
         <mat-label>مقدار الحفظ</mat-label>
-        <input type="number" max="30" matInput formControlName="memorizing" required>
+        <input type="number" matInput formControlName="memorizing" required>
         <mat-error *ngIf="form.get('memorizing').errors?.required">حقل مطلوب</mat-error>
       </mat-form-field>
 
@@ -327,12 +476,14 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
   `,
       styleUrls: ['../../tebyan-level1.component.scss']
 })
-export class AddNewStudent implements OnInit {
+export class AddNewStudent implements OnInit, AfterContentInit {
 
   formObject: FormValidator;
 
 
+icSmartphone = icSmartphone
 icClose = icClose
+icSmartemail = icSmartemail
 icEye = icEye
 icSearch = icSearch
 icPhone = icPhone;
@@ -409,8 +560,11 @@ form: FormGroup;
 
 @ViewChild(MatSort) sort: MatSort;
 @ViewChild(MatPaginator) paginator: MatPaginator;
+@ViewChild('id') id: ElementRef;
 
+status: any;
 constructor(
+  public renderer: Renderer2,
   private sortPipe: SortPipe,
   public dialog: MatDialog,
   private fb: FormBuilder,
@@ -418,29 +572,10 @@ constructor(
   private snackBar: MatSnackBar,
   @Inject(MAT_DIALOG_DATA) public data: any,
   private ngxSpinnerService: NgxSpinnerService,
-  public dialogRef: MatDialogRef<ChangeDataFormDialog>) {
-
-    this.form = this.fb.group({      
-      id:  new FormControl(null, [Validators.required]),
-      nameAr:  new FormControl(null, [Validators.required]),
-      nameEn:  new FormControl(null, [Validators.required]),
-      catagory:  new FormControl(null, [Validators.required]),
-      nationality:  new FormControl(null, [Validators.required]),
-      birthDay:  new FormControl(null, [Validators.required]),
-      qualification:  new FormControl(null, [Validators.required]),
-      sex:  new FormControl(null, [Validators.required]),
-      phone:  new FormControl(null, [Validators.required]),
-      email:  new FormControl(null, [Validators.required]),
-      residence:  new FormControl(null, [Validators.required]),
-      specialization:  new FormControl(null, [Validators.required]),
-      memorizing:  new FormControl(null, [Validators.required]),
-      tajwed:  new FormControl(null, [Validators.required]),
-      expertise:  new FormControl(null, [Validators.required]),
-      region:  new FormControl(null, [Validators.required]),
-      city:  new FormControl(null, [Validators.required]),
-      neighborhood:  new FormControl(null, [Validators.required]),
-    });
-
+  public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
+  
+  ngAfterContentInit(): void {
+    this.renderer.selectRootElement('#id').focus();
   }
 
 
@@ -487,6 +622,7 @@ ngOnInit(): void {
             nationalityMaleAr
             nationalityFemaleAr
             PHONECODE
+            ISO2Code
           }
             qualifications{
               id
@@ -499,7 +635,11 @@ ngOnInit(): void {
     
   this.sex =  data.mexCourseTables.sex
   this.qualifications = data.mexCourseTables.qualifications
-  this.catagory = data.mexCourseTables.catagory
+
+  this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
+    return !(parseInt(value.id) == 1 || parseInt(value.id) == 2)
+   })
+
   
   this.countries = data.mexCourseTables.countries
 
@@ -507,9 +647,229 @@ ngOnInit(): void {
   })
 
 
+  this.form = this.fb.group({      
+    id:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+    nameAr:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    nameEn:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    catagory:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    nationality:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    birthDay:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    qualification:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    sex:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    phone: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3), Validators.maxLength(16), Validators.pattern('[0-9]*')]),
+    companyPhoneKey:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    email:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    residence:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    specialization:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    memorizing:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    tajwed:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    expertise:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    region:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    city:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    neighborhood:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+  });
 
 }
 
+
+searchId(event: Event) {
+  const filterValue = (event.target as HTMLInputElement).value;
+
+  if(filterValue.trim().length <= 6 || filterValue.trim().length > 15) {
+ 
+    this.form.get('nameAr').reset()
+    this.form.get('nameEn').reset()
+    this.form.get('catagory').reset()
+    this.form.get('nationality').reset()
+    this.form.get('birthDay').reset()
+    this.form.get('qualification').reset()
+    this.form.get('sex').reset()
+    this.form.get('phone').reset()
+    this.form.get('companyPhoneKey').reset()
+    this.form.get('email').reset()
+    this.form.get('residence').reset()
+    this.form.get('specialization').reset()
+    this.form.get('memorizing').reset()
+    this.form.get('tajwed').reset()
+    this.form.get('expertise').reset()
+    this.form.get('region').reset()
+    this.form.get('city').reset()
+    this.form.get('neighborhood').reset()
+  
+    this.form.controls['nameAr'].disable({onlySelf: true})
+    this.form.controls['nameEn'].disable({onlySelf: true})
+    this.form.controls['catagory'].disable({onlySelf: true})
+    this.form.controls['nationality'].disable({onlySelf: true})
+    this.form.controls['birthDay'].disable({onlySelf: true})
+    this.form.controls['qualification'].disable({onlySelf: true})
+    this.form.controls['sex'].disable({onlySelf: true})
+    this.form.controls['phone'].disable({onlySelf: true})
+    this.form.controls['companyPhoneKey'].disable({onlySelf: true})
+    this.form.controls['email'].disable({onlySelf: true})
+    this.form.controls['residence'].disable({onlySelf: true})
+    this.form.controls['specialization'].disable({onlySelf: true})
+    this.form.controls['memorizing'].disable({onlySelf: true})
+    this.form.controls['tajwed'].disable({onlySelf: true})
+    this.form.controls['expertise'].disable({onlySelf: true})
+    this.form.controls['region'].disable({onlySelf: true})
+    this.form.controls['city'].disable({onlySelf: true})
+    this.form.controls['neighborhood'].disable({onlySelf: true})
+    
+  } else {
+
+    this.form.controls['nameAr'].enable({onlySelf: true})
+    this.form.controls['nameEn'].enable({onlySelf: true})
+    this.form.controls['catagory'].enable({onlySelf: true})
+    this.form.controls['nationality'].enable({onlySelf: true})
+    this.form.controls['birthDay'].enable({onlySelf: true})
+    this.form.controls['qualification'].enable({onlySelf: true})
+    this.form.controls['sex'].enable({onlySelf: true})
+    this.form.controls['phone'].enable({onlySelf: true})
+    this.form.controls['companyPhoneKey'].enable({onlySelf: true})
+    this.form.controls['email'].enable({onlySelf: true})
+    this.form.controls['residence'].enable({onlySelf: true})
+    this.form.controls['specialization'].enable({onlySelf: true})
+    this.form.controls['memorizing'].enable({onlySelf: true})
+    this.form.controls['tajwed'].enable({onlySelf: true})
+    this.form.controls['expertise'].enable({onlySelf: true})
+    this.form.controls['region'].enable({onlySelf: true})
+    this.form.controls['city'].enable({onlySelf: true})
+    this.form.controls['neighborhood'].enable({onlySelf: true})
+
+    this.ngxSpinnerService.show()
+
+    this.apollo.watchQuery({
+      query: gql`
+        query searchStudentId($identification: ID! $courseId: Int){
+          searchStudentId(identification: $identification courseId: $courseId){
+            coursesDetails{
+  
+              specialization
+              memorizing
+              tajwid
+              experience             
+              catagoryId
+              qualificationId
+            }
+            countryOfPersonal{
+              nationality_id
+              country_of_residence_id
+            }
+            citieANDregion{
+              regionId
+              cityId
+              neighborhoodId
+            }
+            basec{
+              id
+              idnfcation
+              name_AR
+              name_EN
+              sex_id
+            }
+            phone{
+              _01_personalId
+              phone
+              phone_KEY
+            }
+            email{
+              email
+            }
+            birthDay{
+              birthDay
+            }
+          }
+        }
+        `,
+        variables:{
+          identification: filterValue.trim(),
+          courseId: parseInt(this.data.courseNo)   
+        }
+    }).valueChanges.subscribe(( {data}: any ) => {
+  
+  
+      if(!data){
+        
+    this.form.controls['nameAr'].reset()
+    this.form.controls['nameEn'].reset()
+    this.form.controls['catagory'].reset()
+    this.form.controls['nationality'].reset()
+    this.form.controls['birthDay'].reset()
+    this.form.controls['qualification'].reset()
+    this.form.controls['sex'].reset()
+    this.form.controls['phone'].reset()
+    this.form.controls['companyPhoneKey'].reset()
+    this.form.controls['email'].reset()
+    this.form.controls['residence'].reset()
+    this.form.controls['specialization'].reset()
+    this.form.controls['memorizing'].reset()
+    this.form.controls['tajwed'].reset()
+    this.form.controls['expertise'].reset()
+    this.form.controls['region'].reset()
+    this.form.controls['city'].reset()
+    this.form.controls['neighborhood'].reset()
+    this.cities = [];
+    this.neighborhoods = [];
+    this.show = false
+    this.status = {status: 'new', message: 'تسجيل جديد'}
+
+    this.snackBar.open('لا توجد بيانات مسجلة','إغلاق', {
+      duration: 6000,
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+    });
+  
+      } else {
+        this.status = {status: 'edit', message: 'موجود مسبقاً'}
+
+        this.residenceCountryId(data.searchStudentId.countryOfPersonal?.country_of_residence_id)
+        this.nationalitiesFunc(data.searchStudentId.basec?.sex_id)
+
+        this.form.controls['nameAr'].setValue(data.searchStudentId.basec?.name_AR)
+        this.form.controls['nameEn'].setValue(data.searchStudentId.basec?.name_EN)
+        this.form.controls['catagory'].setValue(data.searchStudentId.coursesDetails?.catagoryId.toString())
+        this.form.controls['nationality'].setValue(data.searchStudentId.countryOfPersonal?.nationality_id.toString())
+        this.form.controls['birthDay'].setValue(data.searchStudentId.birthDay?.birthDay)
+        this.form.controls['qualification'].setValue(data.searchStudentId.coursesDetails?.qualificationId)
+        this.form.controls['sex'].setValue(data.searchStudentId?.basec.sex_id.toString())
+        this.form.controls['phone'].setValue(data.searchStudentId.phone?.phone)
+        this.form.controls['companyPhoneKey'].setValue(data.searchStudentId?.phone.phone_KEY.toString())
+        this.form.controls['email'].setValue(data.searchStudentId.email?.email)
+        this.form.controls['residence'].setValue(data.searchStudentId.countryOfPersonal?.country_of_residence_id.toString())
+        this.form.controls['specialization'].setValue(data.searchStudentId.coursesDetails?.specialization.toString())
+        this.form.controls['memorizing'].setValue(data.searchStudentId.coursesDetails?.experience)
+        this.form.controls['tajwed'].setValue(data.searchStudentId.coursesDetails?.tajwid.toString())
+        this.form.controls['expertise'].setValue(data.searchStudentId.coursesDetails?.memorizing)
+        
+        this.form.controls['region'].setValue(data.searchStudentId.citieANDregion?.regionId)
+
+        this.citiesFunc(data.searchStudentId.citieANDregion?.regionId)
+        this.neighborhoodFunc(data.searchStudentId.citieANDregion?.cityId)
+
+        this.form.controls['city'].setValue(data.searchStudentId.citieANDregion?.cityId)
+        this.form.controls['neighborhood'].setValue(data.searchStudentId.citieANDregion?.neighborhoodId)
+
+        this.snackBar.open('الرجاء اكمال بيانات المتدرب ','إغلاق', {
+          duration: 6000,
+          horizontalPosition: this.horizontalPosition,
+          verticalPosition: this.verticalPosition,
+        });
+      }
+  
+  
+      this.ngxSpinnerService.hide()
+  
+  
+  })
+
+  }
+
+
+
+
+this.ngxSpinnerService.hide()
+
+}
 
 nationalitiesFunc(id){
 
@@ -518,14 +878,14 @@ nationalitiesFunc(id){
     case 1:
       this.nationalities = [];
       this.countries.forEach(element => {
-        this.nationalities.push({id: element.id, nationality: element.nationalityMaleAr})
+        this.nationalities.push({id: element.id, nationality: element.nationalityMaleAr, ISO2Code: element.ISO2Code})
       });
       break;
   
     case 2:
       this.nationalities = [];
       this.countries.forEach(element => {
-        this.nationalities.push({id: element.id, nationality: element.nationalityFemaleAr})
+        this.nationalities.push({id: element.id, nationality: element.nationalityFemaleAr, ISO2Code: element.ISO2Code})
       });
       break;
   }
@@ -545,6 +905,7 @@ residenceCountryId(id){
     this.form.controls['region'].setErrors(null)
     this.form.controls['city'].setErrors(null)
     this.form.controls['neighborhood'].setErrors(null)
+    this.form.get('phone').setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(16), Validators.pattern('[0-9]*')])
 
   } else {
     this.show = true;
@@ -552,10 +913,13 @@ residenceCountryId(id){
     this.form.get('region').setValidators(Validators.required)
     this.form.get('city').setValidators(Validators.required)
     this.form.get('neighborhood').setValidators(Validators.required)
+    this.form.get('phone').setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(9), Validators.pattern('[0-9]*')])
     this.cities = [];
     this.neighborhoods = [];
     
+
   };
+
 
 }
 
@@ -582,6 +946,7 @@ provincesFunc(){
 
 citiesFunc(id){
 
+if(id){
   this.apollo.watchQuery({
     query: gql`
         query provinceIds($provinceId: ID!) {
@@ -598,11 +963,13 @@ citiesFunc(id){
     this.cities = data.provinceIds
     this.neighborhoods = [];
   })
+}
 
 }
 
 neighborhoodFunc(id){
 
+if(id){
   this.apollo.watchQuery({
     query: gql`
         query neighborhood($cities: ID!) {
@@ -618,42 +985,22 @@ neighborhoodFunc(id){
   }).valueChanges.subscribe( ( {data}: any ) => {
     this.neighborhoods = data.neighborhood
   })
+}
 
 }
 
 savaData(){
 
-  if(this.form.invalid) return;
-
-  console.log( this.form.get('id').value)
-  console.log( parseInt(this.data.courseNo))
-    console.log( this.form.get('nameAr').value)
-    console.log(  this.form.get('nameEn').value)
-    console.log( parseInt(this.form.get('sex').value))
-    console.log(  parseInt(this.form.get('catagory').value))
-    console.log(  this.form.get('phone').value)
-    console.log( this.form.get('email').value)
-    console.log( this.form.get('birthDay').value)
-    console.log( parseInt(this.form.get('nationality').value))
-    console.log( parseInt(this.form.get('residence').value))
-    console.log( parseInt(this.form.get('region').value))
-    console.log( parseInt(this.form.get('city').value))
-    console.log( parseInt(this.form.get('neighborhood').value))
-    console.log( parseInt(this.form.get('qualification').value))
-    console.log( this.form.get('specialization').value)
-    console.log(  parseInt(this.form.get('memorizing').value))
-    console.log( JSON.parse(this.form.get('tajwed').value))
-    console.log(  parseInt(this.form.get('expertise').value))
-
-
+  
+  if(this.form.invalid) return alert('لم يتم ملئ جميع الحقول !');
 
   this.ngxSpinnerService.show()
     
 
   this.apollo.mutate({
     mutation: gql`
-      mutation createP01_personal($identification: ID! $nameAr: String $nameEn: String $sex: Int $catagoryId: Int $phone: String $email: String $birthDay: Date $nationalityId: Int $residenceId: Int $regionId: Int $cityId: Int $neighborhoodId: Int $qualificationId: Int $specialization: String $memorizing: Int $tajwed: Boolean $expertise: Int){
-        createP01_personal(identification: $identification nameAr: $nameAr nameEn: $nameEn sex: $sex catagoryId: $catagoryId phone: $phone email: $email birthDay: $birthDay nationalityId: $nationalityId residenceId: $residenceId regionId: $regionId cityId: $cityId neighborhoodId: $neighborhoodId qualificationId: $qualificationId specialization: $specialization memorizing: $memorizing tajwed: $tajwed expertise: $expertise)
+      mutation createP01_personal($identification: ID! $courseId: Int $nameAr: String $nameEn: String $sex: Int $catagoryId: Int $phone: String $companyPhoneKey: Int $email: String $birthDay: Date $nationalityId: Int $residenceId: Int $regionId: Int $cityId: Int $neighborhoodId: Int $qualificationId: Int $specialization: String $memorizing: Int $tajwed: Boolean $expertise: Int){
+        createP01_personal(identification: $identification courseId: $courseId nameAr: $nameAr nameEn: $nameEn sex: $sex catagoryId: $catagoryId phone: $phone companyPhoneKey: $companyPhoneKey email: $email birthDay: $birthDay nationalityId: $nationalityId residenceId: $residenceId regionId: $regionId cityId: $cityId neighborhoodId: $neighborhoodId qualificationId: $qualificationId specialization: $specialization memorizing: $memorizing tajwed: $tajwed expertise: $expertise)
       }
       `,
       variables:{
@@ -664,6 +1011,7 @@ savaData(){
         sex: parseInt(this.form.get('sex').value),
         catagoryId: parseInt(this.form.get('catagory').value),
         phone: this.form.get('phone').value.toString(),
+        companyPhoneKey: parseInt(this.form.get('companyPhoneKey').value),
         email: this.form.get('email').value,
         birthDay: this.form.get('birthDay').value,
         nationalityId: parseInt(this.form.get('nationality').value),
@@ -680,7 +1028,7 @@ savaData(){
       }
   }).subscribe(( {data}: any ) => {
 
-   // this.dialogRef.close(true);
+   this.dialogRef.close(true);
   this.ngxSpinnerService.hide()
 
   this.snackBar.open('تمت الإضافة بنجاح','إغلاق', {
