@@ -282,13 +282,13 @@ export class TebyanLevel1Component implements OnInit {
 
   }
 
-  manageCourse(courcesDates, courseNo){
-    
+  manageCourse(courcesDates, courseNo, level){
+
     this.dialog.open(ManageCourseComponent,{
       disableClose: true,
       width: '100vw',
       maxWidth: '100vw',
-      data: {userID: this.userID, courseNo, courcesDates}
+      data: {userID: this.userID, courseNo, courcesDates, level: level == 'المستوى الأول'? 1 : 3}
     }).afterClosed().subscribe(result => {
       if(JSON.parse(result)) this.ngOnInit()
     });

@@ -63,7 +63,7 @@ export class ManageCourseComponent implements OnInit {
     private apollo: Apollo,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private ngxSpinnerService: NgxSpinnerService,
-    public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
+    public dialogRef: MatDialogRef<ChangeDataFormDialog>) {  }
 
 
   ngOnInit(): void {

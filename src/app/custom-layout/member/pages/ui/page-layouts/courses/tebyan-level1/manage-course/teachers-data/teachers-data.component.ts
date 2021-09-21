@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, ViewChild, AfterContentInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild, AfterContentInit, ElementRef, Renderer2, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { Apollo } from 'apollo-angular';
@@ -34,9 +34,10 @@ import { MatTableDataSource } from '@angular/material/table';
     templateUrl: './teachers-data.component.html',
     styleUrls: ['../../tebyan-level1.component.scss']
   })
-  export class TeachersDataComponent implements OnInit {
+  export class TeachersDataComponent implements OnInit, OnDestroy {
 
     @Input('courseNo') courseNo: string;
+    @Input('level') levelNumber: number;
   
   icClose = icClose
   icEye = icEye
@@ -70,7 +71,6 @@ import { MatTableDataSource } from '@angular/material/table';
   beneficiaryTypeName: any;
 
   level: any;
-  levelNumber: any;
 
   catagory: any;
   catagoryName: any;
@@ -113,12 +113,18 @@ import { MatTableDataSource } from '@angular/material/table';
     @Inject(MAT_DIALOG_DATA) public data: any,
     private ngxSpinnerService: NgxSpinnerService,
     public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
+    
+    private unsubscription0: Subscription;
+
+    ngOnDestroy(): void {
+      this.unsubscription0.unsubscribe()   
+    }
 
 
 
   ngOnInit(): void {
     
-    this.apollo.watchQuery({
+   this.unsubscription0 = this.apollo.watchQuery({
       query: gql`
           query coursesdetails($coursesId: Int!) {
             coursesdetails(coursesId: $coursesId) {
@@ -259,7 +265,7 @@ import { MatTableDataSource } from '@angular/material/table';
           disableClose: true,
           width: '100vw',
           maxWidth: '100vw',
-          data: {courseNo: this.courseNo}
+          data: {courseNo: this.courseNo, level: this.levelNumber}
         }).afterClosed().subscribe(result => {
           if(JSON.parse(result)) this.ngOnInit()
 
@@ -286,7 +292,7 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
   selector: 'vex-addNewStudent',
   template: `
     <div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
-  <p>{{status?.message || 'إضافة جديدة'}}</p>
+  <p>{{status?.message || 'أدخل رقم الهوية'}}</p>
 
   <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
      <mat-icon [icIcon]="icClose"></mat-icon>
@@ -298,9 +304,9 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
 
 
     <mat-list>
-      <mat-list-item><b>بيانات الدورة</b></mat-list-item>
+      <mat-list-item><b>البيانات الشخصية</b></mat-list-item>
       <mat-divider></mat-divider>
-    </mat-list>
+    </mat-list><br>
 
     <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
 
@@ -426,7 +432,10 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
 
 
 
-
+    <mat-list>
+      <mat-list-item><b>بيانات الدورة</b></mat-list-item>
+      <mat-divider></mat-divider>
+    </mat-list><br>
     
 
     <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
@@ -470,13 +479,13 @@ import { SortPipe } from "src/@vex/pipes/sort.pipe";
 
     <mat-dialog-actions align="start">
       <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
-      <button mat-raised-button color="primary" (click)="savaData()" cdkFocusInitial>حفظ</button>
+      <button mat-raised-button color="primary" [disabled]="savaButton" (click)="savaData()">حفظ</button>
       <button mat-raised-button (click)="form.reset(); show = false">مسح</button>
     </mat-dialog-actions>
   `,
       styleUrls: ['../../tebyan-level1.component.scss']
 })
-export class AddNewStudent implements OnInit, AfterContentInit {
+export class AddNewStudent implements OnInit, AfterContentInit, OnDestroy {
 
   formObject: FormValidator;
 
@@ -505,6 +514,7 @@ verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
 public dateValusesDate: Date[] = [];
 show = false;
+savaButton = false;
 
 start_time: any;
 hours: any;
@@ -557,6 +567,7 @@ columnsToDisplay: string[];
 dataSource: any;
 
 form: FormGroup;
+isRegested: number[] = [];
 
 @ViewChild(MatSort) sort: MatSort;
 @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -574,6 +585,21 @@ constructor(
   private ngxSpinnerService: NgxSpinnerService,
   public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
   
+  private unsubscription0: Subscription;
+  private unsubscription1: Subscription;
+  private unsubscription2: Subscription;
+  private unsubscription3: Subscription;
+  private unsubscription4: Subscription;
+
+  ngOnDestroy(): void {
+    this.unsubscription0?.unsubscribe()
+    this.unsubscription1?.unsubscribe()
+    this.unsubscription2?.unsubscribe()
+    this.unsubscription3?.unsubscribe()
+    this.unsubscription4?.unsubscribe()
+  
+  }
+
   ngAfterContentInit(): void {
     this.renderer.selectRootElement('#id').focus();
   }
@@ -604,7 +630,7 @@ ngOnInit(): void {
   });
 
 
-  this.apollo.watchQuery({
+  this.unsubscription0 = this.apollo.watchQuery({
     query: gql`
         query mexCourseTables {
           mexCourseTables {
@@ -673,6 +699,8 @@ ngOnInit(): void {
 
 
 searchId(event: Event) {
+  this.unsubscription0.unsubscribe()
+
   const filterValue = (event.target as HTMLInputElement).value;
 
   if(filterValue.trim().length <= 6 || filterValue.trim().length > 15) {
@@ -715,33 +743,19 @@ searchId(event: Event) {
     this.form.controls['city'].disable({onlySelf: true})
     this.form.controls['neighborhood'].disable({onlySelf: true})
     
+    this.isRegested =[]
+    this.status = {status: null, message: 'أدخل رقم الهوية'}
+
   } else {
 
-    this.form.controls['nameAr'].enable({onlySelf: true})
-    this.form.controls['nameEn'].enable({onlySelf: true})
-    this.form.controls['catagory'].enable({onlySelf: true})
-    this.form.controls['nationality'].enable({onlySelf: true})
-    this.form.controls['birthDay'].enable({onlySelf: true})
-    this.form.controls['qualification'].enable({onlySelf: true})
-    this.form.controls['sex'].enable({onlySelf: true})
-    this.form.controls['phone'].enable({onlySelf: true})
-    this.form.controls['companyPhoneKey'].enable({onlySelf: true})
-    this.form.controls['email'].enable({onlySelf: true})
-    this.form.controls['residence'].enable({onlySelf: true})
-    this.form.controls['specialization'].enable({onlySelf: true})
-    this.form.controls['memorizing'].enable({onlySelf: true})
-    this.form.controls['tajwed'].enable({onlySelf: true})
-    this.form.controls['expertise'].enable({onlySelf: true})
-    this.form.controls['region'].enable({onlySelf: true})
-    this.form.controls['city'].enable({onlySelf: true})
-    this.form.controls['neighborhood'].enable({onlySelf: true})
 
     this.ngxSpinnerService.show()
 
-    this.apollo.watchQuery({
+   this.unsubscription1 = this.apollo.watchQuery({
       query: gql`
-        query searchStudentId($identification: ID! $courseId: Int){
-          searchStudentId(identification: $identification courseId: $courseId){
+        query searchStudentId($identification: ID! $courseId: Int $level: Int){
+          searchStudentId(identification: $identification courseId: $courseId level: $level){
+            isRegested
             coursesDetails{
   
               specialization
@@ -778,93 +792,208 @@ searchId(event: Event) {
             birthDay{
               birthDay
             }
+            status
           }
         }
         `,
         variables:{
           identification: filterValue.trim(),
-          courseId: parseInt(this.data.courseNo)   
+          courseId: parseInt(this.data.courseNo),
+          level: parseInt(this.data.level)
         }
     }).valueChanges.subscribe(( {data}: any ) => {
-  
-  
-      if(!data){
+      
+      this.isRegested = data?.searchStudentId.isRegested
+
+      switch (data?.searchStudentId.status) {
+
+        case undefined:
+
+        this.form.controls['nameAr'].reset()
+        this.form.controls['nameEn'].reset()
+        this.form.controls['catagory'].reset()
+        this.form.controls['nationality'].reset()
+        this.form.controls['birthDay'].reset()
+        this.form.controls['qualification'].reset()
+        this.form.controls['sex'].reset()
+        this.form.controls['phone'].reset()
+        this.form.controls['companyPhoneKey'].reset()
+        this.form.controls['email'].reset()
+        this.form.controls['residence'].reset()
+        this.form.controls['specialization'].reset()
+        this.form.controls['memorizing'].reset()
+        this.form.controls['tajwed'].reset()
+        this.form.controls['expertise'].reset()
+        this.form.controls['region'].reset()
+        this.form.controls['city'].reset()
+        this.form.controls['neighborhood'].reset()
+
+        this.form.controls['nameAr'].enable({onlySelf: true})
+        this.form.controls['nameEn'].enable({onlySelf: true})
+        this.form.controls['catagory'].enable({onlySelf: true})
+        this.form.controls['nationality'].enable({onlySelf: true})
+        this.form.controls['birthDay'].enable({onlySelf: true})
+        this.form.controls['qualification'].enable({onlySelf: true})
+        this.form.controls['sex'].enable({onlySelf: true})
+        this.form.controls['phone'].enable({onlySelf: true})
+        this.form.controls['companyPhoneKey'].enable({onlySelf: true})
+        this.form.controls['email'].enable({onlySelf: true})
+        this.form.controls['residence'].enable({onlySelf: true})
+        this.form.controls['specialization'].enable({onlySelf: true})
+        this.form.controls['memorizing'].enable({onlySelf: true})
+        this.form.controls['tajwed'].enable({onlySelf: true})
+        this.form.controls['expertise'].enable({onlySelf: true})
+        this.form.controls['region'].enable({onlySelf: true})
+        this.form.controls['city'].enable({onlySelf: true})
+        this.form.controls['neighborhood'].enable({onlySelf: true})
+
+        this.form.get('region').reset()
+        this.form.get('city').reset()
+        this.form.get('neighborhood').reset()
         
-    this.form.controls['nameAr'].reset()
-    this.form.controls['nameEn'].reset()
-    this.form.controls['catagory'].reset()
-    this.form.controls['nationality'].reset()
-    this.form.controls['birthDay'].reset()
-    this.form.controls['qualification'].reset()
-    this.form.controls['sex'].reset()
-    this.form.controls['phone'].reset()
-    this.form.controls['companyPhoneKey'].reset()
-    this.form.controls['email'].reset()
-    this.form.controls['residence'].reset()
-    this.form.controls['specialization'].reset()
-    this.form.controls['memorizing'].reset()
-    this.form.controls['tajwed'].reset()
-    this.form.controls['expertise'].reset()
-    this.form.controls['region'].reset()
-    this.form.controls['city'].reset()
-    this.form.controls['neighborhood'].reset()
-    this.cities = [];
-    this.neighborhoods = [];
-    this.show = false
-    this.status = {status: 'new', message: 'تسجيل جديد'}
+        this.form.controls['region'].setErrors(null)
+        this.form.controls['city'].setErrors(null)
+        this.form.controls['neighborhood'].setErrors(null)
 
-    this.snackBar.open('لا توجد بيانات مسجلة','إغلاق', {
-      duration: 6000,
-      horizontalPosition: this.horizontalPosition,
-      verticalPosition: this.verticalPosition,
-    });
-  
-      } else {
-        this.status = {status: 'edit', message: 'موجود مسبقاً'}
+        this.cities = [];
+        this.neighborhoods = [];
+        this.show = false
+        this.status = {status: 'new', message: 'تسجيل جديد'}
+        this.savaButton = false;
 
-        this.residenceCountryId(data.searchStudentId.countryOfPersonal?.country_of_residence_id)
-        this.nationalitiesFunc(data.searchStudentId.basec?.sex_id)
-
-        this.form.controls['nameAr'].setValue(data.searchStudentId.basec?.name_AR)
-        this.form.controls['nameEn'].setValue(data.searchStudentId.basec?.name_EN)
-        this.form.controls['catagory'].setValue(data.searchStudentId.coursesDetails?.catagoryId.toString())
-        this.form.controls['nationality'].setValue(data.searchStudentId.countryOfPersonal?.nationality_id.toString())
-        this.form.controls['birthDay'].setValue(data.searchStudentId.birthDay?.birthDay)
-        this.form.controls['qualification'].setValue(data.searchStudentId.coursesDetails?.qualificationId)
-        this.form.controls['sex'].setValue(data.searchStudentId?.basec.sex_id.toString())
-        this.form.controls['phone'].setValue(data.searchStudentId.phone?.phone)
-        this.form.controls['companyPhoneKey'].setValue(data.searchStudentId?.phone.phone_KEY.toString())
-        this.form.controls['email'].setValue(data.searchStudentId.email?.email)
-        this.form.controls['residence'].setValue(data.searchStudentId.countryOfPersonal?.country_of_residence_id.toString())
-        this.form.controls['specialization'].setValue(data.searchStudentId.coursesDetails?.specialization.toString())
-        this.form.controls['memorizing'].setValue(data.searchStudentId.coursesDetails?.experience)
-        this.form.controls['tajwed'].setValue(data.searchStudentId.coursesDetails?.tajwid.toString())
-        this.form.controls['expertise'].setValue(data.searchStudentId.coursesDetails?.memorizing)
         
-        this.form.controls['region'].setValue(data.searchStudentId.citieANDregion?.regionId)
+          this.snackBar.open('تسجيل جديد','إغلاق', {
+            duration: 6000,
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition,
+          });
+        
 
-        this.citiesFunc(data.searchStudentId.citieANDregion?.regionId)
-        this.neighborhoodFunc(data.searchStudentId.citieANDregion?.cityId)
+          break;
+        
+        case true:
+          
+        this.savaButton = true;
 
-        this.form.controls['city'].setValue(data.searchStudentId.citieANDregion?.cityId)
-        this.form.controls['neighborhood'].setValue(data.searchStudentId.citieANDregion?.neighborhoodId)
+        this.form.get('nameAr').reset()
+        this.form.get('nameEn').reset()
+        this.form.get('catagory').reset()
+        this.form.get('nationality').reset()
+        this.form.get('birthDay').reset()
+        this.form.get('qualification').reset()
+        this.form.get('sex').reset()
+        this.form.get('phone').reset()
+        this.form.get('companyPhoneKey').reset()
+        this.form.get('email').reset()
+        this.form.get('residence').reset()
+        this.form.get('specialization').reset()
+        this.form.get('memorizing').reset()
+        this.form.get('tajwed').reset()
+        this.form.get('expertise').reset()
+        this.form.get('region').reset()
+        this.form.get('city').reset()
+        this.form.get('neighborhood').reset()
+      
+        this.form.controls['nameAr'].disable({onlySelf: true})
+        this.form.controls['nameEn'].disable({onlySelf: true})
+        this.form.controls['catagory'].disable({onlySelf: true})
+        this.form.controls['nationality'].disable({onlySelf: true})
+        this.form.controls['birthDay'].disable({onlySelf: true})
+        this.form.controls['qualification'].disable({onlySelf: true})
+        this.form.controls['sex'].disable({onlySelf: true})
+        this.form.controls['phone'].disable({onlySelf: true})
+        this.form.controls['companyPhoneKey'].disable({onlySelf: true})
+        this.form.controls['email'].disable({onlySelf: true})
+        this.form.controls['residence'].disable({onlySelf: true})
+        this.form.controls['specialization'].disable({onlySelf: true})
+        this.form.controls['memorizing'].disable({onlySelf: true})
+        this.form.controls['tajwed'].disable({onlySelf: true})
+        this.form.controls['expertise'].disable({onlySelf: true})
+        this.form.controls['region'].disable({onlySelf: true})
+        this.form.controls['city'].disable({onlySelf: true})
+        this.form.controls['neighborhood'].disable({onlySelf: true})
 
-        this.snackBar.open('الرجاء اكمال بيانات المتدرب ','إغلاق', {
+        this.status = {status: null, message: 'مسجل بالفعل في هذه الدورة'}
+        this.snackBar.open('مسجل بالفعل في هذه الدورة','إغلاق', {
           duration: 6000,
           horizontalPosition: this.horizontalPosition,
           verticalPosition: this.verticalPosition,
         });
+
+          break;
+
+        case false:
+
+          this.savaButton = false;
+
+        
+          
+            this.form.controls['nameAr'].enable({onlySelf: true})
+            this.form.controls['nameEn'].enable({onlySelf: true})
+            this.form.controls['catagory'].enable({onlySelf: true})
+            this.form.controls['nationality'].enable({onlySelf: true})
+            this.form.controls['birthDay'].enable({onlySelf: true})
+            this.form.controls['qualification'].enable({onlySelf: true})
+            this.form.controls['sex'].enable({onlySelf: true})
+            this.form.controls['phone'].enable({onlySelf: true})
+            this.form.controls['companyPhoneKey'].enable({onlySelf: true})
+            this.form.controls['email'].enable({onlySelf: true})
+            this.form.controls['residence'].enable({onlySelf: true})
+            this.form.controls['specialization'].enable({onlySelf: true})
+            this.form.controls['memorizing'].enable({onlySelf: true})
+            this.form.controls['tajwed'].enable({onlySelf: true})
+            this.form.controls['expertise'].enable({onlySelf: true})
+ 
+
+ 
+
+  
+
+
+          this.status = {status: 'edit', message: 'الرجاء اكمال البيانات'}
+
+          this.residenceCountryId(data.searchStudentId.countryOfPersonal?.country_of_residence_id)
+          this.nationalitiesFunc(data.searchStudentId.basec?.sex_id)
+  
+          this.form.controls['nameAr'].setValue(data.searchStudentId.basec?.name_AR)
+          this.form.controls['nameEn'].setValue(data.searchStudentId.basec?.name_EN)
+          this.form.controls['catagory'].setValue(data.searchStudentId.coursesDetails?.catagoryId.toString())
+          this.form.controls['nationality'].setValue(data.searchStudentId.countryOfPersonal?.nationality_id.toString())
+          this.form.controls['birthDay'].setValue(data.searchStudentId.birthDay?.birthDay)
+          this.form.controls['qualification'].setValue(data.searchStudentId.coursesDetails?.qualificationId)
+          this.form.controls['sex'].setValue(data.searchStudentId?.basec.sex_id.toString())
+          this.form.controls['phone'].setValue(data.searchStudentId.phone?.phone)
+          this.form.controls['companyPhoneKey'].setValue(data.searchStudentId?.phone.phone_KEY.toString())
+          this.form.controls['email'].setValue(data.searchStudentId.email?.email)
+          this.form.controls['residence'].setValue(data.searchStudentId.countryOfPersonal?.country_of_residence_id.toString())
+          this.form.controls['specialization'].setValue(data.searchStudentId.coursesDetails?.specialization.toString())
+          this.form.controls['memorizing'].setValue(data.searchStudentId.coursesDetails?.experience)
+          this.form.controls['tajwed'].setValue(data.searchStudentId.coursesDetails?.tajwid.toString())
+          this.form.controls['expertise'].setValue(data.searchStudentId.coursesDetails?.memorizing)
+          
+          this.form.controls['region'].setValue(data.searchStudentId.citieANDregion?.regionId)
+  
+          this.citiesFunc(data.searchStudentId.citieANDregion?.regionId)
+          this.neighborhoodFunc(data.searchStudentId.citieANDregion?.cityId)
+  
+          this.form.controls['city'].setValue(data.searchStudentId.citieANDregion?.cityId)
+          this.form.controls['neighborhood'].setValue(data.searchStudentId.citieANDregion?.neighborhoodId)
+  
+          this.snackBar.open('الرجاء اكمال البيانات','إغلاق', {
+            duration: 6000,
+            horizontalPosition: this.horizontalPosition,
+            verticalPosition: this.verticalPosition,
+          });
+          
+          break;
+
       }
-  
-  
+
       this.ngxSpinnerService.hide()
-  
-  
+
   })
 
   }
-
-
 
 
 this.ngxSpinnerService.hide()
@@ -913,6 +1042,9 @@ residenceCountryId(id){
     this.form.get('region').setValidators(Validators.required)
     this.form.get('city').setValidators(Validators.required)
     this.form.get('neighborhood').setValidators(Validators.required)
+    this.form.controls['region'].enable({onlySelf: true})
+    this.form.controls['city'].enable({onlySelf: true})
+    this.form.controls['neighborhood'].enable({onlySelf: true})
     this.form.get('phone').setValidators([Validators.required, Validators.minLength(3), Validators.maxLength(9), Validators.pattern('[0-9]*')])
     this.cities = [];
     this.neighborhoods = [];
@@ -923,13 +1055,13 @@ residenceCountryId(id){
 
 }
 
-public onFocusOut(): void {
+onFocusOut(): void {
   this.formObject.validate("birthDay")
 }
 
 provincesFunc(){
 
-  this.apollo.watchQuery({
+  this.unsubscription2 = this.apollo.watchQuery({
     query: gql`
         query provinces {
           provinces{
@@ -947,7 +1079,7 @@ provincesFunc(){
 citiesFunc(id){
 
 if(id){
-  this.apollo.watchQuery({
+  this.unsubscription3 = this.apollo.watchQuery({
     query: gql`
         query provinceIds($provinceId: ID!) {
           provinceIds(provinceId: $provinceId) {
@@ -970,7 +1102,7 @@ if(id){
 neighborhoodFunc(id){
 
 if(id){
-  this.apollo.watchQuery({
+  this.unsubscription4 = this.apollo.watchQuery({
     query: gql`
         query neighborhood($cities: ID!) {
           neighborhood(cities: $cities) {
@@ -991,20 +1123,24 @@ if(id){
 
 savaData(){
 
-  
   if(this.form.invalid) return alert('لم يتم ملئ جميع الحقول !');
 
+  if(!(this.isRegested === undefined || this.isRegested.length == 0)){
+    const r = confirm(`تم تسجيل هذا المتدرب لنفس المستوى من قبل، رقم الدورة: ${this.isRegested} هل تريد المتباعة على أي حال؟`)
+    if(!r) return
+  }
   this.ngxSpinnerService.show()
-    
+
 
   this.apollo.mutate({
     mutation: gql`
-      mutation createP01_personal($identification: ID! $courseId: Int $nameAr: String $nameEn: String $sex: Int $catagoryId: Int $phone: String $companyPhoneKey: Int $email: String $birthDay: Date $nationalityId: Int $residenceId: Int $regionId: Int $cityId: Int $neighborhoodId: Int $qualificationId: Int $specialization: String $memorizing: Int $tajwed: Boolean $expertise: Int){
-        createP01_personal(identification: $identification courseId: $courseId nameAr: $nameAr nameEn: $nameEn sex: $sex catagoryId: $catagoryId phone: $phone companyPhoneKey: $companyPhoneKey email: $email birthDay: $birthDay nationalityId: $nationalityId residenceId: $residenceId regionId: $regionId cityId: $cityId neighborhoodId: $neighborhoodId qualificationId: $qualificationId specialization: $specialization memorizing: $memorizing tajwed: $tajwed expertise: $expertise)
+      mutation createP01_personal($identification: ID! $status: String! $courseId: Int $nameAr: String $nameEn: String $sex: Int $catagoryId: Int $phone: String $companyPhoneKey: Int $email: String $birthDay: Date $nationalityId: Int $residenceId: Int $regionId: Int $cityId: Int $neighborhoodId: Int $qualificationId: Int $specialization: String $memorizing: Int $tajwed: Boolean $expertise: Int){
+        createP01_personal(identification: $identification status: $status courseId: $courseId nameAr: $nameAr nameEn: $nameEn sex: $sex catagoryId: $catagoryId phone: $phone companyPhoneKey: $companyPhoneKey email: $email birthDay: $birthDay nationalityId: $nationalityId residenceId: $residenceId regionId: $regionId cityId: $cityId neighborhoodId: $neighborhoodId qualificationId: $qualificationId specialization: $specialization memorizing: $memorizing tajwed: $tajwed expertise: $expertise)
       }
       `,
       variables:{
         identification: this.form.get('id').value,
+        status: this.status.status,
         courseId: parseInt(this.data.courseNo),
         nameAr: this.form.get('nameAr').value,
         nameEn:  this.form.get('nameEn').value,
@@ -1028,14 +1164,31 @@ savaData(){
       }
   }).subscribe(( {data}: any ) => {
 
-   this.dialogRef.close(true);
-  this.ngxSpinnerService.hide()
+    let message: string;
 
-  this.snackBar.open('تمت الإضافة بنجاح','إغلاق', {
-    duration: 6000,
-    horizontalPosition: this.horizontalPosition,
-    verticalPosition: this.verticalPosition,
-  });
+    switch (data.createP01_personal) {
+
+      case 'email':
+        message = 'عنوان البريد الإلكتروني موجود، يجب تغييره !!'
+        break;
+
+      case 'phone':
+        message = 'رقم الجوال موجود، يجب تغييره !!'
+        break;
+
+      default:
+        message = data.createP01_personal
+        this.dialogRef.close(true);
+        break;
+    }
+    
+    this.ngxSpinnerService.hide()
+
+    this.snackBar.open(message,'إغلاق', {
+      duration: 6000,
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
+    });
 
 })
 
