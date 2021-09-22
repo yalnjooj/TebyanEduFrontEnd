@@ -144,7 +144,13 @@
   
 
   
-                  <a (click)="deleteCourse(element.id)"
+                  <a (click)="editCourse(element.idnfcation)"
+                  class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
+                  mat-icon-button>
+                    <mat-icon [icIcon]="icEdit" size="22px"></mat-icon>
+                  </a>
+  
+                  <a (click)="deleteCourse(element.courseDetailsId)"
                   class="w-8 h-8 leading-none flex items-center justify-center hover:bg-hover text-primary bg-primary-light"
                   mat-icon-button>
                     <mat-icon [icIcon]="icDelete" color="warn" size="22px"></mat-icon>
@@ -155,19 +161,7 @@
             
                      
             
-            
-            <!-- updatedAt Column -->
-            <ng-container matColumnDef="updatedAt">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>آخر تعديل</th>
-              <td mat-cell *matCellDef="let element">{{element.updatedAt | date:'dd-MM-yyyy':'+0300'}}</td>
-            </ng-container>
-  
-  
-            <!-- createdAt Column -->
-            <ng-container matColumnDef="createdAt">
-              <th mat-header-cell mat-sort-header *matHeaderCellDef>تاريخ الإنشاء</th>
-              <td mat-cell *matCellDef="let element">{{element.createdAt | date:'dd-MM-yyyy':'+0300'}}</td>
-            </ng-container>
+ 
             
             
   

@@ -43,7 +43,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { ManageCourseComponent } from './manage-course/manage-course.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import { AttendanceComponent } from './manage-course/attendance/attendance.component';
-import { TeachersDataComponent, AddNewStudent } from './manage-course/teachers-data/teachers-data.component';
+import { TeachersDataComponent, AddNewStudent, AddEditStudent } from './manage-course/teachers-data/teachers-data.component';
 import { ParticipationsComponent } from './manage-course/participations/participations.component';
 import { ActivitiesComponent } from './manage-course/activities/activities.component';
 import { ShortTestsComponent } from './manage-course/short-tests/short-tests.component';
@@ -54,7 +54,7 @@ import { SortPipe } from 'src/@vex/pipes/sort.pipe'
 
 
 @NgModule({
-  declarations: [SortPipe, TebyanLevel1Component, DialogAddNewCourse, DialogEditCourse, DialogViewCourse, ManageCourseComponent, AttendanceComponent, TeachersDataComponent, AddNewStudent, ParticipationsComponent, ActivitiesComponent, ShortTestsComponent, OralExamComponent, WrittenExamComponent, FinalGradesComponent],
+  declarations: [SortPipe, TebyanLevel1Component, DialogAddNewCourse, DialogEditCourse, DialogViewCourse, ManageCourseComponent, AttendanceComponent, TeachersDataComponent, AddNewStudent, AddEditStudent, ParticipationsComponent, ActivitiesComponent, ShortTestsComponent, OralExamComponent, WrittenExamComponent, FinalGradesComponent],
   imports: [
     CommonModule,
     SecondaryToolbarModule,
