@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild, AfterContentInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { Apollo } from 'apollo-angular';
@@ -26,6 +26,7 @@ import icClose from '@iconify/icons-ic/twotone-close';
 import icPrint from '@iconify/icons-ic/print';
 import { Subscription } from 'rxjs';
 import { FormValidator, FormValidatorModel } from '@syncfusion/ej2-inputs';
+import { DomSanitizer } from '@angular/platform-browser';
 
 
   @Component({
@@ -57,6 +58,8 @@ import { FormValidator, FormValidatorModel } from '@syncfusion/ej2-inputs';
 
   public dateValusesDate: Date[] = [];
   show = false;
+
+  unsubscription6: any
 
   start_time: any;
   hours: any;
@@ -98,13 +101,126 @@ import { FormValidator, FormValidatorModel } from '@syncfusion/ej2-inputs';
   displayedColumns: string[] = [];
   columnsToDisplay: string[];
   dataSource: any;
-
+  dataFromServer: any;
+  localValue: any
+  arraeis: number [] = [];
 
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @Input() set dataFromActivities(localValue: any){
+
+    this.localValue = localValue
+    
+    this.ngxSpinnerService.show()
+
+
+
+    if(localValue){
+
+
+
+
+      this.dataFromActivitie(localValue)
+
+
+    }
+
+            
+
+    this.ngxSpinnerService.hide()
+  };
+
+  dataFromActivitie(localValue: any){
+
+
+    this.apollo.watchQuery({
+      query: gql`
+          query courcesDatesValues($courseNo: Int!) {
+            courcesDatesValues(courseNo: $courseNo) {
+              id
+              cource_id
+              tabId
+              studentId
+              cource_dateId
+              value
+            }
+        }
+        `,
+        variables: {
+          courseNo: parseInt(this.data.courseNo)
+        }
+    }).valueChanges.subscribe( async ( {data}: any ) => {
+      this.dataFromServer = data
+    })
+
+    this.apollo.watchQuery({
+      query: gql`
+          query courcesDatesValues($courseNo: Int!) {
+            courcesDatesValues(courseNo: $courseNo) {
+              id
+              cource_id
+              tabId
+              studentId
+              cource_dateId
+              value
+            }
+        }
+        `,
+        variables: {
+          courseNo: parseInt(this.data.courseNo)
+        }
+    }).valueChanges.subscribe( async ( {data}: any ) => {
+      this.dataFromServer = data
+
+      this.dataFromServer.courcesDatesValues.forEach( datesSarver => {
+
+        for (let index = 0; index < localValue.length; index++) {
+          const element = localValue[index];
+  
+          if(datesSarver.studentId == element.studentId){
+  
+            localValue[index][datesSarver.cource_dateId] = datesSarver.value 
+  
+          }
+  
+        }
+  
+      })
+  
+  
+      localValue.forEach((element, index) => {
+  
+          localValue[index]['ت'] = index +1
+          localValue[index]['اسم المتدرب'] = element.name
+  
+              let sum: number = 0
+          for( var key in element ){
+              if(!isNaN(Date.parse(key))){
+                
+            sum +=localValue[index][key]
+  
+              }
+          }
+  
+          localValue[index]['درجة المشاركة'] = sum.toFixed(1)
+  
+  
+      });
+  
+      
+  
+    this.dataSource = localValue
+
+    })
+
+
+  
+  }
+
   
   constructor(
+    public sanitizer:DomSanitizer,
     public dialog: MatDialog,
     private fb: FormBuilder,
     private apollo: Apollo,
@@ -117,80 +233,109 @@ import { FormValidator, FormValidatorModel } from '@syncfusion/ej2-inputs';
 
 
 
+  op(val, column, studentId, status){
+
+    this.ngxSpinnerService.show()
+
+    if (!status) {
+
+      this.apollo.mutate({
+        mutation: gql`
+          mutation createCourcesDatesValues($courseNo: Int! $tabId: String! $studentId: Int! $column: String! $value: String!){
+            createCourcesDatesValues(courseNo: $courseNo tabId: $tabId studentId: $studentId column: $column value: $value){
+              id
+            }
+          }
+          `,
+          variables:{
+            courseNo: parseInt(this.data.courseNo),
+            tabId: 'activities',
+            studentId,
+            column,
+            value: val.target.value,          
+          }
+      }).subscribe(( {data}: any ) => {
+    
+    
+        this.apollo.watchQuery({
+          query: gql`
+              query courcesDatesValues($courseNo: Int!) {
+                courcesDatesValues(courseNo: $courseNo) {
+                  id
+                  cource_id
+                  tabId
+                  studentId
+                  cource_dateId
+                  value
+                }
+            }
+            `,
+            variables: {
+              courseNo: parseInt(this.data.courseNo)
+            }
+        }).valueChanges.subscribe( async ( {data}: any ) => {
+          this.dataFromServer = data
+        })
+        
+        this.dataFromActivitie(this.localValue)
+
+        this.ngxSpinnerService.hide()
+    
+    
+    })
+
+    } else {
+      
+      this.apollo.mutate({
+        mutation: gql`
+          mutation updateCourcesDatesValues($courseNo: Int! $tabId: String! $studentId: Int! $column: String! $value: String!){
+            updateCourcesDatesValues(courseNo: $courseNo tabId: $tabId studentId: $studentId column: $column value: $value){
+              id
+            }
+          }
+          `,
+          variables:{
+            courseNo: parseInt(this.data.courseNo),
+            tabId: 'activities',
+            studentId,
+            column,
+            value: val.target.value,          
+          }
+      }).subscribe(( {data}: any ) => {
+    
+    
+
+                  this.dataFromActivitie(this.localValue)
+
+        this.ngxSpinnerService.hide()
+    
+    
+    })
+
+    }
+
+  }
+
+
   ngOnInit(): void {
 
-    let localData = [
-      {
-        '2021-08-10 00:00:00': 1,
-        '2021-08-11 00:00:00': 2,
-        '2021-08-12 00:00:00': 3,
-        '2021-08-13 00:00:00': 4,
-        '2021-08-14 00:00:00': 5,
-      },
-      {
-        '2021-08-10 00:00:00': 6,
-        '2021-08-11 00:00:00': 8,
-        '2021-08-12 00:00:00': 9,
-        '2021-08-13 00:00:00': 10,
-        '2021-08-14 00:00:00': 115,
-    }
-  ];
-
-    this.dataSource = [...localData]
-    
-    // console.log(this.data.courseNo)
-    // console.log(this.data.userID)
-
+    this.displayedColumns.push('ت')
+    this.displayedColumns.push('اسم المتدرب')
     this.data.courcesDates.forEach(date => {
       this.displayedColumns.push(date)
-      
-
-
     });
-    this.columnsToDisplay = this.displayedColumns.slice();
+    this.displayedColumns.push('درجة المشاركة')
 
-    // this.displayedColumns.forEach((val, index) =>{
+    let deg = ( 15 / this.data.courcesDates.length) + 1
 
-    //   this.dataSource.push({
-    //     [`${val}`]:1
-    //   });
+    for (let index = 0; index < deg; index++) {
+      this.arraeis.push(index)
+    }
 
 
-    //   })
-    //   console.log(this.dataSource)
 
-    //     this.dataSource = [
-    //   {'ت': 1, 'الأحد 24/ 2': 'Hydrogen', 'الإثنين 25/ 2': 1.0079},
-    //   {'ت': 2, 'الأحد 24/ 2': 'Helium', 'الإثنين 25/ 2': 4.0026, },
-    //   {'ت': 3, 'الأحد 24/ 2': 'Lithium', 'الإثنين 25/ 2': 6.941, },
-    //   {'ت': 4, 'الأحد 24/ 2': 'Beryllium', 'الإثنين 25/ 2': 9.0122},
-    //   {'ت': 5, 'الأحد 24/ 2': 'Boron', 'الإثنين 25/ 2': 5.5615},
-    //   {'ت': 6, 'الأحد 24/ 2': 'Carbon', 'الإثنين 25/ 2': 12.0107},
-    //   {'ت': 7, 'الأحد 24/ 2': 'Nitrogen', 'الإثنين 25/ 2': 14.0067},
-    // ];
+    
 
-    // this.dataSource = [
-    //   {'ت': 1, 'الأحد 24/ 2': 'Hydrogen', 'الإثنين 25/ 2': 1.0079},
-    //   {'ت': 2, 'الأحد 24/ 2': 'Helium', 'الإثنين 25/ 2': 4.0026, },
-    //   {'ت': 3, 'الأحد 24/ 2': 'Lithium', 'الإثنين 25/ 2': 6.941, },
-    //   {'ت': 4, 'الأحد 24/ 2': 'Beryllium', 'الإثنين 25/ 2': 9.0122},
-    //   {'ت': 5, 'الأحد 24/ 2': 'Boron', 'الإثنين 25/ 2': 5.5615},
-    //   {'ت': 6, 'الأحد 24/ 2': 'Carbon', 'الإثنين 25/ 2': 12.0107},
-    //   {'ت': 7, 'الأحد 24/ 2': 'Nitrogen', 'الإثنين 25/ 2': 14.0067},
-    // ];
-
-      // this.dataSource = [
-      //   {'ت': 1, 'الأحد 24/ 2': 'Hydrogen', 'الإثنين 25/ 2': 1.0079, 'الثلاثاء 26/ 2': 'H' , 'آخر تحديث': 'H'},
-      //   {'ت': 2, 'الأحد 24/ 2': 'Helium', 'الإثنين 25/ 2': 4.0026, 'الثلاثاء 26/ 2': 'He' , 'آخر تحديث': 'H'},
-      //   {'ت': 3, 'الأحد 24/ 2': 'Lithium', 'الإثنين 25/ 2': 6.941, 'الثلاثاء 26/ 2': 'Li' , 'آخر تحديث': 'H'},
-      //   {'ت': 4, 'الأحد 24/ 2': 'Beryllium', 'الإثنين 25/ 2': 9.0122, 'الثلاثاء 26/ 2': 'Be' , 'آخر تحديث': 'H'},
-      //   {'ت': 5, 'الأحد 24/ 2': 'Boron', 'الإثنين 25/ 2': 10.811, 'الثلاثاء 26/ 2': 'B' , 'آخر تحديث': 'H'},
-      //   {'ت': 6, 'الأحد 24/ 2': 'Carbon', 'الإثنين 25/ 2': 12.0107, 'الثلاثاء 26/ 2': 'C' , 'آخر تحديث': 'H'},
-      //   {'ت': 7, 'الأحد 24/ 2': 'Nitrogen', 'الإثنين 25/ 2': 14.0067, 'الثلاثاء 26/ 2': 'N' , 'آخر تحديث': 'H'},
-      //   {'ت': 8, 'الأحد 24/ 2': 'Oxygen', 'الإثنين 25/ 2': 15.9994, 'الثلاثاء 26/ 2': 'O' , 'آخر تحديث': 'H'},
-      //   {'ت': 9, 'الأحد 24/ 2': 'Fluorine', 'الإثنين 25/ 2': 18.9984, 'الثلاثاء 26/ 2': 'F' , 'آخر تحديث': 'H'},
-      //   {'ت': 10, 'الأحد 24/ 2': 'Neon', 'الإثنين 25/ 2': 20.1797, 'الثلاثاء 26/ 2': 'Ne' , 'آخر تحديث': 'H'},
-      // ];
 
   }
 

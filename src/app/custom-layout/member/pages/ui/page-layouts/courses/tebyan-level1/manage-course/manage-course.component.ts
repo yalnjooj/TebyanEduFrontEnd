@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import gql from 'graphql-tag';
 import icClose from '@iconify/icons-ic/twotone-close';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'vex-manage-course',
@@ -58,14 +59,30 @@ export class ManageCourseComponent implements OnInit {
   oralTest: any
   writtenTest: any
 
-  
+  dataFromActivities: any
+
   constructor(
     private apollo: Apollo,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private ngxSpinnerService: NgxSpinnerService,
     public dialogRef: MatDialogRef<ChangeDataFormDialog>) {  }
 
+eventsSubject: Subject<void> = new Subject<void>();
 
+emitEventToChild(jj) {
+
+  switch (jj._indexToSelect) {
+    case 3:
+      this.eventsSubject.next();
+      break;
+  
+    default:
+      break;
+  }
+}
+  getDataToActivities(data: any){
+    this.dataFromActivities = data;
+  }
   ngOnInit(): void {
    
 

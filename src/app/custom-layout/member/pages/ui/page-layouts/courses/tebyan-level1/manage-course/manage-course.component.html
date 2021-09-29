@@ -70,11 +70,11 @@
   
       <mat-dialog-content id="form-element" class="form-vertical" class="mat-typography" novalidate>
   
-        <mat-tab-group selectedIndex="3" mat-align-tabs="center" animationDuration="0ms">
-          <mat-tab label="بيانات المتدربين"> <vex-teachers-data [courseNo]="data.courseNo" [level]="data.level"></vex-teachers-data> </mat-tab>
+        <mat-tab-group #tabGroup (selectedTabChange)="emitEventToChild(tabGroup)" selectedIndex="3" mat-align-tabs="center" animationDuration="0ms">
+          <mat-tab label="بيانات المتدربين"> <vex-teachers-data [events]="eventsSubject.asObservable()" (senDataToActivities)="getDataToActivities($event)" [courseNo]="data.courseNo" [level]="data.level"></vex-teachers-data> </mat-tab>
           <mat-tab label="الحضور والغياب"> <vex-attendance></vex-attendance> </mat-tab>
           <mat-tab label="المشاركات اليومية"> <vex-participations></vex-participations> </mat-tab>
-          <mat-tab label="الانشطة المنزلية"> <vex-activities></vex-activities> </mat-tab>
+          <mat-tab label="الانشطة المنزلية"> <vex-activities [dataFromActivities]="dataFromActivities"></vex-activities> </mat-tab>
           <mat-tab label="الاختبارات القصيرة"> <vex-short-tests></vex-short-tests> </mat-tab>
           <mat-tab label="درجات الاختبار الشفهي"> <vex-oral-exam></vex-oral-exam> </mat-tab>
           <mat-tab label="درجات الاختبار التحريري"> <vex-written-exam></vex-written-exam> </mat-tab>

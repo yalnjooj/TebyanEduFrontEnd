@@ -1,4 +1,4 @@
-import { Component, Inject, Input, OnInit, ViewChild, AfterContentInit, ElementRef, Renderer2, OnDestroy } from '@angular/core';
+import { Component, Inject, Input, OnInit, ViewChild, AfterContentInit, ElementRef, Renderer2, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { Apollo } from 'apollo-angular';
@@ -28,13 +28,14 @@ import icClose from '@iconify/icons-ic/twotone-close';
 import icPrint from '@iconify/icons-ic/print';
 import { Subscription } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
+import { Observable } from 'rxjs';
 
   @Component({
     selector: 'vex-teachers-data',
     templateUrl: './teachers-data.component.html',
     styleUrls: ['../../tebyan-level1.component.scss']
   })
-  export class TeachersDataComponent implements OnInit, OnDestroy {
+  export class TeachersDataComponent implements OnInit, OnDestroy, AfterContentInit {
 
     @Input('courseNo') courseNo: string;
     @Input('level') levelNumber: number;
@@ -102,6 +103,9 @@ import { MatTableDataSource } from '@angular/material/table';
 
   displayedColumns: string[] = ['id', 'name', 'catagory', 'nationality', 'birthDay', 'qualification', 'specialization', 'memorizing', 'tajwid', 'experience', 'idnfcation', 'phone', 'email', 'edit'];
   dataSource: any;
+  activities: any;
+
+  @Output() senDataToActivities: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   
@@ -113,147 +117,190 @@ import { MatTableDataSource } from '@angular/material/table';
     @Inject(MAT_DIALOG_DATA) public data: any,
     private ngxSpinnerService: NgxSpinnerService,
     public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
+
+    ngAfterContentInit(): void {
+
+    }
     
     private unsubscription0: Subscription;
+    private unsubscription1: Subscription;
+    private eventsSubscription: Subscription;
+
+    @Input() events: Observable<any>;
 
     ngOnDestroy(): void {
-      this.unsubscription0.unsubscribe()   
+      this.unsubscription0?.unsubscribe();
+      this.unsubscription1?.unsubscribe();
+      this.eventsSubscription?.unsubscribe();
     }
 
 
 
-  ngOnInit(): void {
+ async ngOnInit() {
+  this.eventsSubscription = this.events.subscribe(() => {
+    this.senDataToActivities.emit(this.activities)
+  });
+  
+   await new Promise((resolve, reject)=>{
+      this.unsubscription0 = this.apollo.watchQuery({
+        query: gql`
+            query coursesdetails($coursesId: Int!) {
+              coursesdetails(coursesId: $coursesId) {
+                id
+                studentId
+                specialization
+                memorizing
+                tajwid
+                experience
+  
+                case_Letters
+                direct_Reading
+                spelling
+                recitation
+                teaching_Methods
+  
+                short_test1
+                short_test2
+  
+                written_test
+  
+                createdAt
+                updatedAt
+                
+                coursesId
+                catagoryId
+                catagory{
+                  id
+                  name
+                }
+                qualification{
+                  id
+                  qualification
+                }
+                email{
+                  _01_personalId
+                  email
+                }
+                phone{
+                  _01_personalId
+                  phone
+                }
+                birthDay{
+                  id
+                  birthDay
+                }
+                nationality{
+                  id
+                  nationalityMaleAr
+                  nationalityFemaleAr
+                }
+                countryOfResidence{
+                  id
+                  countrylityNameAr
+                }
+                region{
+                  id
+                  nameAr
+                }
+                city{
+                  id
+                  nameAr
+                }
+                neighborhood{
+                  id
+                  nameAr
+                }
+                student{
+                  id
+                  name_AR
+                  idnfcation
+                }
+                sex{
+                  id
+                  sex
+              }
+              }
+          }
+          `,
+          variables: {
+            coursesId: parseInt(this.courseNo)
+          }
+      }).valueChanges.subscribe( async ( {data}: any ) => {
+  
+          let e: any[] = [];
+          let a: any[] = [];
+          let t: any[] = [];
+  
+          for (let index = 0; index < data.coursesdetails.length; index++) {
+            const element = data.coursesdetails[index];
+  
+            e.push({
+              id: index+1,
+              courseDetailsId: element.id,
+              name: element.student.name_AR,
+              catagory: element.catagory.name,
+              nationality: element.sex.id == 2? element.nationality.nationalityFemaleAr : element.nationality.nationalityMaleAr,
+              birthDay: element.birthDay.birthDay,
+              qualification: element.qualification.qualification,
+              specialization: element.specialization,
+              memorizing: element.memorizing,
+              tajwid: element.tajwid? 'ملم':'غير ملم',
+              experience: element.experience,
+              idnfcation: element.student.idnfcation,
+              phone: element.phone.phone,
+              email: element.email.email,
+              createdAt: element.createdAt,
+              updatedAt: element.updatedAt,
     
-   this.unsubscription0 = this.apollo.watchQuery({
-      query: gql`
-          query coursesdetails($coursesId: Int!) {
-            coursesdetails(coursesId: $coursesId) {
-              id
-              studentId
-              specialization
-              memorizing
-              tajwid
-              experience
-
-              case_Letters
-              direct_Reading
-              spelling
-              recitation
-              teaching_Methods
-
-              short_test1
-              short_test2
-
-              written_test
-
-              createdAt
-              updatedAt
-              
-              coursesId
-              catagoryId
-              catagory{
-                id
-                name
-              }
-              qualification{
-                id
-                qualification
-              }
-              email{
-                _01_personalId
-                email
-              }
-              phone{
-                _01_personalId
-                phone
-              }
-              birthDay{
-                id
-                birthDay
-              }
-              nationality{
-                id
-                nationalityMaleAr
-                nationalityFemaleAr
-              }
-              countryOfResidence{
-                id
-                countrylityNameAr
-              }
-              region{
-                id
-                nameAr
-              }
-              city{
-                id
-                nameAr
-              }
-              neighborhood{
-                id
-                nameAr
-              }
-              student{
-                id
-                name_AR
-                idnfcation
-              }
-              sex{
-                id
-                sex
-            }
-            }
-        }
-        `,
-        variables: {
-          coursesId: parseInt(this.courseNo)
-        }
-    }).valueChanges.subscribe( async ( {data}: any ) => {
-
-        let e: any[] = [];
-
-      data.coursesdetails.forEach((element, index) => {
-
-        e.push({
-          id: index+1,
-          courseDetailsId: element.id,
-          name: element.student.name_AR,
-          catagory: element.catagory.name,
-          nationality: element.sex.id == 2? element.nationality.nationalityFemaleAr : element.nationality.nationalityMaleAr,
-          birthDay: element.birthDay.birthDay,
-          qualification: element.qualification.qualification,
-          specialization: element.specialization,
-          memorizing: element.memorizing,
-          tajwid: element.tajwid? 'ملم':'غير ملم',
-          experience: element.experience,
-          idnfcation: element.student.idnfcation,
-          phone: element.phone.phone,
-          email: element.email.email,
-          createdAt: element.createdAt,
-          updatedAt: element.updatedAt,
-
-          caseLetters: element.case_Letters,
-          directReading: element.direct_Reading,
-          spelling: element.spelling,
-          recitation: element.recitation,
-          teachingMethods: element.teaching_Methods,
-
-          shortTest1: element.short_test1,
-          shortTest2: element.short_test2,
-
-          writtenTest: element.written_test
-
-        })
-
-      });
-
-      this.dataSource = new MatTableDataSource(e);
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-
-    })
+              caseLetters: element.case_Letters,
+              directReading: element.direct_Reading,
+              spelling: element.spelling,
+              recitation: element.recitation,
+              teachingMethods: element.teaching_Methods,
+    
+              shortTest1: element.short_test1,
+              shortTest2: element.short_test2,
+    
+              writtenTest: element.written_test
+    
+            })
+            a.push({
+              courseDetailsId: element.id,
+              studentId: element.studentId,
+              name: element.student.name_AR,
+            })
+            t.push({
+              courseDetailsId: element.id,
+              studentId: element.studentId,
+              name: element.student.name_AR,
+    
+              caseLetters: element.case_Letters,
+              directReading: element.direct_Reading,
+              spelling: element.spelling,
+              recitation: element.recitation,
+              teachingMethods: element.teaching_Methods,
+    
+              shortTest1: element.short_test1,
+              shortTest2: element.short_test2,
+    
+              writtenTest: element.written_test
+    
+            })
+          }
+  
+  
+  
+        this.dataSource = new MatTableDataSource(e);
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
+  
+        resolve(a)
+      })
+    }).then((data)=>{ this.activities = data })
 
   }
 
+  
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -297,7 +344,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
           this.ngxSpinnerService.show()
 
-          this.apollo.mutate({
+          this.unsubscription1 = this.apollo.mutate({
             mutation: gql`
               mutation deleteP01_personal($id: Int!){
                 deleteP01_personal(id: $id)
@@ -638,6 +685,9 @@ constructor(
   private unsubscription2: Subscription;
   private unsubscription3: Subscription;
   private unsubscription4: Subscription;
+  private unsubscription5: Subscription;
+  private unsubscription6: Subscription;
+  private unsubscription7: Subscription;
 
   ngOnDestroy(): void {
     this.unsubscription0?.unsubscribe()
@@ -645,6 +695,9 @@ constructor(
     this.unsubscription2?.unsubscribe()
     this.unsubscription3?.unsubscribe()
     this.unsubscription4?.unsubscribe()
+    this.unsubscription5?.unsubscribe()
+    this.unsubscription6?.unsubscribe()
+    this.unsubscription7?.unsubscribe()
   
   }
 
@@ -678,7 +731,7 @@ ngOnInit(): void {
   });
 
 
-  this.unsubscription0 = this.apollo.watchQuery({
+  this.unsubscription2 = this.apollo.watchQuery({
     query: gql`
         query mexCourseTables {
           mexCourseTables {
@@ -709,13 +762,13 @@ ngOnInit(): void {
     
   this.sex =  data.mexCourseTables.sex
   this.qualifications = data.mexCourseTables.qualifications
+  this.countries = data.mexCourseTables.countries
 
   this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
     return !(parseInt(value.id) == 1 || parseInt(value.id) == 2)
    })
 
   
-  this.countries = data.mexCourseTables.countries
 
   
   })
@@ -747,7 +800,7 @@ ngOnInit(): void {
 
 
 searchId(event: Event) {
-  this.unsubscription0.unsubscribe()
+  this.unsubscription0?.unsubscribe()
 
   const filterValue = (event.target as HTMLInputElement).value;
 
@@ -799,7 +852,7 @@ searchId(event: Event) {
 
     this.ngxSpinnerService.show()
 
-   this.unsubscription1 = this.apollo.watchQuery({
+   this.unsubscription3 = this.apollo.watchQuery({
       query: gql`
         query searchStudentId($identification: ID! $courseId: Int $level: Int){
           searchStudentId(identification: $identification courseId: $courseId level: $level){
@@ -1108,7 +1161,7 @@ onFocusOut(): void {
 
 provincesFunc(){
 
-  this.unsubscription2 = this.apollo.watchQuery({
+  this.unsubscription4 = this.apollo.watchQuery({
     query: gql`
         query provinces {
           provinces{
@@ -1126,7 +1179,7 @@ provincesFunc(){
 citiesFunc(id){
 
 if(id){
-  this.unsubscription3 = this.apollo.watchQuery({
+  this.unsubscription5 = this.apollo.watchQuery({
     query: gql`
         query provinceIds($provinceId: ID!) {
           provinceIds(provinceId: $provinceId) {
@@ -1149,7 +1202,7 @@ if(id){
 neighborhoodFunc(id){
 
 if(id){
-  this.unsubscription4 = this.apollo.watchQuery({
+  this.unsubscription6 = this.apollo.watchQuery({
     query: gql`
         query neighborhood($cities: ID!) {
           neighborhood(cities: $cities) {
@@ -1179,7 +1232,7 @@ savaData(){
   this.ngxSpinnerService.show()
 
 
-  this.apollo.mutate({
+  this.unsubscription7 = this.apollo.mutate({
     mutation: gql`
       mutation createP01_personal($identification: ID! $status: String! $courseId: Int $nameAr: String $nameEn: String $sex: Int $catagoryId: Int $phone: String $companyPhoneKey: Int $email: String $birthDay: Date $nationalityId: Int $residenceId: Int $regionId: Int $cityId: Int $neighborhoodId: Int $qualificationId: Int $specialization: String $memorizing: Int $tajwed: Boolean $expertise: Int){
         createP01_personal(identification: $identification status: $status courseId: $courseId nameAr: $nameAr nameEn: $nameEn sex: $sex catagoryId: $catagoryId phone: $phone companyPhoneKey: $companyPhoneKey email: $email birthDay: $birthDay nationalityId: $nationalityId residenceId: $residenceId regionId: $regionId cityId: $cityId neighborhoodId: $neighborhoodId qualificationId: $qualificationId specialization: $specialization memorizing: $memorizing tajwed: $tajwed expertise: $expertise)
@@ -1560,6 +1613,8 @@ constructor(
   private unsubscription2: Subscription;
   private unsubscription3: Subscription;
   private unsubscription4: Subscription;
+  private unsubscription5: Subscription;
+  private unsubscription6: Subscription;
 
   ngOnDestroy(): void {
     this.unsubscription0?.unsubscribe()
@@ -1567,6 +1622,8 @@ constructor(
     this.unsubscription2?.unsubscribe()
     this.unsubscription3?.unsubscribe()
     this.unsubscription4?.unsubscribe()
+    this.unsubscription5?.unsubscribe()
+    this.unsubscription6?.unsubscribe()
   
   }
 
@@ -1600,6 +1657,27 @@ ngOnInit(): void {
   });
     this.ngxSpinnerService.show()
 
+    this.form = this.fb.group({      
+      id:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+      nameAr:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      nameEn:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      catagory:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      nationality:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      birthDay:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      qualification:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      sex:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      phone: new FormControl({ value: null, disabled: false }, [Validators.required, Validators.minLength(3), Validators.maxLength(16), Validators.pattern('[0-9]*')]),
+      companyPhoneKey:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      email:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      residence:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      specialization:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      memorizing:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      tajwed:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      expertise:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      region:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      city:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+      neighborhood:  new FormControl({ value: null, disabled: false }, [Validators.required]),
+    });
 
   this.unsubscription0 = this.apollo.watchQuery({
     query: gql`
@@ -1632,142 +1710,123 @@ ngOnInit(): void {
     
   this.sex =  data.mexCourseTables.sex
   this.qualifications = data.mexCourseTables.qualifications
+  this.countries = data.mexCourseTables.countries
 
   this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
     return !(parseInt(value.id) == 1 || parseInt(value.id) == 2)
    })
 
-  
-  this.countries = await data.mexCourseTables.countries
+   
 
-  
+
+
+
+
+      this.unsubscription1 = this.apollo.watchQuery({
+          query: gql`
+            query searchStudentId($identification: ID! $courseId: Int $level: Int){
+              searchStudentId(identification: $identification courseId: $courseId level: $level){
+                isRegested
+                coursesDetails{
+      
+                  specialization
+                  memorizing
+                  tajwid
+                  experience             
+                  catagoryId
+                  qualificationId
+                }
+                countryOfPersonal{
+                  nationality_id
+                  country_of_residence_id
+                }
+                citieANDregion{
+                  regionId
+                  cityId
+                  neighborhoodId
+                }
+                basec{
+                  id
+                  idnfcation
+                  name_AR
+                  name_EN
+                  sex_id
+                }
+                phone{
+                  _01_personalId
+                  phone
+                  phone_KEY
+                }
+                email{
+                  email
+                }
+                birthDay{
+                  birthDay
+                }
+                status
+              }
+            }
+            `,
+            variables:{
+              identification: this.data.idnfcation,
+              courseId: parseInt(this.data.courseNo),
+              level: parseInt(this.data.level)
+            }
+        }).valueChanges.subscribe(( {data}: any ) => {
+          
+
+
+      
+
+
+              this.status = {status: 'edit', message: 'الرجاء اكمال البيانات'}
+      
+              this.form.controls['id'].setValue(data.searchStudentId.basec?.idnfcation)
+              this.form.controls['nameAr'].setValue(data.searchStudentId.basec?.name_AR)
+              this.form.controls['nameEn'].setValue(data.searchStudentId.basec?.name_EN)
+              this.form.controls['catagory'].setValue(data.searchStudentId.coursesDetails?.catagoryId.toString())
+              this.form.controls['nationality'].setValue(data.searchStudentId.countryOfPersonal?.nationality_id.toString())
+              this.form.controls['birthDay'].setValue(data.searchStudentId.birthDay?.birthDay)
+              this.form.controls['qualification'].setValue(data.searchStudentId.coursesDetails?.qualificationId)
+              this.form.controls['sex'].setValue(data.searchStudentId?.basec.sex_id.toString())
+              this.form.controls['phone'].setValue(data.searchStudentId.phone?.phone)
+              this.form.controls['companyPhoneKey'].setValue(data.searchStudentId?.phone.phone_KEY.toString())
+              this.form.controls['email'].setValue(data.searchStudentId.email?.email)
+              this.form.controls['residence'].setValue(data.searchStudentId.countryOfPersonal?.country_of_residence_id.toString())
+              this.form.controls['specialization'].setValue(data.searchStudentId.coursesDetails?.specialization.toString())
+              this.form.controls['memorizing'].setValue(data.searchStudentId.coursesDetails?.memorizing)
+              this.form.controls['tajwed'].setValue(data.searchStudentId.coursesDetails?.tajwid.toString())
+              this.form.controls['expertise'].setValue(data.searchStudentId.coursesDetails?.experience)
+              
+              this.form.controls['region'].setValue(data.searchStudentId.citieANDregion?.regionId)
+      
+              this.citiesFunc(data.searchStudentId.citieANDregion?.regionId)
+              this.neighborhoodFunc(data.searchStudentId.citieANDregion?.cityId)
+      
+              this.residenceCountryId(data.searchStudentId.countryOfPersonal?.country_of_residence_id)
+              this.nationalitiesFunc(data.searchStudentId.basec?.sex_id)
+
+              this.form.controls['city'].setValue(data.searchStudentId.citieANDregion?.cityId)
+              this.form.controls['neighborhood'].setValue(data.searchStudentId.citieANDregion?.neighborhoodId)
+      
+              this.snackBar.open('الرجاء اكمال البيانات','إغلاق', {
+                duration: 6000,
+                horizontalPosition: this.horizontalPosition,
+                verticalPosition: this.verticalPosition,
+              });
+              
+          
+
+          
+
+          this.ngxSpinnerService.hide()
+
+      })
+
+
   })
 
-  this.form = this.fb.group({      
-    id:  new FormControl({ value: null, disabled: true }, [Validators.required]),
-    nameAr:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    nameEn:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    catagory:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    nationality:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    birthDay:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    qualification:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    sex:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    phone: new FormControl({ value: null, disabled: false }, [Validators.required, Validators.minLength(3), Validators.maxLength(16), Validators.pattern('[0-9]*')]),
-    companyPhoneKey:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    email:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    residence:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    specialization:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    memorizing:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    tajwed:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    expertise:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    region:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    city:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-    neighborhood:  new FormControl({ value: null, disabled: false }, [Validators.required]),
-  });
 
-
-
-
-   this.unsubscription1 = this.apollo.watchQuery({
-      query: gql`
-        query searchStudentId($identification: ID! $courseId: Int $level: Int){
-          searchStudentId(identification: $identification courseId: $courseId level: $level){
-            isRegested
-            coursesDetails{
-  
-              specialization
-              memorizing
-              tajwid
-              experience             
-              catagoryId
-              qualificationId
-            }
-            countryOfPersonal{
-              nationality_id
-              country_of_residence_id
-            }
-            citieANDregion{
-              regionId
-              cityId
-              neighborhoodId
-            }
-            basec{
-              id
-              idnfcation
-              name_AR
-              name_EN
-              sex_id
-            }
-            phone{
-              _01_personalId
-              phone
-              phone_KEY
-            }
-            email{
-              email
-            }
-            birthDay{
-              birthDay
-            }
-            status
-          }
-        }
-        `,
-        variables:{
-          identification: this.data.idnfcation,
-          courseId: parseInt(this.data.courseNo),
-          level: parseInt(this.data.level)
-        }
-    }).valueChanges.subscribe(( {data}: any ) => {
-      
-
-
-  
-
-
-          this.status = {status: 'edit', message: 'الرجاء اكمال البيانات'}
-
-          this.residenceCountryId(data.searchStudentId.countryOfPersonal?.country_of_residence_id)
-          this.nationalitiesFunc(data.searchStudentId.basec?.sex_id)
-  
-          this.form.controls['id'].setValue(data.searchStudentId.basec?.idnfcation)
-          this.form.controls['nameAr'].setValue(data.searchStudentId.basec?.name_AR)
-          this.form.controls['nameEn'].setValue(data.searchStudentId.basec?.name_EN)
-          this.form.controls['catagory'].setValue(data.searchStudentId.coursesDetails?.catagoryId.toString())
-          this.form.controls['nationality'].setValue(data.searchStudentId.countryOfPersonal?.nationality_id.toString())
-          this.form.controls['birthDay'].setValue(data.searchStudentId.birthDay?.birthDay)
-          this.form.controls['qualification'].setValue(data.searchStudentId.coursesDetails?.qualificationId)
-          this.form.controls['sex'].setValue(data.searchStudentId?.basec.sex_id.toString())
-          this.form.controls['phone'].setValue(data.searchStudentId.phone?.phone)
-          this.form.controls['companyPhoneKey'].setValue(data.searchStudentId?.phone.phone_KEY.toString())
-          this.form.controls['email'].setValue(data.searchStudentId.email?.email)
-          this.form.controls['residence'].setValue(data.searchStudentId.countryOfPersonal?.country_of_residence_id.toString())
-          this.form.controls['specialization'].setValue(data.searchStudentId.coursesDetails?.specialization.toString())
-          this.form.controls['memorizing'].setValue(data.searchStudentId.coursesDetails?.memorizing)
-          this.form.controls['tajwed'].setValue(data.searchStudentId.coursesDetails?.tajwid.toString())
-          this.form.controls['expertise'].setValue(data.searchStudentId.coursesDetails?.experience)
-          
-          this.form.controls['region'].setValue(data.searchStudentId.citieANDregion?.regionId)
-  
-          this.citiesFunc(data.searchStudentId.citieANDregion?.regionId)
-          this.neighborhoodFunc(data.searchStudentId.citieANDregion?.cityId)
-  
-          this.form.controls['city'].setValue(data.searchStudentId.citieANDregion?.cityId)
-          this.form.controls['neighborhood'].setValue(data.searchStudentId.citieANDregion?.neighborhoodId)
-  
-          this.snackBar.open('الرجاء اكمال البيانات','إغلاق', {
-            duration: 6000,
-            horizontalPosition: this.horizontalPosition,
-            verticalPosition: this.verticalPosition,
-          });
-          
-      
-
-      
-
-      this.ngxSpinnerService.hide()
-
-  })
 
   
 
@@ -1830,7 +1889,7 @@ searchId(event: Event) {
 
     this.ngxSpinnerService.show()
 
-   this.unsubscription1 = this.apollo.watchQuery({
+   this.unsubscription2 = this.apollo.watchQuery({
       query: gql`
         query searchStudentId($identification: ID! $courseId: Int $level: Int){
           searchStudentId(identification: $identification courseId: $courseId level: $level){
@@ -2080,22 +2139,30 @@ searchId(event: Event) {
 
 nationalitiesFunc(id){
 
-  switch (parseInt(id)) {
+      
+      
 
-    case 1:
-      this.nationalities = [];
-      this.countries.forEach(element => {
-        this.nationalities.push({id: element.id, nationality: element.nationalityMaleAr, ISO2Code: element.ISO2Code})
-      });
-      break;
-  
-    case 2:
-      this.nationalities = [];
-      this.countries.forEach(element => {
-        this.nationalities.push({id: element.id, nationality: element.nationalityFemaleAr, ISO2Code: element.ISO2Code})
-      });
-      break;
+        switch (parseInt(id)) {
+
+          case 1:
+            this.nationalities = [];
+            this.countries.forEach(element => {
+              this.nationalities.push({id: element.id, nationality: element.nationalityMaleAr, ISO2Code: element.ISO2Code})
+            });
+            break;
+        
+          case 2:
+            this.nationalities = [];
+            this.countries.forEach(element => {
+              this.nationalities.push({id: element.id, nationality: element.nationalityFemaleAr, ISO2Code: element.ISO2Code})
+            });
+            break;
   }
+
+      
+
+  
+
 
 }
 
@@ -2139,7 +2206,7 @@ onFocusOut(): void {
 
 provincesFunc(){
 
-  this.unsubscription2 = this.apollo.watchQuery({
+  this.unsubscription3 = this.apollo.watchQuery({
     query: gql`
         query provinces {
           provinces{
@@ -2157,7 +2224,7 @@ provincesFunc(){
 citiesFunc(id){
 
 if(id){
-  this.unsubscription3 = this.apollo.watchQuery({
+  this.unsubscription4 = this.apollo.watchQuery({
     query: gql`
         query provinceIds($provinceId: ID!) {
           provinceIds(provinceId: $provinceId) {
@@ -2180,7 +2247,7 @@ if(id){
 neighborhoodFunc(id){
 
 if(id){
-  this.unsubscription4 = this.apollo.watchQuery({
+  this.unsubscription5 = this.apollo.watchQuery({
     query: gql`
         query neighborhood($cities: ID!) {
           neighborhood(cities: $cities) {
@@ -2207,7 +2274,7 @@ updateDate(){
   this.ngxSpinnerService.show()
 
 
-  this.apollo.mutate({
+  this.unsubscription6 = this.apollo.mutate({
     mutation: gql`
       mutation createP01_personal($identification: ID! $status: String! $courseId: Int $nameAr: String $nameEn: String $sex: Int $catagoryId: Int $phone: String $companyPhoneKey: Int $email: String $birthDay: Date $nationalityId: Int $residenceId: Int $regionId: Int $cityId: Int $neighborhoodId: Int $qualificationId: Int $specialization: String $memorizing: Int $tajwed: Boolean $expertise: Int){
         createP01_personal(identification: $identification status: $status courseId: $courseId nameAr: $nameAr nameEn: $nameEn sex: $sex catagoryId: $catagoryId phone: $phone companyPhoneKey: $companyPhoneKey email: $email birthDay: $birthDay nationalityId: $nationalityId residenceId: $residenceId regionId: $regionId cityId: $cityId neighborhoodId: $neighborhoodId qualificationId: $qualificationId specialization: $specialization memorizing: $memorizing tajwed: $tajwed expertise: $expertise)
@@ -2215,7 +2282,7 @@ updateDate(){
       `,
       variables:{
         identification: this.form.get('id').value,
-        status: 'edit',
+        status: 'update',
         courseId: parseInt(this.data.courseNo),
         nameAr: this.form.get('nameAr').value,
         nameEn:  this.form.get('nameEn').value,
