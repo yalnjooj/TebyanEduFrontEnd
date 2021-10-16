@@ -1,0 +1,5 @@
+
+<div [ngSwitch]="link.status">
+    <div *ngSwitchCase="true"><vex-addNewStudent [dataLinkFn]="link"></vex-addNewStudent></div>
+    <div *ngSwitchCase="false">التسجيل مغلق!!</div>
+</div>

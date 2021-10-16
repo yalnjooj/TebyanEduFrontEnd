@@ -50,6 +50,10 @@ const routes: VexRoutes = [
     canActivate: [AuthGuard], data: [Role.MEMBER]
   },
   {
+    path: 'newRejester/:link',
+    loadChildren: () => import('./new-rejester/new-rejester.module').then(m => m.NewRejesterModule)
+  },
+  {
     path: 'guest',
     loadChildren: () => import('./custom-layout/guest/guest.module').then(m => m.GuestModule),
     canActivate: [AuthGuard], data: [Role.GUEST]

@@ -27,15 +27,15 @@ import icPrint from '@iconify/icons-ic/print';
 import { Subscription } from 'rxjs';
 import { FormValidator, FormValidatorModel } from '@syncfusion/ej2-inputs';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
 
 
-  @Component({
-    selector: 'vex-activities',
-    templateUrl: './activities.component.html',
-        styleUrls: ['../../tebyan-level1.component.scss']
-  })
-  export class ActivitiesComponent implements OnInit {
-  
+@Component({
+  selector: 'vex-activities',
+  templateUrl: './activities.component.html',
+      styleUrls: ['../../tebyan-level1.component.scss']
+})
+export class ActivitiesComponent implements OnInit {
   icClose = icClose
   icEye = icEye
   icSearch = icSearch
@@ -108,111 +108,71 @@ import { DomSanitizer } from '@angular/platform-browser';
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  
   @Input() set dataFromActivities(localValue: any){
-
     this.localValue = localValue
     
+
     this.ngxSpinnerService.show()
 
 
-
-    if(localValue){
-
-
-
-
-      this.dataFromActivitie(localValue)
-
+    if(localValue?.activities){
+   
+      this.dataFromActivitie(localValue.activities, localValue.activitiesBasicData)
 
     }
 
-            
-
     this.ngxSpinnerService.hide()
+
   };
 
-  dataFromActivitie(localValue: any){
+  dataFromActivitie(localValue, namesInfoo){
 
 
-    this.apollo.watchQuery({
-      query: gql`
-          query courcesDatesValues($courseNo: Int!) {
-            courcesDatesValues(courseNo: $courseNo) {
-              id
-              cource_id
-              tabId
-              studentId
-              cource_dateId
-              value
-            }
-        }
-        `,
-        variables: {
-          courseNo: parseInt(this.data.courseNo)
-        }
-    }).valueChanges.subscribe( async ( {data}: any ) => {
-      this.dataFromServer = data
-    })
 
-    this.apollo.watchQuery({
-      query: gql`
-          query courcesDatesValues($courseNo: Int!) {
-            courcesDatesValues(courseNo: $courseNo) {
-              id
-              cource_id
-              tabId
-              studentId
-              cource_dateId
-              value
-            }
-        }
-        `,
-        variables: {
-          courseNo: parseInt(this.data.courseNo)
-        }
-    }).valueChanges.subscribe( async ( {data}: any ) => {
-      this.dataFromServer = data
+   
+      
+      for (let index = 0; index < localValue.length; index++) {
+          let datesSarver = localValue[index];
 
-      this.dataFromServer.courcesDatesValues.forEach( datesSarver => {
+        for (let index0 = 0; index0 < namesInfoo.length; index0++) {
+          let element = namesInfoo[index0];
 
-        for (let index = 0; index < localValue.length; index++) {
-          const element = localValue[index];
-  
           if(datesSarver.studentId == element.studentId){
-  
-            localValue[index][datesSarver.cource_dateId] = datesSarver.value 
-  
+            namesInfoo[index0][datesSarver.cource_dateId] = datesSarver.value
           }
   
         }
-  
-      })
-  
-  
-      localValue.forEach((element, index) => {
-  
-          localValue[index]['ت'] = index +1
-          localValue[index]['اسم المتدرب'] = element.name
-  
-              let sum: number = 0
-          for( var key in element ){
-              if(!isNaN(Date.parse(key))){
-                
-            sum +=localValue[index][key]
-  
-              }
-          }
-  
-          localValue[index]['درجة المشاركة'] = sum.toFixed(1)
+      }
   
   
-      });
+      for (let index = 0; index < namesInfoo.length; index++) {
+        let element = namesInfoo[index];
+        
+        namesInfoo[index]['ت'] = index +1
+        namesInfoo[index]['اسم المتدرب'] = element.name
+
+            let sum: number = 0
+        for( var key in element ){
+            if(!isNaN(Date.parse(key))){
+              
+          sum +=namesInfoo[index][key]
+
+            }
+        }
+
+        namesInfoo[index]['درجة النشاط'] = sum.toFixed(1)
+
+
+      }
+  
+  
+  
   
       
-  
-    this.dataSource = localValue
+    this.dataSource = namesInfoo
 
-    })
+    
 
 
   
@@ -237,13 +197,18 @@ import { DomSanitizer } from '@angular/platform-browser';
 
     this.ngxSpinnerService.show()
 
-    if (!status) {
+    if (status == undefined) {
 
       this.apollo.mutate({
         mutation: gql`
           mutation createCourcesDatesValues($courseNo: Int! $tabId: String! $studentId: Int! $column: String! $value: String!){
             createCourcesDatesValues(courseNo: $courseNo tabId: $tabId studentId: $studentId column: $column value: $value){
               id
+              cource_id
+              tabId
+              studentId
+              cource_dateId
+              value
             }
           }
           `,
@@ -255,29 +220,8 @@ import { DomSanitizer } from '@angular/platform-browser';
             value: val.target.value,          
           }
       }).subscribe(( {data}: any ) => {
-    
-    
-        this.apollo.watchQuery({
-          query: gql`
-              query courcesDatesValues($courseNo: Int!) {
-                courcesDatesValues(courseNo: $courseNo) {
-                  id
-                  cource_id
-                  tabId
-                  studentId
-                  cource_dateId
-                  value
-                }
-            }
-            `,
-            variables: {
-              courseNo: parseInt(this.data.courseNo)
-            }
-        }).valueChanges.subscribe( async ( {data}: any ) => {
-          this.dataFromServer = data
-        })
         
-        this.dataFromActivitie(this.localValue)
+        this.dataFromActivitie(data.createCourcesDatesValues, this.localValue.activitiesBasicData)
 
         this.ngxSpinnerService.hide()
     
@@ -291,6 +235,11 @@ import { DomSanitizer } from '@angular/platform-browser';
           mutation updateCourcesDatesValues($courseNo: Int! $tabId: String! $studentId: Int! $column: String! $value: String!){
             updateCourcesDatesValues(courseNo: $courseNo tabId: $tabId studentId: $studentId column: $column value: $value){
               id
+              cource_id
+              tabId
+              studentId
+              cource_dateId
+              value
             }
           }
           `,
@@ -302,40 +251,39 @@ import { DomSanitizer } from '@angular/platform-browser';
             value: val.target.value,          
           }
       }).subscribe(( {data}: any ) => {
-    
-    
 
-                  this.dataFromActivitie(this.localValue)
+        this.dataFromActivitie(data.updateCourcesDatesValues, this.localValue.activitiesBasicData)
 
         this.ngxSpinnerService.hide()
-    
-    
+
     })
 
     }
 
   }
 
-
   ngOnInit(): void {
+  
 
     this.displayedColumns.push('ت')
     this.displayedColumns.push('اسم المتدرب')
     this.data.courcesDates.forEach(date => {
       this.displayedColumns.push(date)
     });
-    this.displayedColumns.push('درجة المشاركة')
+    this.displayedColumns.push('درجة النشاط')
 
-    let deg = ( 15 / this.data.courcesDates.length) + 1
+    let deg = parseInt( (15 / this.data.courcesDates.length).toString() ) +1
+    let degd = (15 / this.data.courcesDates.length) +1
 
-    for (let index = 0; index < deg; index++) {
-      this.arraeis.push(index)
+
+    this.arraeis.push(0)
+    for (let index = deg; index > 0; index--) {
+
+      this.arraeis.push(degd -=1)
+
     }
-
-
-
-    
-
+    this.arraeis = [...new Set(this.arraeis)];
+    this.arraeis.sort((a, b) => a - b)
 
   }
 
@@ -350,6 +298,16 @@ import { DomSanitizer } from '@angular/platform-browser';
   deleteCourse(courseNo){}
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

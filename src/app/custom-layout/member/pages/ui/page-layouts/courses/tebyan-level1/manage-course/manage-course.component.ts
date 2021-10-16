@@ -59,8 +59,13 @@ export class ManageCourseComponent implements OnInit {
   oralTest: any
   writtenTest: any
 
-  dataFromActivities: any
-
+  activities:any
+  participations:any
+  attendance:any
+  shortTests:any
+  oralExam:any
+  writtenExam:any
+  courseNo: number
   constructor(
     private apollo: Apollo,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -68,21 +73,93 @@ export class ManageCourseComponent implements OnInit {
     public dialogRef: MatDialogRef<ChangeDataFormDialog>) {  }
 
 eventsSubject: Subject<void> = new Subject<void>();
+eventsSubjectFINAL: Subject<void> = new Subject<void>();
 
-emitEventToChild(jj) {
 
-  switch (jj._indexToSelect) {
-    case 3:
-      this.eventsSubject.next();
-      break;
+  emitEventToChild(tabNo) {
+
+    this.eventsSubject.next();
+
+    if(tabNo._indexToSelect == 7){
+      this.eventsSubjectFINAL.next();
+    }
+
+  }
+
   
-    default:
-      break;
+
+  getFromTeachers({activitiesBasicData, participationsBasicData, attendanceBasicData, shortTestsBasicData, oralExamBasicData, writtenExamBasicData, courseNo}){
+
+    this.apollo.watchQuery({
+      query: gql`
+          query courcesDatesValues($courseNo: Int!) {
+            courcesDatesValues(courseNo: $courseNo) {
+              id
+              cource_id
+              tabId
+              studentId
+              cource_dateId
+              value
+            }
+        }
+        `,
+        variables: {
+          courseNo: parseInt(this.data.courseNo)
+        }
+    }).valueChanges.subscribe( async ( {data}: any ) => {
+
+        let activities:any = [];
+        let participations:any = [];
+        let attendance:any = [];
+        let shortTests:any = [];
+        let oralExam:any = [];
+        let writtenExam:any = [];
+
+        for (let index = 0; index < data.courcesDatesValues.length; index++) {
+          const element = data.courcesDatesValues[index];
+          
+
+        switch (element.tabId) {
+        
+          case 'activities':
+            activities.push(element)
+            break;
+          case 'participations':
+            participations.push(element)
+            break;
+          case 'attendance':
+            attendance.push(element)
+            break;
+          case 'shortTests':
+            shortTests.push(element)
+            break;
+          case 'oralExam':
+            oralExam.push(element)
+            break;
+          case 'writtenExam':
+            writtenExam.push(element)
+            break;
+        }
+  
+      }
+
+      this.activities = {activities, activitiesBasicData}
+      this.participations = {participations, participationsBasicData}
+      this.attendance = {attendance, attendanceBasicData}
+      this.shortTests = shortTestsBasicData
+      this.oralExam = oralExamBasicData
+      this.writtenExam = writtenExamBasicData
+      this.courseNo = courseNo
+
+
+
+    })
+
+
+
+
   }
-}
-  getDataToActivities(data: any){
-    this.dataFromActivities = data;
-  }
+
   ngOnInit(): void {
    
 
@@ -185,6 +262,7 @@ emitEventToChild(jj) {
       }).valueChanges.subscribe( async ( {data}: any ) => {
 
       //  this.dateValusesDate = [new Date('8/8/2020'), new Date('8/8/2020'), new Date('8/9/2020')];
+      // console.log(data?.courseID?.courcesDates)
        this.dateValusesDate = JSON.parse(data.courseID.courcesDates).map( dateString => new Date(dateString) )
        
        data.courseID.company_type_id == 3? this.show = true : this.show = false;
@@ -247,10 +325,6 @@ emitEventToChild(jj) {
 
       })
 
-
-      // console.log(this.dataSourse.courcesExtend1.companyProfilesId)
-      // console.log(this.dataSourse.courcesExtend1.coordinatorId)
-      // console.log(this.dataSourse.courcesExtend1.trainingPlace)
   
       this.ngxSpinnerService.hide()
   

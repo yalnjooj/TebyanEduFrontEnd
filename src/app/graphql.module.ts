@@ -76,6 +76,13 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
                 // this part of code is depends what you actually need to do, in my 
                // case i had to save my incoming data as single object in cache
               }
+            },
+            courcesDatesValues: {
+              merge(existing = [], incoming: any) {
+                return { ...existing, ...incoming };
+                // this part of code is depends what you actually need to do, in my 
+               // case i had to save my incoming data as single object in cache
+              }
             }
           }
         }

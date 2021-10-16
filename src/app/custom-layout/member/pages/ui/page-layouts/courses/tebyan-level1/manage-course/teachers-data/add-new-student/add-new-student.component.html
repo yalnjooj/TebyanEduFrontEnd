@@ -1,0 +1,192 @@
+<div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
+    <p>{{status?.message || 'أدخل رقم الهوية / الجواز'}}</p>
+  
+    <!-- <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
+       <mat-icon [icIcon]="icClose"></mat-icon>
+     </button> -->
+   </div>
+  
+  
+      <mat-dialog-content id="form-element" class="form-vertical" [formGroup]="form" class="mat-typography" novalidate>
+  
+  
+      <mat-list>
+        <mat-list-item>البيانات الشخصية</mat-list-item>
+        <mat-divider></mat-divider>
+      </mat-list><br>
+  
+      <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>رقم الهوية</mat-label>
+          <input type="text" matInput id="id" formControlName="id"  (keyup)="searchId($event)" required>
+          <mat-error *ngIf="form.get('id').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>الاسم بالعربي</mat-label>
+          <input type="text" matInput formControlName="nameAr" required>
+          <mat-error *ngIf="form.get('nameAr').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>الاسم بالإنجليزي</mat-label>
+          <input type="text" matInput formControlName="nameEn" required>
+          <mat-error *ngIf="form.get('nameEn').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>الجنس</mat-label>
+          <mat-select formControlName="sex">
+            <mat-option dir="rtl" required *ngFor="let data of sex" [value]="data.id" (click)="nationalitiesFunc(data.id)">{{data.sex}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('sex').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>المهنة</mat-label>
+          <mat-select formControlName="catagory">
+            <mat-option dir="rtl" required *ngFor="let data of catagory" [value]="data.id">{{data.name}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('catagory').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        </div>
+  
+        <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>رقم الجوال</mat-label>
+          <md-input-container>
+            <input type="text" matInput formControlName="phone" required>
+          </md-input-container>
+          <mat-icon matSuffix [icIcon]="icSmartphone"></mat-icon>
+          <mat-error *ngIf="form.get('phone').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+        
+        <mat-form-field fxFlex="90px">
+        <mat-label>اختر مفتاح الدولة</mat-label>
+          <mat-select formControlName="companyPhoneKey" required>
+            <mat-option dir="rtl" *ngFor="let infoo of countries" [value]="infoo.id">
+              <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{infoo.ISO2Code}}.png" />
+              {{infoo.PHONECODE}}+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>البريد الإلكتروني</mat-label>
+          <md-input-container>
+            <input type="email" matInput formControlName="email" required>
+          </md-input-container>
+          <mat-icon [icIcon]="icSmartemail" class="mr-2" matPrefix></mat-icon>  
+          <mat-error *ngIf="form.get('email').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <ejs-datepicker #birthDay id='birthDay' formControlName="birthDay" floatLabelType='Auto' fxFlex="auto" placeholder="تاريخ الميلاد" enableRtl='true' locale='ar'></ejs-datepicker>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>الجنسية</mat-label>
+          <mat-select formControlName="nationality">
+            <mat-option dir="rtl" required *ngFor="let data of nationalities | sort:'asc':'nationality'" [value]="data.id">
+            <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{data.ISO2Code}}.png" />
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.nationality}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('nationality').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>بلد الإقامة</mat-label>
+          <mat-select formControlName="residence">
+            <mat-option dir="rtl" required *ngFor="let data of countries | sort:'asc':'countrylityNameAr'" (click)="residenceCountryId(data.id)" [value]="data.id">
+            <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{data.ISO2Code}}.png" />  
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.countrylityNameAr}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('residence').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        </div>
+  
+        <div fxLayout="row" *ngIf="show" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>المنطقة</mat-label>
+          <mat-select formControlName="region">
+            <mat-option dir="rtl" required *ngFor="let data of provinces | sort:'asc':'nameAr'" (click)="citiesFunc(data.id)" [value]="data.id">{{data.nameAr}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('region').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>المدينة</mat-label>
+          <mat-select formControlName="city">
+            <mat-option dir="rtl" required *ngFor="let data of cities | sort:'asc':'nameAr'"  (click)="neighborhoodFunc(data.id)" [value]="data.id">{{data.nameAr}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('city').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>الحي</mat-label>
+          <mat-select formControlName="neighborhood">
+            <mat-option dir="rtl" required *ngFor="let data of neighborhoods | sort:'asc':'nameAr'"[value]="data.id">{{data.nameAr}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('neighborhood').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+      </div>
+  
+  
+  
+      <mat-list>
+        <mat-list-item>بيانات الدورة</mat-list-item>
+        <mat-divider></mat-divider>
+      </mat-list><br>
+      
+  
+      <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>المؤهل</mat-label>
+          <mat-select formControlName="qualification">
+            <mat-option dir="rtl" required *ngFor="let data of qualifications" [value]="data.id">{{data.qualification}}</mat-option>
+          </mat-select>        <mat-error *ngIf="form.get('qualification').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>التخصص</mat-label>
+          <input type="text" matInput formControlName="specialization" required>
+          <mat-error *ngIf="form.get('specialization').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>مقدار الحفظ</mat-label>
+          <input type="number" matInput formControlName="memorizing" required>
+          <mat-error *ngIf="form.get('memorizing').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>الإلمام بأحكام التجويد</mat-label>
+          <mat-select formControlName="tajwed">
+          <mat-option dir="rtl" required value="true">ملم ـة</mat-option>
+          <mat-option dir="rtl" required value="false">غير ملم ـة</mat-option>
+          </mat-select>        <mat-error *ngIf="form.get('tajwed').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field fxFlex="auto">
+          <mat-label>سنوات الخبرة</mat-label>
+          <input type="number" matInput formControlName="expertise" required>
+          <mat-error *ngIf="form.get('expertise').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+  
+      </div>
+  
+      </mat-dialog-content>
+  
+      <mat-dialog-actions align="start">
+        <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
+        <button mat-raised-button color="primary" [disabled]="savaButton" (click)="savaData()">تسجيل</button>
+        <button mat-raised-button (click)="form.reset(); show = false">مسح</button>
+      </mat-dialog-actions>
+  

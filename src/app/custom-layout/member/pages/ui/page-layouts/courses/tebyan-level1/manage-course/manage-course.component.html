@@ -70,27 +70,22 @@
   
       <mat-dialog-content id="form-element" class="form-vertical" class="mat-typography" novalidate>
   
-        <mat-tab-group #tabGroup (selectedTabChange)="emitEventToChild(tabGroup)" selectedIndex="3" mat-align-tabs="center" animationDuration="0ms">
-          <mat-tab label="بيانات المتدربين"> <vex-teachers-data [events]="eventsSubject.asObservable()" (senDataToActivities)="getDataToActivities($event)" [courseNo]="data.courseNo" [level]="data.level"></vex-teachers-data> </mat-tab>
-          <mat-tab label="الحضور والغياب"> <vex-attendance></vex-attendance> </mat-tab>
-          <mat-tab label="المشاركات اليومية"> <vex-participations></vex-participations> </mat-tab>
-          <mat-tab label="الانشطة المنزلية"> <vex-activities [dataFromActivities]="dataFromActivities"></vex-activities> </mat-tab>
-          <mat-tab label="الاختبارات القصيرة"> <vex-short-tests></vex-short-tests> </mat-tab>
-          <mat-tab label="درجات الاختبار الشفهي"> <vex-oral-exam></vex-oral-exam> </mat-tab>
-          <mat-tab label="درجات الاختبار التحريري"> <vex-written-exam></vex-written-exam> </mat-tab>
-          <mat-tab label="الدرجات النهائية"> <vex-final-grades></vex-final-grades> </mat-tab>
+        <mat-tab-group #tabGroup (selectedTabChange)="emitEventToChild(tabGroup)" selectedIndex="0" mat-align-tabs="center" animationDuration="0ms">
+          <mat-tab label="بيانات المتدربين"> <vex-teachers-data [event]="eventsSubject.asObservable()" (senDataToManage)="getFromTeachers($event)" [courseNo]="data.courseNo" [level]="data.level"></vex-teachers-data> </mat-tab>
+          <mat-tab label="الحضور والغياب"> <vex-attendance [dataFromAttendances]="attendance"></vex-attendance> </mat-tab>
+          <mat-tab label="المشاركات اليومية"> <vex-participations [dataFromParticipations]="participations"></vex-participations> </mat-tab>
+          <mat-tab label="الانشطة المنزلية"> <vex-activities [dataFromActivities]="activities"></vex-activities> </mat-tab>
+          <mat-tab label="الاختبارات القصيرة"> <vex-short-tests [dataFromShortTests]="shortTests"></vex-short-tests> </mat-tab>
+          <mat-tab label="درجات الاختبار الشفهي"> <vex-oral-exam [dataFromOralExams]="oralExam"></vex-oral-exam> </mat-tab>
+          <mat-tab label="درجات الاختبار التحريري"> <vex-written-exam [dataFromWrittenExams]="writtenExam"></vex-written-exam> </mat-tab>
+          <mat-tab label="الدرجات النهائية"> <vex-final-grades [events]="eventsSubjectFINAL.asObservable()" [dataFromFinalGrades]="courseNo"></vex-final-grades> </mat-tab>
         </mat-tab-group>
-
-
-
-
-
 
     </mat-dialog-content>
 
     <mat-dialog-actions align="start">
       <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
-      <button mat-raised-button color="primary"  cdkFocusInitial>حفظ</button>
-      <button mat-raised-button >مسح</button>
+      <!-- <button mat-raised-button color="primary"  cdkFocusInitial>حفظ</button>
+      <button mat-raised-button >مسح</button> -->
     </mat-dialog-actions>
     

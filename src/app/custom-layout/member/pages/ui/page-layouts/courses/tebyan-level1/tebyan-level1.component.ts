@@ -7,6 +7,7 @@ import icEye from '@iconify/icons-ic/remove-red-eye';
 import icMoreHoriz from '@iconify/icons-ic/twotone-more-horiz';
 import icFolder from '@iconify/icons-ic/twotone-folder';
 import icPhone from '@iconify/icons-ic/twotone-phone';
+import icLink from '@iconify/icons-ic/twotone-link';
 import icMail from '@iconify/icons-ic/twotone-mail';
 import icMap from '@iconify/icons-ic/twotone-map';
 import icFocus from '@iconify/icons-ic/center-focus-strong';
@@ -73,11 +74,12 @@ export interface PeriodicElement {
 export class TebyanLevel1Component implements OnInit {
 
   userID: number;
-  displayedColumns: string[] = ['id', 'courseNo', 'level', 'catagory', 'beneficiaryType', 'courceDate', 'startTime', 'typePlace', 'coache', 'view', 'edit2', 'edit','status', 'updatedAt', 'createdAt'];
+  displayedColumns: string[] = ['id', 'courseNo', 'level', 'catagory', 'beneficiaryType', 'courceDate', 'startTime', 'typePlace', 'coache', 'view','link', 'edit2', 'edit','status', 'updatedAt', 'createdAt'];
   dataSource: any
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  icLink = icLink;
   icPhone = icPhone;
   icMail = icMail;
   icMap = icMap;
@@ -282,6 +284,17 @@ export class TebyanLevel1Component implements OnInit {
 
   }
 
+  linkCourse(courseNo){
+
+    this.dialog.open(DialogLinkCourse,{
+      disableClose: true,
+      data: {userID: this.userID, courseNo}
+    }).afterClosed().subscribe(result => {
+      if(JSON.parse(result)) this.ngOnInit()
+    });
+
+  }
+
   manageCourse(courcesDates, courseNo, level){
 
     this.dialog.open(ManageCourseComponent,{
@@ -290,7 +303,7 @@ export class TebyanLevel1Component implements OnInit {
       maxWidth: '100vw',
       data: {userID: this.userID, courseNo, courcesDates, level: level == 'المستوى الأول'? 1 : 3}
     }).afterClosed().subscribe(result => {
-      if(JSON.parse(result)) this.ngOnInit()
+      if(result) this.ngOnInit()
     });
 
   }
@@ -832,7 +845,7 @@ constructor(
       
   this.apollo.watchQuery({
     query: gql`
-        query mexCourseTables{
+        query coursesLinkRejecter{
         mexCourseTables{
           courceName{
             id
@@ -2397,6 +2410,100 @@ constructor(
   courseStatus(){
 
   }
+
+
+}
+
+
+/**--------------------------------link Course------------------------------------ */ 
+/**-------------------------------------------------------------------- */ 
+/**-------------------------------------------------------------------- */ 
+
+@Component({
+  selector: 'dialog-link-form',
+  template: `
+  <div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
+  <p>رابط التسجيل</p>رقم الدورة:  {{data.courseNo}} #
+
+  <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
+     <mat-icon [icIcon]="icClose"></mat-icon>
+   </button>
+ </div>
+
+
+
+    <mat-dialog-content id="form-element" class="form-vertical" class="mat-typography" novalidate>
+
+
+  <p> {{ 'http://localhost:4200/newRejester/'+link.link }}</p>
+  <mat-slide-toggle (click)="checkeStatus(link.courseId)" [(ngModel)]="link.status" [checked]="link.status">حالة الرابط</mat-slide-toggle>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="start">
+  <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
+</mat-dialog-actions>
+
+  `,
+  styleUrls: ['./tebyan-level1.component.scss'],
+  providers: [MaskedDateTimeService]
+})
+
+
+export class DialogLinkCourse implements OnInit {
+
+  icClose = icClose
+  link: any = {};
+
+constructor(
+  private fb: FormBuilder,
+  private apollo: Apollo,
+  private snackBar: MatSnackBar,
+  @Inject(MAT_DIALOG_DATA) public data: any,
+  private ngxSpinnerService: NgxSpinnerService,
+  public dialogRef: MatDialogRef<ChangeDataFormDialog>) { }
+
+
+
+  ngOnInit(){
+    
+    this.apollo.watchQuery({
+      query: gql`
+          query coursesLinkRejecter($courseId: Int){
+          coursesLinkRejecter(courseId: $courseId){
+            link
+            courseId
+            status
+          }
+        }
+        `,
+        variables: {
+          courseId: parseInt(this.data.courseNo)
+        }
+    }).valueChanges.subscribe(( {data}: any ) => {
+      this.link.link = data.coursesLinkRejecter.link
+      this.link.courseId = data.coursesLinkRejecter.courseId
+      this.link.status = data.coursesLinkRejecter.status
+    })
+  }
+
+
+  checkeStatus(courseId){
+
+    this.apollo.mutate({
+      mutation: gql`
+        mutation updateCoursesLinkRejecter($courseId: Int! $status: Boolean){
+          updateCoursesLinkRejecter(courseId: $courseId status: $status)
+        }
+        `,
+        variables:{
+          courseId: parseInt(courseId),
+          status: !this.link.status,      
+        }
+    }).subscribe(( {data}: any ) => {})
+    
+  }
+
 
 
 }

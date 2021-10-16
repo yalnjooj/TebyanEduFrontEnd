@@ -24,7 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import { TebyanLevel1RoutingModule } from './tebyan-level1-routing.module';
-import { DialogAddNewCourse, TebyanLevel1Component, DialogEditCourse, DialogViewCourse } from './tebyan-level1.component';
+import { DialogAddNewCourse, TebyanLevel1Component, DialogEditCourse, DialogViewCourse, DialogLinkCourse } from './tebyan-level1.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 // import { AppMomentModule } from "../../../../../../../datePicker/moment/moment.module";
 // import { AppNativeModule } from "../../../../../../../datePicker/native/native.module";
@@ -43,20 +43,21 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { ManageCourseComponent } from './manage-course/manage-course.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import { AttendanceComponent } from './manage-course/attendance/attendance.component';
-import { TeachersDataComponent, AddNewStudent, AddEditStudent } from './manage-course/teachers-data/teachers-data.component';
+import { TeachersDataComponent, AddEditStudent } from './manage-course/teachers-data/teachers-data.component';
 import { ParticipationsComponent } from './manage-course/participations/participations.component';
 import { ActivitiesComponent } from './manage-course/activities/activities.component';
 import { ShortTestsComponent } from './manage-course/short-tests/short-tests.component';
 import { OralExamComponent } from './manage-course/oral-exam/oral-exam.component';
 import { WrittenExamComponent } from './manage-course/written-exam/written-exam.component';
 import { FinalGradesComponent } from './manage-course/final-grades/final-grades.component';
-import { SortPipe } from 'src/@vex/pipes/sort.pipe'
+import { SharedModuleModule } from 'src/app/new-rejester/SharedModule.module';
 
 
 @NgModule({
-  declarations: [SortPipe, TebyanLevel1Component, DialogAddNewCourse, DialogEditCourse, DialogViewCourse, ManageCourseComponent, AttendanceComponent, TeachersDataComponent, AddNewStudent, AddEditStudent, ParticipationsComponent, ActivitiesComponent, ShortTestsComponent, OralExamComponent, WrittenExamComponent, FinalGradesComponent],
+  declarations: [TebyanLevel1Component, DialogAddNewCourse, DialogEditCourse, DialogViewCourse, DialogLinkCourse, ManageCourseComponent, AttendanceComponent, TeachersDataComponent, AddEditStudent, ParticipationsComponent, ActivitiesComponent, ShortTestsComponent, OralExamComponent, WrittenExamComponent, FinalGradesComponent],
   imports: [
     CommonModule,
+    SharedModuleModule,
     SecondaryToolbarModule,
     ContainerModule,
     IconModule,
@@ -102,7 +103,6 @@ import { SortPipe } from 'src/@vex/pipes/sort.pipe'
     MatTabsModule
 
   ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  providers: [SortPipe]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class TebyanLevel1Module { }
