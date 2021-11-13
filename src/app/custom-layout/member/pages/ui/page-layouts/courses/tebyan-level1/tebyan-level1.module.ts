@@ -22,6 +22,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatRadioModule} from '@angular/material/radio';
 
 import { TebyanLevel1RoutingModule } from './tebyan-level1-routing.module';
 import { DialogAddNewCourse, TebyanLevel1Component, DialogEditCourse, DialogViewCourse, DialogLinkCourse } from './tebyan-level1.component';
@@ -100,7 +101,8 @@ import { SharedModuleModule } from 'src/app/new-rejester/SharedModule.module';
     MatGridListModule,
     MatDividerModule,
     MatSlideToggleModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRadioModule
 
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

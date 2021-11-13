@@ -31,6 +31,7 @@ import { CustomerCreateUpdateModule } from '../custom-layout/admin/pages/apps/ai
 import { TebyanLevel1RoutingModule } from '../custom-layout/member/pages/ui/page-layouts/courses/tebyan-level1/tebyan-level1-routing.module';
 import { MatListModule } from '@angular/material/list';
 import { SortPipe } from 'src/@vex/pipes/sort.pipe';
+import {MatRadioModule} from '@angular/material/radio';
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import { SortPipe } from 'src/@vex/pipes/sort.pipe';
     MatGridListModule,
     MatDividerModule,
     MatSlideToggleModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRadioModule
 
    ],
   declarations: [ SortPipe, AddNewStudentComponent ],

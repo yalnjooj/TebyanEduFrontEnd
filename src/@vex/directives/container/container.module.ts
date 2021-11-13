@@ -1,14 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ContainerDirective } from './container.directive';
+import { CoorDinatorList } from './coorDinatorList.directive';
 
 
 @NgModule({
-  declarations: [ContainerDirective],
+  declarations: [ContainerDirective, CoorDinatorList],
   imports: [
     CommonModule
   ],
-  exports: [ContainerDirective]
+  exports: [ContainerDirective, CoorDinatorList]
 })
 export class ContainerModule {
 }

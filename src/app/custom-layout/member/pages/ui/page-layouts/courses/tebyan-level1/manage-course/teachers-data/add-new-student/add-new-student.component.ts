@@ -34,6 +34,9 @@ import { Subscription } from 'rxjs';
 import { SortPipe } from "src/@vex/pipes/sort.pipe";
 import { ConformDialogComponent } from 'src/app/custom-layout/member/layout/dialogs/conformDialog/conform.dialog.component';
 import { ChangeDataFormDialog } from 'src/app/custom-layout/member/pages/apps/social/social-profile/social-profile.component';
+import { Router } from '@angular/router';
+import {patternsEmail, patternsNumber, dontStartWithZero} from 'src/app/tools/patterns';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 
 @Component({
@@ -77,10 +80,10 @@ hours: any;
 
 courceName: any;
 
-beneficiaryType: any;
+beneficiaries: any;
 beneficiaryTypeName: any;
 
-level: any;
+levels: any;
 levelNumber: any;
 
 catagoryName: any;
@@ -124,6 +127,10 @@ dataSource: any;
 
 form: FormGroup;
 isRegested: number[] = [];
+phoneNumberLength: number
+countryID: number
+companies: object[] = [];
+isFromCompany: boolean
 
 @ViewChild(MatSort) sort: MatSort;
 @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -135,7 +142,7 @@ dataLink: any
 
 constructor(
   public renderer: Renderer2,
-  private sortPipe: SortPipe,
+  private router: Router,
   public dialog: MatDialog,
   private fb: FormBuilder,
   private apollo: Apollo,
@@ -168,7 +175,6 @@ constructor(
   ngAfterContentInit(): void {
     this.renderer.selectRootElement('#id').focus();
   }
-
 
 
 
@@ -214,10 +220,21 @@ ngOnInit(): void {
             nationalityFemaleAr
             PHONECODE
             ISO2Code
+            length
           }
             qualifications{
               id
               qualification
+            }
+
+            level{
+              id
+              name
+            }
+
+            beneficiaryType{
+              id
+              companyType
             }
         }
       }
@@ -227,16 +244,158 @@ ngOnInit(): void {
   this.sex =  data.mexCourseTables.sex
   this.qualifications = data.mexCourseTables.qualifications
   this.countries = data.mexCourseTables.countries
+  
+  this.beneficiaries = data.mexCourseTables.beneficiaryType.filter((value, index, array)=>{
+    return parseInt(value.id) == 7 || parseInt(value.id) == 3 || parseInt(value.id) == 8
+   })
+
+  this.levels = data.mexCourseTables.level.filter((value, index, array)=>{
+    return parseInt(value.id) == 1 || parseInt(value.id) == 3 || parseInt(value.id) == 8 || parseInt(value.id) == 7
+   })
+
 
   this.catagory = data.mexCourseTables.catagory.filter((value, index, array)=>{
     return !(parseInt(value.id) == 1 || parseInt(value.id) == 2)
    })
 
-  
+
+
+  this.apollo.watchQuery({
+    query: gql`
+        query coursesLinkRejecter($courseId: Int){
+          coursesLinkRejecter(courseId: $courseId){
+            link
+            courseId
+            status
+            price
+            beneficiaryType
+            level
+        }
+      }
+      `,
+      variables: {
+        courseId: parseInt(this.data.courseNo)
+      }
+  }).valueChanges.subscribe(( {data}: any ) => {
+
+    this.beneficiaryTypeName = this.beneficiaries.filter((value, index, array)=>{
+      return parseInt(value.id) == parseInt(data.coursesLinkRejecter.beneficiaryType)
+     })
+       this.beneficiaryTypeName = {companyTypeName: this.beneficiaryTypeName[0].companyType, id: this.beneficiaryTypeName[0].id}
+
+    this.levelNumber = this.levels.filter((value, index, array)=>{
+      return parseInt(value.id) == parseInt(data.coursesLinkRejecter.level)
+     })
+
+    this.levels = this.levels.filter((value, index, array)=>{
+      return parseInt(value.id) != 8
+     })
+
+
+      this.levelNumber = {levelName: this.levelNumber[0].name, id: this.levelNumber[0].id}
+
+      console.log('beneficiaryTypeName ', this.beneficiaryTypeName.id, ((this.beneficiaryTypeName.id == 8) || (this.beneficiaryTypeName.id == 3)))
+     console.log('levelNumber ', this.levelNumber.id)
+
+ 
+   
+    // this.courseId = data.coursesLinkRejecter.courseId
+    // const links = JSON.parse(data.coursesLinkRejecter.link)
+    // this.beneficiaryId = data.coursesLinkRejecter.beneficiaryType
+    // const prices = JSON.parse(data.coursesLinkRejecter.price)
+    // const status = JSON.parse(data.coursesLinkRejecter.status)
+
+    // if(this.beneficiaryId == 8){
+
+    //   this.link.link1 = links[0]
+    //   this.link.link2 = links[1]
+      
+    //   this.afrad = true
+    //   this.jehat = true
+
+    //   this.priceCourse1 = prices[0]
+    //   this.priceCertificate2 = prices[1]
+    //   this.priceCertificate3 = prices[2]
+
+    //   this.priceCourse4 = prices[3]
+    //   this.priceCertificate5 = prices[4]
+    //   this.priceCertificate6 = prices[5]
+
+    //   this.status1 = status[0]
+    //   this.status2 = status[1]
+    //   this.status3 = status[2]
+    //   this.status4 = status[3]
+
+    //   this.status5 = status[4]
+    //   this.status6 = status[5]
+    //   this.status7 = status[6]
+    //   this.status8 = status[7]
+
+
+        
+    // } else {
+    //   (this.beneficiaryId == 7)? this.afrad = true : this.jehat = true;
+
+    //   if((this.beneficiaryId == 7)){
+        
+    //   this.link.link1 = links[0];
+    //   this.priceCourse1 = prices[0]
+    //   this.priceCertificate2 = prices[1]
+    //   this.priceCertificate3 = prices[2];
+
+    //   this.status1 = status[0]
+    //   this.status2 = status[1]
+    //   this.status3 = status[2]
+    //   this.status4 = status[3]
+
+
+    //   } else {
+
+    //   this.link.link2 = links[0];
+    //   this.priceCourse4 = prices[0]
+    //   this.priceCertificate5 = prices[1]
+    //   this.priceCertificate6 = prices[2];
+
+    //   this.status5 = status[0]
+    //   this.status6 = status[1]
+    //   this.status7 = status[2]
+    //   this.status8 = status[3]
+
+    //   }
+
+
+
+
+    // }
 
   
   })
 
+  
+  })
+
+  
+  this.apollo.watchQuery({
+    query: gql`
+        query courcesExtend1($courceId: Int!){
+          courcesExtend1(courceId: $courceId){
+            id
+            courceId
+            companyProfilesANDcoordinator
+            trainingPlace
+        }
+      }
+      `,
+      variables: {
+        courceId: parseInt(this.data.courseNo)
+      }
+  }).valueChanges.subscribe(( {data}: any ) => {
+
+    if(data.courcesExtend1){
+    this.companies = JSON.parse(data.courcesExtend1.companyProfilesANDcoordinator)
+    }
+
+  })
 
   this.form = this.fb.group({      
     id:  new FormControl({ value: null, disabled: false }, [Validators.required]),
@@ -247,9 +406,10 @@ ngOnInit(): void {
     birthDay:  new FormControl({ value: null, disabled: true }, [Validators.required]),
     qualification:  new FormControl({ value: null, disabled: true }, [Validators.required]),
     sex:  new FormControl({ value: null, disabled: true }, [Validators.required]),
-    phone: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3), Validators.maxLength(16), Validators.pattern('[0-9]*')]),
+    phone: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(6), Validators.pattern(/[0-9]/)]),
     companyPhoneKey:  new FormControl({ value: null, disabled: true }, [Validators.required]),
-    email:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+    email:  new FormControl({ value: null, disabled: true }, [Validators.required,
+      Validators.email, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
     residence:  new FormControl({ value: null, disabled: true }, [Validators.required]),
     specialization:  new FormControl({ value: null, disabled: true }, [Validators.required]),
     memorizing:  new FormControl({ value: null, disabled: true }, [Validators.required]),
@@ -258,8 +418,14 @@ ngOnInit(): void {
     region:  new FormControl({ value: null, disabled: true }, [Validators.required]),
     city:  new FormControl({ value: null, disabled: true }, [Validators.required]),
     neighborhood:  new FormControl({ value: null, disabled: true }, [Validators.required]),
+
+    level:  new FormControl(null, (this.levelNumber?.id == 8)? Validators.required : null),
+    company:  new FormControl(null, ((this.beneficiaryTypeName == 8) || (this.beneficiaryTypeName == 3))? Validators.required : null),
   });
 
+
+
+  
 }
 
 
@@ -309,7 +475,7 @@ searchId(event: Event) {
     this.form.controls['neighborhood'].disable({onlySelf: true})
     
     this.isRegested =[]
-    this.status = {status: null, message: 'أدخل رقم الهوية / الجواز'}
+    this.status = {status: null, message: 'أدخل رقم الهوية | الجواز'}
     this.savaButton = true
 
   } else {
@@ -743,7 +909,11 @@ savaData(){
 
       default:
         message = data.createP01_personal
-        this.dialogRef.close(true);
+        if(this.dataLink?.courseId){
+          this.router.navigate(['/'])
+          } else {
+          this.dialogRef.close(true);
+        }
         break;
     }
     

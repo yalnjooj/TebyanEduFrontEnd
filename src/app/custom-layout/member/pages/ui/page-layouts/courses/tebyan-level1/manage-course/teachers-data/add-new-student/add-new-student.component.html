@@ -1,15 +1,30 @@
-<div mat-dialog-title fxLayout="row" fxLayoutAlign="space-between center">
-    <p>{{status?.message || 'أدخل رقم الهوية / الجواز'}}</p>
-  
-    <!-- <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
+<div mat-dialog-title fxLayout="row" fxLayoutAlign="center">
+      <!-- <button type="button" mat-icon-button mat-dialog-close tabindex="-1">
        <mat-icon [icIcon]="icClose"></mat-icon>
      </button> -->
-   </div>
+</div>
+<div mat-dialog-title fxLayout="row" fxLayoutAlign="center space-between">
+
+  <span> {{levelNumber?.levelName}} </span> | <span> نوع المستفيد: {{beneficiaryTypeName?.companyTypeName}} </span>
   
+</div>
   
+<div *ngIf="((beneficiaryTypeName?.id == 8) || (beneficiaryTypeName?.id == 7))" fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+
+  <mat-checkbox [(ngModel)]="isFromCompany" [disabled]="(beneficiaryTypeName?.id == 7)" [checked]="(beneficiaryTypeName?.id == 7)">هل أنت تابع لجهة ما؟</mat-checkbox>
+
+  <mat-radio-group *ngIf="!isFromCompany" aria-label="Select an option">
+    <label class="example-margin"><b>اختر نوع الشهادة:</b></label>
+    <mat-radio-button value="1">شهادة الشركة</mat-radio-button>
+    <mat-radio-button value="2">شهادة موثقة</mat-radio-button>
+    <mat-radio-button value="3">لا أرغب في الحصول على شهادة</mat-radio-button>
+  </mat-radio-group>
+</div>
+
       <mat-dialog-content id="form-element" class="form-vertical" [formGroup]="form" class="mat-typography" novalidate>
   
-  
+        <p fxLayoutAlign="center">{{status?.message || 'أدخل رقم الهوية | الجواز'}}</p>
+
       <mat-list>
         <mat-list-item>البيانات الشخصية</mat-list-item>
         <mat-divider></mat-divider>
@@ -19,19 +34,19 @@
   
         <mat-form-field fxFlex="auto">
           <mat-label>رقم الهوية</mat-label>
-          <input type="text" matInput id="id" formControlName="id"  (keyup)="searchId($event)" required>
+          <input type="text" matInput id="id" formControlName="id" oninput="this.value=this.value.replace(/[^a-zA-Z0-9]/g,'')" (keyup)="searchId($event)" required>
           <mat-error *ngIf="form.get('id').errors?.required">حقل مطلوب</mat-error>
         </mat-form-field>
   
         <mat-form-field fxFlex="auto">
           <mat-label>الاسم بالعربي</mat-label>
-          <input type="text" matInput formControlName="nameAr" required>
+          <input type="text" matInput formControlName="nameAr" oninput="this.value=this.value.replace(/[^ء-ي\s]/g,'')" required>
           <mat-error *ngIf="form.get('nameAr').errors?.required">حقل مطلوب</mat-error>
         </mat-form-field>
   
         <mat-form-field fxFlex="auto">
           <mat-label>الاسم بالإنجليزي</mat-label>
-          <input type="text" matInput formControlName="nameEn" required>
+          <input type="text" matInput formControlName="nameEn" oninput="this.value=this.value.replace(/[^a-zA-Z\s]/g,'')" required>
           <mat-error *ngIf="form.get('nameEn').errors?.required">حقل مطلوب</mat-error>
         </mat-form-field>
   
@@ -55,25 +70,25 @@
   
         <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
   
-        <mat-form-field fxFlex="auto">
-          <mat-label>رقم الجوال</mat-label>
-          <md-input-container>
-            <input type="text" matInput formControlName="phone" required>
-          </md-input-container>
-          <mat-icon matSuffix [icIcon]="icSmartphone"></mat-icon>
-          <mat-error *ngIf="form.get('phone').errors?.required">حقل مطلوب</mat-error>
-        </mat-form-field>
-        
         <mat-form-field fxFlex="90px">
         <mat-label>اختر مفتاح الدولة</mat-label>
           <mat-select formControlName="companyPhoneKey" required>
-            <mat-option dir="rtl" *ngFor="let infoo of countries" [value]="infoo.id">
-              <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{infoo.ISO2Code}}.png" />
-              {{infoo.PHONECODE}}+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <mat-option (click)="phoneNumberLength = country.length; form.get('phone').setValue(null); countryID = country.id" dir="rtl" *ngFor="let country of countries" [value]="country.id">
+              <img style="display: inline;" width="30px" src="http://localhost:3000/uploadedFiles/flags/48x48/{{country.ISO2Code}}.png" />
+              {{country.PHONECODE}} + &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </mat-option>
           </mat-select>
         </mat-form-field>
   
+        <mat-form-field fxFlex="auto">
+          <mat-label>رقم الجوال</mat-label>
+          <md-input-container>
+            <input type="text" matInput formControlName="phone" [maxLength]="(countryID == 187)? phoneNumberLength : 17" oninput="this.value=this.value.replace(/^0+/g,'')" required>
+          </md-input-container>
+          <mat-icon matSuffix [icIcon]="icSmartphone"></mat-icon>
+          <mat-error *ngIf="form.get('phone').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+
         <mat-form-field fxFlex="auto">
           <mat-label>البريد الإلكتروني</mat-label>
           <md-input-container>
@@ -144,7 +159,24 @@
         <mat-divider></mat-divider>
       </mat-list><br>
       
-  
+      <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
+
+        <mat-form-field *ngIf="levelNumber?.id == 8" fxFlex="auto">
+          <mat-label>اختر المستوى</mat-label>
+          <mat-select formControlName="qualification">
+            <mat-option dir="rtl" *ngFor="let level of levels" [value]="level.id">{{level.name}}</mat-option>
+          </mat-select>        <mat-error *ngIf="form.get('level').errors?.required">حقل مطلوب</mat-error>
+        </mat-form-field>
+
+        <span fxFlex="auto" *ngIf="((beneficiaryTypeName?.id == 8) || (beneficiaryTypeName?.id == 3)) || isFromCompany">
+          <mat-form-field *ngIf="isFromCompany" fxFlex="auto">
+            <mat-label>اختر جهتك</mat-label>
+            <mat-select formControlName="qualification">
+              <mat-option dir="rtl" *ngFor="let company of companies" [value]="company.companyId">{{company.companyName}}</mat-option>
+            </mat-select>        <mat-error *ngIf="form.get('company').errors?.required">حقل مطلوب</mat-error>
+          </mat-form-field>
+        </span>
+      </div>
       <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutGap="16px" fxLayoutGap.lt-sm="0">
   
         <mat-form-field fxFlex="auto">
@@ -156,7 +188,7 @@
   
         <mat-form-field fxFlex="auto">
           <mat-label>التخصص</mat-label>
-          <input type="text" matInput formControlName="specialization" required>
+          <input type="text" matInput formControlName="specialization" oninput="this.value=this.value.replace(/[^a-zA-Z0-9ء-ي\s]/g,'')" required>
           <mat-error *ngIf="form.get('specialization').errors?.required">حقل مطلوب</mat-error>
         </mat-form-field>
   
@@ -182,11 +214,20 @@
   
       </div>
   
+
+      <mat-list>
+        <mat-list-item>رسوم البرنامج</mat-list-item>
+        <mat-divider></mat-divider>
+      </mat-list><br>
+      
+
       </mat-dialog-content>
-  
-      <mat-dialog-actions align="start">
-        <button mat-raised-button color="warn" mat-dialog-close="false">إلغاء</button>
-        <button mat-raised-button color="primary" [disabled]="savaButton" (click)="savaData()">تسجيل</button>
-        <button mat-raised-button (click)="form.reset(); show = false">مسح</button>
-      </mat-dialog-actions>
+      <div mat-dialog-actions align="center">
+        <mat-dialog-actions>
+          <button mat-raised-button color="warn" *ngIf="!dataLink?.courseId" mat-dialog-close="false">إلغاء</button>
+          <button mat-raised-button color="primary" [disabled]="savaButton" (click)="savaData()">تسجيل</button>
+          <button mat-raised-button (click)="form.reset(); show = false">مسح</button>
+        </mat-dialog-actions>
+      </div>
+    
   
