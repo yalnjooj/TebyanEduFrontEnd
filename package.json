@@ -56,7 +56,7 @@
     "graphql-tag": "^2.11.0",
     "highlight.js": "~10.3.2",
     "jspdf": "^2.2.0",
-    "luxon": "~1.25.0",
+    "luxon": "~1.28.1",
     "ngx-quill": "~12.0.1",
     "ngx-showdown": "^6.0.0",
     "ngx-spinner": "^10.0.1",
